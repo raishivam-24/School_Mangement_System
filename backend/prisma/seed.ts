@@ -4,10 +4,9 @@
  * Academic structure, Teachers, Students, Enrollments, and Financial samples.
  */
 
-import { PrismaClient, UserRole, SchoolStatus, SubscriptionPlan, Gender, AttendanceStatus, ExamStatus, InvoiceStatus, PaymentMethod } from '@prisma/client';
+import { UserRole, SchoolStatus, SubscriptionPlan, Gender, AttendanceStatus, ExamStatus, InvoiceStatus, PaymentMethod } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { prisma } from '../src/db/prisma.js';
 
 async function main() {
   console.log('🌱 Starting Database Seeding...');
