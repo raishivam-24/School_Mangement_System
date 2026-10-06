@@ -94,7 +94,7 @@ export const FinancePage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
           <span className="text-xs font-semibold text-slate-400 block mb-1">Total Billed Fees</span>
-          <p className="text-3xl font-extrabold text-slate-800">₹1,840,000</p>
+          <p className="text-3xl font-extrabold text-slate-800">₹18,40,000</p>
           <span className="text-[11px] font-bold text-brand-sky-dark mt-2 inline-block">
             Across 148 Active Students
           </span>
@@ -102,7 +102,7 @@ export const FinancePage: React.FC = () => {
 
         <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
           <span className="text-xs font-semibold text-slate-400 block mb-1">Total Collected</span>
-          <p className="text-3xl font-extrabold text-brand-mint-dark">₹1,420,000</p>
+          <p className="text-3xl font-extrabold text-brand-mint-dark">₹14,20,000</p>
           <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2 py-0.5 rounded-full mt-2 inline-block">
             77.2% Collection Rate
           </span>
@@ -112,7 +112,7 @@ export const FinancePage: React.FC = () => {
           <span className="text-xs font-semibold text-slate-400 block mb-1">
             Outstanding Pending
           </span>
-          <p className="text-3xl font-extrabold text-brand-yellow-dark">₹420,000</p>
+          <p className="text-3xl font-extrabold text-brand-yellow-dark">₹4,20,000</p>
           <span className="text-[11px] font-bold text-slate-400 mt-2 inline-block">
             Due by end of term
           </span>

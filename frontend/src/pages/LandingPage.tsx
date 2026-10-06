@@ -249,7 +249,7 @@ export const LandingPage: React.FC = () => {
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-black text-slate-900">
-                  ${isAnnual ? '299' : '29'}
+                  ₹{isAnnual ? '24,999' : '2,499'}
                 </span>
                 <span className="text-sm font-semibold text-slate-400">
                   /{isAnnual ? 'year' : 'month'}
@@ -293,7 +293,7 @@ export const LandingPage: React.FC = () => {
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-black text-slate-900">
-                  ${isAnnual ? '999' : '99'}
+                  ₹{isAnnual ? '79,999' : '7,999'}
                 </span>
                 <span className="text-sm font-semibold text-slate-400">
                   /{isAnnual ? 'year' : 'month'}
@@ -336,7 +336,7 @@ export const LandingPage: React.FC = () => {
               </span>
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-black text-slate-900">
-                  ${isAnnual ? '2999' : '299'}
+                  ₹{isAnnual ? '2,49,999' : '24,999'}
                 </span>
                 <span className="text-sm font-semibold text-slate-400">
                   /{isAnnual ? 'year' : 'month'}

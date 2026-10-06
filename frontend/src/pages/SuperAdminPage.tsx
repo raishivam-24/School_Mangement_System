@@ -95,7 +95,7 @@ export const SuperAdminPage: React.FC = () => {
 
         <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
           <span className="text-xs font-semibold text-slate-400 block mb-1">Monthly SaaS MRR</span>
-          <p className="text-3xl font-extrabold text-brand-mint-dark">$24,500</p>
+          <p className="text-3xl font-extrabold text-brand-mint-dark">₹24,50,000</p>
           <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2 py-0.5 rounded-full mt-2 inline-block">
             +18.4% YoY
           </span>
@@ -158,7 +158,7 @@ export const SuperAdminPage: React.FC = () => {
                   <td className="py-4 px-6 font-bold text-slate-900">{s.teachers}</td>
                   <td className="py-4 px-6">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-lilac-light text-brand-lilac-dark">
-                      {s.plan} (${s.mrr}/mo)
+                      {s.plan} (₹{(s.mrr * 250).toLocaleString('en-IN')}/mo)
                     </span>
                   </td>
                   <td className="py-4 px-6">
