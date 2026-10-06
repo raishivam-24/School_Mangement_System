@@ -22,11 +22,11 @@ import { TimetablePage } from './pages/TimetablePage';
 import { AnnouncementsPage } from './pages/AnnouncementsPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { SuperAdminPage } from './pages/SuperAdminPage';
+import { ProfilePage } from './pages/ProfilePage';
 import {
   LibraryPage,
   MessagesPage,
   ReportsPage,
-  ProfilePage,
   SettingsPage,
 } from './pages/OtherPages';
 
