@@ -23,6 +23,7 @@ import { AnnouncementsPage } from './pages/AnnouncementsPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { SuperAdminPage } from './pages/SuperAdminPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { StudentSubjectsPage } from './pages/StudentSubjectsPage';
 import {
   LibraryPage,
   MessagesPage,
@@ -82,6 +83,7 @@ export function App() {
               }
             >
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/my-subjects" element={<StudentSubjectsPage />} />
               <Route path="/students" element={<StudentsPage />} />
               <Route path="/teachers" element={<TeachersPage />} />
               <Route path="/academics" element={<AcademicsPage />} />

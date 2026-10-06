@@ -54,11 +54,47 @@ import {
 /* ========================================================================= */
 /* 🎓 1. STUDENT DASHBOARD VIEW                                              */
 /* ========================================================================= */
+const getTimeGreeting = (): string => {
+  const hour = new Date().getHours();
+  if (hour >= 4 && hour < 12) return 'Good Morning';
+  if (hour >= 12 && hour < 17) return 'Good Afternoon';
+  if (hour >= 17 && hour < 22) return 'Good Evening';
+  return 'Hello';
+};
+
 const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([
-    { id: 1, title: 'Maths Chapter 4 (Quadratic Eq.) Ex 4.2', subject: 'Mathematics', due: 'Tomorrow, 08:30 AM', done: false },
-    { id: 2, title: 'Physics Lab File — Ohm’s Law Verification', subject: 'Physics', due: 'Wednesday, Apr 23', done: false },
-    { id: 3, title: 'English Essay: Role of Technology in Education', subject: 'English', due: 'Friday, Apr 25', done: true },
+    {
+      id: 1,
+      title: 'Maths Ch 4: Quadratic Equations Ex 4.2',
+      subject: 'Mathematics',
+      subjectBadge: 'bg-sky-100 text-sky-800',
+      due: 'Tomorrow, 08:30 AM',
+      dueHours: 'Due in 18 Hours',
+      isUrgent: true,
+      done: false,
+    },
+    {
+      id: 2,
+      title: 'Physics Practical Lab: Ohm’s Law Verification',
+      subject: 'Physics',
+      subjectBadge: 'bg-purple-100 text-purple-800',
+      due: 'Wednesday, Apr 23 (4:00 PM)',
+      dueHours: 'Due in 2 Days',
+      isUrgent: false,
+      done: false,
+    },
+    {
+      id: 3,
+      title: 'English Critical Essay: The Ball Poem Analysis',
+      subject: 'English',
+      subjectBadge: 'bg-rose-100 text-rose-800',
+      due: 'Friday, Apr 25 (11:59 PM)',
+      dueHours: 'Due in 4 Days',
+      isUrgent: false,
+      done: true,
+    },
   ]);
 
   const toggleTask = (id: number) => {
@@ -75,12 +111,12 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
   ];
 
   const periodsToday = [
-    { period: 1, time: '08:30 - 09:15', subject: 'Mathematics', teacher: 'Amit Sharma Sir', room: 'Room 201', current: false },
-    { period: 2, time: '09:15 - 10:00', subject: 'Physics Lab', teacher: 'Dr. Priya Patel', room: 'Lab 1', current: true },
-    { period: 3, time: '10:15 - 11:00', subject: 'English', teacher: 'Sunita Rao Ma’am', room: 'Room 201', current: false },
-    { period: 4, time: '11:00 - 11:45', subject: 'Chemistry', teacher: 'Dr. Priya Patel', room: 'Lab 2', current: false },
-    { period: 5, time: '12:30 - 01:15', subject: 'Computer Sci', teacher: 'Rajesh Nair Sir', room: 'Comp Lab 3', current: false },
-    { period: 6, time: '01:15 - 02:00', subject: 'Physical Edu', teacher: 'Vikram Seth Sir', room: 'Playground', current: false },
+    { period: 1, time: '08:30 - 09:15', subject: 'Mathematics', teacher: 'Amit Sharma Sir', room: 'Room 201', current: false, color: 'bg-sky-50 border-sky-200 text-sky-900' },
+    { period: 2, time: '09:15 - 10:00', subject: 'Physics Lab', teacher: 'Dr. Priya Patel', room: 'Science Lab 1', current: true, color: 'bg-purple-50 border-purple-300 text-purple-900' },
+    { period: 3, time: '10:15 - 11:00', subject: 'English', teacher: 'Sunita Rao Ma’am', room: 'Room 201', current: false, color: 'bg-rose-50 border-rose-200 text-rose-900' },
+    { period: 4, time: '11:00 - 11:45', subject: 'Chemistry', teacher: 'Dr. Priya Patel', room: 'Science Lab 2', current: false, color: 'bg-amber-50 border-amber-200 text-amber-900' },
+    { period: 5, time: '12:30 - 01:15', subject: 'Computer Sci', teacher: 'Rajesh Nair Sir', room: 'Comp Lab 3', current: false, color: 'bg-indigo-50 border-indigo-200 text-indigo-900' },
+    { period: 6, time: '01:15 - 02:00', subject: 'Physical Edu', teacher: 'Vikram Seth Sir', room: 'Playground', current: false, color: 'bg-emerald-50 border-emerald-200 text-emerald-900' },
   ];
 
   return (
@@ -97,7 +133,7 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
             <span>Class 10-A • Roll No: 24 • Tagore House (Red)</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
-            Namaste, {user.name}! 📚
+            {getTimeGreeting()}, {user.name}! 📚
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
             You have 6 classes scheduled today. Next lecture is <strong className="text-white">Physics Lab with Dr. Priya Patel</strong> at 09:15 AM.
@@ -112,10 +148,19 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
           </div>
         </div>
 
-        <div className="relative z-10 w-28 h-28 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex flex-col items-center justify-center text-center p-3 shrink-0">
-          <GraduationCap className="w-8 h-8 text-brand-yellow mb-1" />
-          <span className="text-xl font-bold">A1</span>
-          <span className="text-[10px] text-sky-100 font-medium">Rank #4 in Class</span>
+        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-3 shrink-0">
+          <button
+            onClick={() => navigate('/my-subjects')}
+            className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+          >
+            <BookOpen className="w-4 h-4 text-brand-sky" />
+            <span>My Subjects &amp; Homework</span>
+          </button>
+          <div className="w-24 h-24 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex flex-col items-center justify-center text-center p-2">
+            <GraduationCap className="w-7 h-7 text-brand-yellow mb-0.5" />
+            <span className="text-lg font-bold">A1</span>
+            <span className="text-[10px] text-sky-100 font-medium">Rank #4</span>
+          </div>
         </div>
       </motion.div>
 
@@ -189,19 +234,30 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
                 <h3 className="text-base font-bold text-slate-800">Today’s Period Schedule</h3>
                 <p className="text-xs text-slate-400 font-medium">Monday • Class 10-A Timetable</p>
               </div>
-              <span className="text-xs font-bold text-brand-sky-dark bg-brand-sky-light px-3 py-1 rounded-full">
-                Period 2 Ongoing
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-brand-sky-dark bg-brand-sky-light px-3 py-1 rounded-full">
+                  Period 2 Ongoing
+                </span>
+                <button
+                  type="button"
+                  onClick={() => navigate('/timetable')}
+                  className="hidden sm:flex items-center gap-1 text-xs font-bold text-brand-sky-dark hover:underline cursor-pointer"
+                >
+                  <span>My Timetable</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {periodsToday.map((p) => (
                 <div
                   key={p.period}
-                  className={`p-3.5 rounded-2xl border transition-all ${
+                  onClick={() => navigate('/timetable')}
+                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer hover:shadow-sm ${
                     p.current
                       ? 'bg-brand-sky-light border-brand-sky text-brand-sky-dark shadow-sm'
-                      : 'bg-slate-50 border-slate-100 text-slate-700'
+                      : 'bg-slate-50 border-slate-100 text-slate-700 hover:bg-slate-100/70'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -231,7 +287,14 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
                 <h3 className="text-base font-bold text-slate-800">Subject-wise Marks (% Score)</h3>
                 <p className="text-xs text-slate-400 font-medium">Recent Periodic Assessment (PA-1)</p>
               </div>
-              <span className="text-xs font-bold text-slate-500">Max: 100</span>
+              <button
+                type="button"
+                onClick={() => navigate('/my-subjects')}
+                className="text-xs font-bold text-brand-sky-dark hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <span>View All Subjects</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             <div className="h-56">
@@ -257,32 +320,73 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
         <div className="space-y-6">
           {/* Homework Action Checklist */}
           <div className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card">
-            <h3 className="text-base font-bold text-slate-800 mb-1">Homework &amp; Assignments</h3>
-            <p className="text-xs text-slate-400 mb-4">Click checkbox upon completing task</p>
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <h3 className="text-base font-bold text-slate-800">Homework &amp; Tasks</h3>
+                <p className="text-xs text-slate-400">Deadlines &amp; submissions</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/my-subjects')}
+                className="px-3 py-1.5 rounded-xl bg-brand-sky-light text-brand-sky-dark hover:bg-sky-200 transition-all text-xs font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <span>My Subjects</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 mt-4">
               {tasks.map((t) => (
                 <div
                   key={t.id}
-                  onClick={() => toggleTask(t.id)}
-                  className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                  className={`p-3.5 rounded-2xl border transition-all ${
                     t.done
                       ? 'bg-slate-50 border-slate-100 opacity-60'
+                      : t.isUrgent
+                      ? 'bg-amber-50/50 border-amber-200 shadow-sm'
                       : 'bg-white border-slate-200 hover:border-brand-sky shadow-sm'
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <button className="mt-0.5 text-brand-sky">
-                      {t.done ? <CheckCircle2 className="w-5 h-5 text-brand-mint-dark" /> : <Circle className="w-5 h-5 text-slate-400" />}
+                    <button
+                      type="button"
+                      onClick={() => toggleTask(t.id)}
+                      className="mt-0.5 text-brand-sky cursor-pointer"
+                    >
+                      {t.done ? (
+                        <CheckCircle2 className="w-5 h-5 text-brand-mint-dark" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-slate-400 hover:text-brand-sky transition-colors" />
+                      )}
                     </button>
                     <div className="flex-1">
-                      <span className="text-[10px] font-bold text-brand-sky-dark uppercase tracking-wider">
-                        {t.subject}
-                      </span>
-                      <p className={`text-xs font-semibold mt-0.5 ${t.done ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md ${t.subjectBadge}`}>
+                          {t.subject}
+                        </span>
+                        {t.isUrgent && !t.done && (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-100 text-amber-900 flex items-center gap-1 animate-pulse">
+                            <Clock className="w-2.5 h-2.5 text-amber-700" />
+                            <span>{t.dueHours}</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-xs font-semibold mt-1 ${t.done ? 'line-through text-slate-400' : 'text-slate-800'}`}>
                         {t.title}
                       </p>
-                      <span className="text-[10px] text-slate-400 block mt-1">Due: {t.due}</span>
+                      <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-100/60">
+                        <span className="text-[10px] text-slate-500 font-medium">Due: {t.due}</span>
+                        {!t.done && (
+                          <button
+                            type="button"
+                            onClick={() => navigate('/my-subjects')}
+                            className="text-[11px] font-bold text-brand-sky-dark hover:underline flex items-center gap-0.5 cursor-pointer"
+                          >
+                            <span>Submit in Portal</span>
+                            <ChevronRight className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -347,7 +451,7 @@ const TeacherDashboardView: React.FC<{ user: any }> = ({ user }) => {
             <span>Senior PGT Mathematics • Class Teacher: Class 10-A</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
-            Good Morning, {user.name}! 👨‍🏫
+            {getTimeGreeting()}, {user.name}! 👨‍🏫
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
             You have 4 teaching periods scheduled today. Period 1 roll call for Class 10-A has been marked (39/42 present).
@@ -356,8 +460,9 @@ const TeacherDashboardView: React.FC<{ user: any }> = ({ user }) => {
 
         <div className="relative z-10 flex gap-3">
           <button
+            type="button"
             onClick={() => navigate('/attendance')}
-            className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2"
+            className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <UserCheck className="w-4 h-4" />
             <span>Class 10-A Roll Call</span>
@@ -473,7 +578,10 @@ const TeacherDashboardView: React.FC<{ user: any }> = ({ user }) => {
             </div>
           </div>
 
-          <button className="w-full mt-4 py-3 rounded-2xl bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all">
+          <button
+            type="button"
+            className="w-full mt-4 py-3 rounded-2xl bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all cursor-pointer active:scale-95"
+          >
             Broadcast Homework
           </button>
         </div>
@@ -515,7 +623,7 @@ const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
             <span>Delhi Public Academy • CBSE Affiliation #1930482</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
-            Welcome, Principal Sharma
+            {getTimeGreeting()}, Principal Sharma
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
             Academic Year 2026–27 (Term 1) • Campus operations running smoothly with 94.2% daily attendance.
@@ -523,7 +631,10 @@ const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
         </div>
 
         <div className="relative z-10 flex gap-3">
-          <button className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2">
+          <button
+            type="button"
+            className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+          >
             <FileText className="w-4 h-4" />
             <span>Daily Admin Report</span>
           </button>
@@ -647,7 +758,7 @@ const ParentDashboardView: React.FC<{ user: any }> = ({ user }) => {
             <span>Tracking: Rahul Sharma • Class 10-A (Roll No: 24)</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
-            Welcome, Parent of Rahul Sharma
+            {getTimeGreeting()}, Parent of Rahul Sharma
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
             Delhi Public Academy • Rahul is present in school today. Next Parent-Teacher Meeting (PTM) is on Saturday, April 28.
@@ -655,7 +766,10 @@ const ParentDashboardView: React.FC<{ user: any }> = ({ user }) => {
         </div>
 
         <div className="relative z-10">
-          <button className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2">
+          <button
+            type="button"
+            className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+          >
             <CreditCard className="w-4 h-4" />
             <span>Pay Q1 Fees (UPI)</span>
           </button>

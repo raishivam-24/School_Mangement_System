@@ -66,9 +66,22 @@ export const Sidebar: React.FC = () => {
       ];
     }
 
-    if (user.role === 'STUDENT' || user.role === 'PARENT') {
+    if (user.role === 'STUDENT') {
       return [
         { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+        { name: 'My Subjects', to: '/my-subjects', icon: BookOpen },
+        { name: 'Timetable', to: '/timetable', icon: Clock },
+        { name: 'Attendance', to: '/attendance', icon: CalendarCheck },
+        { name: 'Fees & Invoices', to: '/finance', icon: DollarSign },
+        { name: 'Notice', to: '/announcements', icon: Bell },
+        { name: 'Calendar', to: '/calendar', icon: Calendar },
+      ];
+    }
+
+    if (user.role === 'PARENT') {
+      return [
+        { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+        { name: 'Child Subjects', to: '/my-subjects', icon: BookOpen },
         { name: 'Timetable', to: '/timetable', icon: Clock },
         { name: 'Attendance', to: '/attendance', icon: CalendarCheck },
         { name: 'Fees & Invoices', to: '/finance', icon: DollarSign },
@@ -124,7 +137,7 @@ export const Sidebar: React.FC = () => {
                 key={item.name}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all duration-200 ${
+                  `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all duration-200 cursor-pointer ${
                     isActive
                       ? 'bg-brand-sky-light text-brand-sky-dark font-semibold shadow-sm'
                       : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
@@ -147,7 +160,7 @@ export const Sidebar: React.FC = () => {
             <NavLink
               to="/profile"
               className={({ isActive }) =>
-                `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all ${
+                `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all cursor-pointer ${
                   isActive
                     ? 'bg-brand-sky-light text-brand-sky-dark font-semibold'
                     : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
@@ -160,7 +173,7 @@ export const Sidebar: React.FC = () => {
             <NavLink
               to="/settings"
               className={({ isActive }) =>
-                `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all ${
+                `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm transition-all cursor-pointer ${
                   isActive
                     ? 'bg-brand-sky-light text-brand-sky-dark font-semibold'
                     : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
@@ -172,7 +185,7 @@ export const Sidebar: React.FC = () => {
             </NavLink>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all text-left"
+              className="w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl font-medium text-sm text-slate-500 hover:text-rose-500 hover:bg-rose-50 transition-all text-left cursor-pointer"
             >
               <LogOut className="w-5 h-5" />
               <span>Log out</span>
