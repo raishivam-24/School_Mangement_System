@@ -22,6 +22,7 @@
 | **Phase 10** | **Frontend Foundation & Pastel UI System** | ✅ Complete | React 18 + TypeScript + Vite + Tailwind CSS + Framer Motion + Recharts (matching SchoolHub pastel aesthetic, Plus Jakarta Sans, and glass cards). |
 | **Phase 11** | **Frontend Routing & All Domain Views** | ✅ Complete | Public Landing (self-service onboarding modal), Multi-tenant Login, School Admin Dashboard (Hero, Donut, Multi-Bar, Calendar & Agenda, Spline Wave), Students, Teachers, Attendance, Finance, Academics, Timetable, Notices, Super Admin views. |
 | **Phase 12** | **Indian Schooling Personas & UX Architecture** | ✅ Complete | Researched CBSE/ICSE board nuances, Indian fee quarters in ₹ INR, 75% attendance threshold, and created role-isolated dashboard specifications documented in `docs/indian-school-system-personas-and-ux.md`. |
+| **Phase 13** | **Daily Attendance Engine & Zustand State Store** | ✅ Complete | Installed Zustand (`useUIStore`, `useAcademicStore`), built interactive Daily Roll Call sheet with 1-click 'Mark All Present', status pills, live counters, absence reasons, and batch API saving. Roadmap documented in `docs/implementation-roadmap.md`. |
 
 ---
 
