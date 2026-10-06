@@ -823,13 +823,24 @@ export const TimetablePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
+                      const subjectMap: Record<string, string> = {
+                        'Mathematics': 'sub_math',
+                        'Physics': 'sub_phy',
+                        'Physics Lab': 'sub_phy',
+                        'Chemistry': 'sub_chem',
+                        'Chemistry Lab': 'sub_chem',
+                        'Biology': 'sub_bio',
+                        'English Lit': 'sub_eng',
+                        'Computer Sci': 'sub_cs',
+                      };
+                      const targetId = subjectMap[activeSlot.subject] || 'sub_math';
                       setActiveSlot(null);
-                      navigate('/my-subjects');
+                      navigate(`/my-subjects/${targetId}`);
                     }}
                     className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                   >
                     <BookOpen className="w-4 h-4" />
-                    <span>Open Subject Classroom</span>
+                    <span>Open {activeSlot.subject} Classroom</span>
                   </button>
                 )}
               </div>

@@ -379,10 +379,17 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
                         {!t.done && (
                           <button
                             type="button"
-                            onClick={() => navigate('/my-subjects')}
+                            onClick={() => {
+                              const map: Record<string, string> = {
+                                'Mathematics': 'sub_math',
+                                'Physics': 'sub_phy',
+                                'English': 'sub_eng',
+                              };
+                              navigate(`/my-subjects/${map[t.subject] || 'sub_math'}`);
+                            }}
                             className="text-[11px] font-bold text-brand-sky-dark hover:underline flex items-center gap-0.5 cursor-pointer"
                           >
-                            <span>Submit in Portal</span>
+                            <span>Open {t.subject} Classroom</span>
                             <ChevronRight className="w-3 h-3" />
                           </button>
                         )}

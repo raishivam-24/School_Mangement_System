@@ -24,6 +24,7 @@ import { CalendarPage } from './pages/CalendarPage';
 import { SuperAdminPage } from './pages/SuperAdminPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { StudentSubjectsPage } from './pages/StudentSubjectsPage';
+import { SubjectClassroomPage } from './pages/SubjectClassroomPage';
 import {
   LibraryPage,
   MessagesPage,
@@ -84,6 +85,7 @@ export function App() {
             >
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/my-subjects" element={<StudentSubjectsPage />} />
+              <Route path="/my-subjects/:subjectId" element={<SubjectClassroomPage />} />
               <Route path="/students" element={<StudentsPage />} />
               <Route path="/teachers" element={<TeachersPage />} />
               <Route path="/academics" element={<AcademicsPage />} />
