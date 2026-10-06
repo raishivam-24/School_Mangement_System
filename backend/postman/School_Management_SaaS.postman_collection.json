@@ -1,0 +1,780 @@
+{
+  "info": {
+    "_postman_id": "school-management-saas-api-v1",
+    "name": "School Management SaaS API",
+    "description": "Comprehensive Postman Collection for Multi-Tenant School Management SaaS Backend.\nSupports HttpOnly Cookies & Bearer Tokens, Role-Based Access, and Tenant Scoping.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Authentication & Onboarding",
+      "item": [
+        {
+          "name": "Get Subscription Plans (Landing Page)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/plans",
+              "host": ["{{baseUrl}}"],
+              "path": ["subscriptions", "plans"]
+            }
+          }
+        },
+        {
+          "name": "Register School (Self-Service Landing Page)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('accessToken', jsonData.data.accessToken);",
+                  "    if (jsonData.data.school) {",
+                  "        pm.environment.set('schoolId', jsonData.data.school.id);",
+                  "    }",
+                  "    console.log('Self-registered School Admin token saved!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"schoolName\": \"St. Xavier High School\",\n  \"schoolCode\": \"STX-DELHI\",\n  \"schoolEmail\": \"principal@stxavier.edu\",\n  \"schoolPhone\": \"+91 98111 22334\",\n  \"schoolAddress\": \"Civil Lines, Delhi\",\n  \"plan\": \"PRO\",\n  \"billingCycle\": \"ANNUALLY\",\n  \"adminName\": \"Father Thomas\",\n  \"adminEmail\": \"admin@stxavier.edu\",\n  \"adminPassword\": \"Admin@Secure123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register-school",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register-school"]
+            }
+          }
+        },
+        {
+          "name": "Search Schools (Login Dropdown)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schools/public?search=xavier",
+              "host": ["{{baseUrl}}"],
+              "path": ["schools", "public"],
+              "query": [{ "key": "search", "value": "xavier" }]
+            }
+          }
+        },
+        {
+          "name": "Login - Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('accessToken', jsonData.data.accessToken);",
+                  "    console.log('Super Admin Access Token saved!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"superadmin@platform.com\",\n  \"password\": \"SuperAdmin@Secure123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - School Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('accessToken', jsonData.data.accessToken);",
+                  "    if (jsonData.data.user && jsonData.data.user.school) {",
+                  "        pm.environment.set('schoolId', jsonData.data.user.school.id);",
+                  "    }",
+                  "    console.log('School Admin Access Token saved!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@dpa.edu\",\n  \"password\": \"Admin@Secure123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('accessToken', jsonData.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"amit.sharma@dpa.edu\",\n  \"password\": \"Teacher@Secure123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('accessToken', jsonData.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rahul.sharma@dpa.edu\",\n  \"password\": \"Student@Secure123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Super Admin (Platform & Schools)",
+      "item": [
+        {
+          "name": "Platform Dashboard",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "List Schools",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schools?page=1&pageSize=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["schools"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create School",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Greenwood International School\",\n  \"code\": \"GW-MUMBAI\",\n  \"email\": \"contact@greenwood.edu\",\n  \"phone\": \"+91 99887 76655\",\n  \"address\": \"Andheri West, Mumbai\",\n  \"plan\": \"PRO\",\n  \"maxStudents\": 1500,\n  \"adminName\": \"Pooja Deshmukh\",\n  \"adminEmail\": \"admin@greenwood.edu\",\n  \"adminPassword\": \"Admin@Secure123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schools",
+              "host": ["{{baseUrl}}"],
+              "path": ["schools"]
+            }
+          }
+        },
+        {
+          "name": "Get School Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schools/{{schoolId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["schools", "{{schoolId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update School Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schools/{{schoolId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["schools", "{{schoolId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. School Dashboard",
+      "item": [
+        {
+          "name": "School Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Academic Structure",
+      "item": [
+        {
+          "name": "List Academic Years",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/academics/years",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "years"]
+            }
+          }
+        },
+        {
+          "name": "Create Academic Year",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"2027-2028\",\n  \"startDate\": \"2027-04-01\",\n  \"endDate\": \"2028-03-31\",\n  \"isCurrent\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/academics/years",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "years"]
+            }
+          }
+        },
+        {
+          "name": "List Classes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/academics/classes",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "classes"]
+            }
+          }
+        },
+        {
+          "name": "Get Class Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/academics/classes/{{classId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "classes", "{{classId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Class",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Class 11\",\n  \"numericOrder\": 11,\n  \"initialSections\": [\"A\", \"B\", \"C\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/academics/classes",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "classes"]
+            }
+          }
+        },
+        {
+          "name": "List Subjects",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/academics/subjects",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "subjects"]
+            }
+          }
+        },
+        {
+          "name": "Create Subject",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Computer Science\",\n  \"code\": \"CS101\",\n  \"type\": \"LAB\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/academics/subjects",
+              "host": ["{{baseUrl}}"],
+              "path": ["academics", "subjects"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Students",
+      "item": [
+        {
+          "name": "List Students",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students?page=1&pageSize=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Student Profile & Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            }
+          }
+        },
+        {
+          "name": "Admit New Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"admissionNo\": \"ADM-2026-002\",\n  \"firstName\": \"Aman\",\n  \"lastName\": \"Verma\",\n  \"dateOfBirth\": \"2010-08-22\",\n  \"gender\": \"MALE\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"classId\": \"{{classId}}\",\n  \"sectionId\": \"{{sectionId}}\",\n  \"rollNumber\": \"1002\",\n  \"emergencyContact\": \"+91 98888 77777\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Teachers",
+      "item": [
+        {
+          "name": "List Teachers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers"]
+            }
+          }
+        },
+        {
+          "name": "Get Teacher Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/teachers/{{teacherId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers", "{{teacherId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Teacher",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employeeId\": \"TCH-002\",\n  \"name\": \"Neha Singh\",\n  \"email\": \"neha.singh@dpa.edu\",\n  \"password\": \"Teacher@Secure123!\",\n  \"designation\": \"Science Faculty\",\n  \"gender\": \"FEMALE\",\n  \"phone\": \"+91 97777 66666\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Attendance",
+      "item": [
+        {
+          "name": "Get Attendance Sheet",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/attendance?date=2026-09-28&classId={{classId}}&sectionId={{sectionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance"],
+              "query": [
+                { "key": "date", "value": "2026-09-28" },
+                { "key": "classId", "value": "{{classId}}" },
+                { "key": "sectionId", "value": "{{sectionId}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Submit Batch Attendance",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-09-28\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"classId\": \"{{classId}}\",\n  \"sectionId\": \"{{sectionId}}\",\n  \"remarks\": \"All present on Monday\",\n  \"records\": [\n    {\n      \"studentId\": \"{{studentId}}\",\n      \"status\": \"PRESENT\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance"]
+            }
+          }
+        },
+        {
+          "name": "Student Attendance History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/attendance/student/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "student", "{{studentId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Finance (Fees & Payments)",
+      "item": [
+        {
+          "name": "Fee Revenue Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/finance/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["finance", "summary"]
+            }
+          }
+        },
+        {
+          "name": "List Fee Structures",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/finance/structures",
+              "host": ["{{baseUrl}}"],
+              "path": ["finance", "structures"]
+            }
+          }
+        },
+        {
+          "name": "Create Fee Structure",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"classId\": \"{{classId}}\",\n  \"name\": \"Term 2 Tuition & Sports Fee\",\n  \"frequency\": \"QUARTERLY\",\n  \"items\": [\n    { \"name\": \"Tuition Fee\", \"amount\": 20000 },\n    { \"name\": \"Sports & Arts\", \"amount\": 4000 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/finance/structures",
+              "host": ["{{baseUrl}}"],
+              "path": ["finance", "structures"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Generate Invoices",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"feeStructureId\": \"{{feeStructureId}}\",\n  \"classId\": \"{{classId}}\",\n  \"dueDate\": \"2026-11-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/finance/invoices/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["finance", "invoices", "generate"]
+            }
+          }
+        },
+        {
+          "name": "List Invoices",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/finance/invoices?page=1&pageSize=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["finance", "invoices"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Collect Fee Payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feeInvoiceId\": \"{{invoiceId}}\",\n  \"amount\": 5000,\n  \"paymentMethod\": \"UPI\",\n  \"transactionRef\": \"UPI/2026/998877\",\n  \"remarks\": \"Second installment received\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/finance/payments/collect",
+              "host": ["{{baseUrl}}"],
+              "path": ["finance", "payments", "collect"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Examinations & Results",
+      "item": [
+        {
+          "name": "List Exams",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/exams",
+              "host": ["{{baseUrl}}"],
+              "path": ["exams"]
+            }
+          }
+        },
+        {
+          "name": "Create Exam",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"name\": \"Final Board Preparatory Exam 2026\",\n  \"term\": \"Term 2\",\n  \"startDate\": \"2026-12-01\",\n  \"endDate\": \"2026-12-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/exams",
+              "host": ["{{baseUrl}}"],
+              "path": ["exams"]
+            }
+          }
+        },
+        {
+          "name": "Submit Student Exam Marks",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"examSubjectId\": \"{{examSubjectId}}\",\n  \"marks\": [\n    {\n      \"studentId\": \"{{studentId}}\",\n      \"marksObtained\": 92.5,\n      \"remarks\": \"Excellent performance\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/exams/marks",
+              "host": ["{{baseUrl}}"],
+              "path": ["exams", "marks"]
+            }
+          }
+        },
+        {
+          "name": "Get Student Report Card",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/report-card/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["exams", "{{examId}}", "report-card", "{{studentId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Announcements & Reports",
+      "item": [
+        {
+          "name": "List Announcements",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/announcements",
+              "host": ["{{baseUrl}}"],
+              "path": ["announcements"]
+            }
+          }
+        },
+        {
+          "name": "Publish Announcement",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Annual Sports Day Scheduled\",\n  \"content\": \"The annual sports festival will take place on November 20th. Registrations open now!\",\n  \"targetAudience\": \"ALL\",\n  \"priority\": \"HIGH\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/announcements",
+              "host": ["{{baseUrl}}"],
+              "path": ["announcements"]
+            }
+          }
+        },
+        {
+          "name": "Attendance Summary Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reports/attendance?classId={{classId}}&startDate=2026-04-01&endDate=2026-09-28",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "attendance"],
+              "query": [
+                { "key": "classId", "value": "{{classId}}" },
+                { "key": "startDate", "value": "2026-04-01" },
+                { "key": "endDate", "value": "2026-09-28" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Fee Collection Report",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reports/fees",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "fees"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
