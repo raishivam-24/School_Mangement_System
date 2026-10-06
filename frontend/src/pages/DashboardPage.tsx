@@ -10,6 +10,7 @@
  */
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -324,6 +325,7 @@ const StudentDashboardView: React.FC<{ user: any }> = ({ user }) => {
 /* 👨‍🏫 2. TEACHER DASHBOARD VIEW                                              */
 /* ========================================================================= */
 const TeacherDashboardView: React.FC<{ user: any }> = ({ user }) => {
+  const navigate = useNavigate();
   const teacherLectures = [
     { period: 1, time: '08:30 - 09:15', class: 'Class 10-A', subject: 'Mathematics (Calculus)', room: 'Room 201', status: 'Completed' },
     { period: 2, time: '09:15 - 10:00', class: 'Class 11-Science', subject: 'Linear Algebra', room: 'Room 304', status: 'Next' },
@@ -353,7 +355,10 @@ const TeacherDashboardView: React.FC<{ user: any }> = ({ user }) => {
         </div>
 
         <div className="relative z-10 flex gap-3">
-          <button className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2">
+          <button
+            onClick={() => navigate('/attendance')}
+            className="px-5 py-3 rounded-2xl bg-white text-brand-sky-dark font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2"
+          >
             <UserCheck className="w-4 h-4" />
             <span>Class 10-A Roll Call</span>
           </button>
