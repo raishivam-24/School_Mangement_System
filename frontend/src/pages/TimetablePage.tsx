@@ -210,9 +210,9 @@ export const TimetablePage: React.FC = () => {
         teacher: 'Anand Roy Sir',
         teacherRole: 'Chief Librarian',
         topic: 'Reference Reading & Project Journal Consultation',
-        colorClass: 'bg-slate-100/90 text-slate-800',
-        badgeClass: 'bg-slate-200 text-slate-700',
-        borderClass: 'border-slate-200 hover:border-slate-400',
+        colorClass: 'bg-surface-raised/90 text-primary',
+        badgeClass: 'bg-slate-200 text-secondary',
+        borderClass: 'border-border hover:border-slate-400',
       },
     ],
     Wednesday: [
@@ -517,9 +517,9 @@ export const TimetablePage: React.FC = () => {
         teacher: 'Transport In-charge',
         teacherRole: 'Logistics Team',
         topic: 'Safe Boarding & Student Roll Count',
-        colorClass: 'bg-slate-100/90 text-slate-800',
-        badgeClass: 'bg-slate-200 text-slate-700',
-        borderClass: 'border-slate-200 hover:border-slate-400',
+        colorClass: 'bg-surface-raised/90 text-primary',
+        badgeClass: 'bg-slate-200 text-secondary',
+        borderClass: 'border-border hover:border-slate-400',
       },
       {
         periodNum: 6,
@@ -530,11 +530,72 @@ export const TimetablePage: React.FC = () => {
         teacher: 'Staff Only',
         teacherRole: 'Administration',
         topic: 'Weekly Academic Review & Progress Audit',
-        colorClass: 'bg-slate-100/90 text-slate-800',
-        badgeClass: 'bg-slate-200 text-slate-700',
-        borderClass: 'border-slate-200 hover:border-slate-400',
+        colorClass: 'bg-surface-raised/90 text-primary',
+        badgeClass: 'bg-slate-200 text-secondary',
+        borderClass: 'border-border hover:border-slate-400',
       },
     ],
+  };
+
+  const getPeriodThemeClasses = (subjectCode: string, isLive: boolean) => {
+    const prefix = subjectCode.split('-')[0];
+    switch (prefix) {
+      case 'MATH':
+        return {
+          card: 'bg-sky-50/90 text-sky-950 border-sky-200 hover:border-sky-400 dark:bg-sky-950/40 dark:text-sky-100 dark:border-sky-800/60 dark:hover:border-sky-500',
+          badge: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300',
+        };
+      case 'PHY':
+        return {
+          card: `bg-purple-50/90 text-purple-950 border-purple-200 hover:border-purple-400 dark:bg-purple-950/40 dark:text-purple-100 dark:border-purple-800/60 dark:hover:border-purple-500 ${isLive ? 'ring-2 ring-accent-blue/50' : ''}`,
+          badge: 'bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300',
+        };
+      case 'ENG':
+        return {
+          card: 'bg-rose-50/90 text-rose-950 border-rose-200 hover:border-rose-400 dark:bg-rose-950/40 dark:text-rose-100 dark:border-rose-800/60 dark:hover:border-rose-500',
+          badge: 'bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300',
+        };
+      case 'CHEM':
+        return {
+          card: 'bg-amber-50/90 text-amber-950 border-amber-200 hover:border-amber-400 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-800/60 dark:hover:border-amber-500',
+          badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
+        };
+      case 'CS':
+        return {
+          card: 'bg-indigo-50/90 text-indigo-950 border-indigo-200 hover:border-indigo-400 dark:bg-indigo-950/40 dark:text-indigo-100 dark:border-indigo-800/60 dark:hover:border-indigo-500',
+          badge: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300',
+        };
+      case 'PE':
+        return {
+          card: 'bg-emerald-50/90 text-emerald-950 border-emerald-200 hover:border-emerald-400 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-800/60 dark:hover:border-emerald-500',
+          badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
+        };
+      case 'BIO':
+        return {
+          card: 'bg-teal-50/90 text-teal-950 border-teal-200 hover:border-teal-400 dark:bg-teal-950/40 dark:text-teal-100 dark:border-teal-800/60 dark:hover:border-teal-500',
+          badge: 'bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-300',
+        };
+      case 'LIB':
+        return {
+          card: 'bg-slate-100 text-slate-900 border-slate-300 hover:border-slate-400 dark:bg-slate-800/60 dark:text-slate-100 dark:border-slate-700/80 dark:hover:border-slate-500',
+          badge: 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200',
+        };
+      case 'SST':
+        return {
+          card: 'bg-orange-50/90 text-orange-950 border-orange-200 hover:border-orange-400 dark:bg-orange-950/40 dark:text-orange-100 dark:border-orange-800/60 dark:hover:border-orange-500',
+          badge: 'bg-orange-100 text-orange-800 dark:bg-orange-900/60 dark:text-orange-300',
+        };
+      case 'ART':
+        return {
+          card: 'bg-pink-50/90 text-pink-950 border-pink-200 hover:border-pink-400 dark:bg-pink-950/40 dark:text-pink-100 dark:border-pink-800/60 dark:hover:border-pink-500',
+          badge: 'bg-pink-100 text-pink-800 dark:bg-pink-900/60 dark:text-pink-300',
+        };
+      default:
+        return {
+          card: 'bg-surface-raised border-border text-primary hover:border-border-dark',
+          badge: 'bg-accent-blue/10 text-accent-blue',
+        };
+    }
   };
 
   return (
@@ -544,13 +605,13 @@ export const TimetablePage: React.FC = () => {
       {/* ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
             <span>{isStudent ? 'My Class Timetable' : 'Class Timetable & Schedule'}</span>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-sky-light text-brand-sky-dark">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
               Term 1 (2026–27)
             </span>
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-secondary mt-1">
             {isStudent
               ? 'Your personalized weekly academic schedule with period timings, teacher rooms, and subject classrooms.'
               : 'Weekly class periods, lab sessions, and assigned subject teachers across all school sections.'}
@@ -561,15 +622,15 @@ export const TimetablePage: React.FC = () => {
           <button
             type="button"
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-sm transition-all cursor-pointer active:scale-95"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface border border-border hover:bg-surface-raised text-secondary font-bold text-xs shadow-sm transition-all cursor-pointer active:scale-95"
           >
-            <Printer className="w-3.5 h-3.5 text-slate-500" />
+            <Printer className="w-3.5 h-3.5 text-secondary" />
             <span>Print Timetable</span>
           </button>
           <button
             type="button"
             onClick={() => alert('Exporting Official CBSE Timetable PDF...')}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all cursor-pointer active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-blue text-white font-bold text-xs shadow-card hover:bg-brand-sky-dark transition-all cursor-pointer active:scale-95"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export PDF</span>
@@ -582,25 +643,25 @@ export const TimetablePage: React.FC = () => {
       {/* ========================================================================= */}
       {isStudent ? (
         /* Dedicated Student Banner: Strictly locks timetable to student's enrolled section */
-        <div className="bg-gradient-to-r from-sky-50 via-white to-sky-50/50 p-5 rounded-3xl border border-sky-100 shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-gradient-to-r from-sky-50 via-white to-sky-50/50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800/80 p-5 rounded-3xl border border-sky-100 dark:border-border shadow-card flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-brand-sky text-white flex items-center justify-center shadow-glow-sky shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-accent-blue text-white flex items-center justify-center shadow-glow-sky shrink-0">
               <GraduationCap className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-base font-extrabold text-slate-800">
+                <h3 className="text-base font-extrabold text-primary">
                   Class 10 - Section A • My Schedule
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-mint-light text-brand-mint-dark">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-accent-green-subtle text-accent-green">
                   Tagore House (Red)
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-lilac-light text-brand-lilac-dark">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-accent-violet-subtle text-accent-violet">
                   Roll No: 24
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Class Teacher: <strong className="text-slate-700">Amit Sharma Sir</strong> • Room 201 • 36 Periods / Week
+              <p className="text-xs text-secondary mt-1">
+                Class Teacher: <strong className="text-secondary">Amit Sharma Sir</strong> • Room 201 • 36 Periods / Week
               </p>
             </div>
           </div>
@@ -609,9 +670,9 @@ export const TimetablePage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate('/my-subjects')}
-              className="px-4 py-2 rounded-2xl bg-white border border-sky-200 text-brand-sky-dark font-bold text-xs hover:bg-sky-50 transition-all flex items-center gap-1.5 shadow-sm cursor-pointer active:scale-95"
+              className="px-4 py-2 rounded-2xl bg-surface border border-sky-200 dark:border-border text-accent-blue font-bold text-xs hover:bg-surface-raised transition-all flex items-center gap-1.5 shadow-sm cursor-pointer active:scale-95"
             >
-              <BookOpen className="w-4 h-4 text-brand-sky" />
+              <BookOpen className="w-4 h-4 text-accent-blue" />
               <span>Go to My Subjects</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -619,10 +680,10 @@ export const TimetablePage: React.FC = () => {
         </div>
       ) : (
         /* Admin & Faculty Section Switcher */
-        <div className="bg-surface p-4 rounded-3xl border border-slate-100 shadow-card flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-surface p-4 rounded-3xl border border-border shadow-card flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <Filter className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-bold text-slate-700 mr-1">Select Section:</span>
+            <Filter className="w-4 h-4 text-muted" />
+            <span className="text-xs font-bold text-secondary mr-1">Select Section:</span>
             {['Class 10 - Section A', 'Class 10 - Section B', 'Class 11 - Science A', 'Class 12 - Science A'].map((cls) => (
               <button
                 type="button"
@@ -630,40 +691,40 @@ export const TimetablePage: React.FC = () => {
                 onClick={() => setSelectedClass(cls)}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
                   selectedClass === cls
-                    ? 'bg-brand-sky text-white shadow-soft'
-                    : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    ? 'bg-accent-blue text-white shadow-card'
+                    : 'bg-surface-raised text-secondary hover:bg-surface-raised'
                 }`}
               >
                 {cls}
               </button>
             ))}
           </div>
-          <span className="text-xs text-slate-400 font-medium">Viewing 6 Daily Periods</span>
+          <span className="text-xs text-muted font-medium">Viewing 6 Daily Periods</span>
         </div>
       )}
 
       {/* ========================================================================= */}
       {/* 3. WEEKLY TIMETABLE GRID                                                  */}
       {/* ========================================================================= */}
-      <div className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card overflow-x-auto">
+      <div className="bg-surface rounded-3xl p-6 border border-border shadow-card overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[950px]">
           <thead>
             <tr>
-              <th className="py-3.5 px-4 text-xs font-extrabold uppercase tracking-wider text-slate-500 bg-slate-50/80 rounded-l-2xl w-36">
+              <th className="py-3.5 px-4 text-xs font-extrabold uppercase tracking-wider text-secondary bg-surface-raised/80 rounded-l-2xl w-36">
                 Day / Period
               </th>
               {times.map((t, i) => (
                 <th
                   key={i}
-                  className={`py-3.5 px-3 text-xs font-extrabold uppercase tracking-wider text-slate-600 bg-slate-50/80 text-center ${
+                  className={`py-3.5 px-3 text-xs font-extrabold uppercase tracking-wider text-secondary bg-surface-raised/80 text-center ${
                     i === times.length - 1 ? 'rounded-r-2xl' : ''
                   }`}
                 >
-                  <div className="flex items-center justify-center gap-1.5 text-slate-800">
-                    <Clock className="w-3.5 h-3.5 text-brand-sky" />
+                  <div className="flex items-center justify-center gap-1.5 text-primary">
+                    <Clock className="w-3.5 h-3.5 text-accent-blue" />
                     <span>Period {i + 1}</span>
                   </div>
-                  <span className="text-[10px] font-semibold text-slate-400 block mt-0.5">{t}</span>
+                  <span className="text-[10px] font-semibold text-muted block mt-0.5">{t}</span>
                 </th>
               ))}
             </tr>
@@ -676,17 +737,17 @@ export const TimetablePage: React.FC = () => {
                 <tr
                   key={day}
                   className={`transition-colors ${
-                    isToday ? 'bg-sky-50/30 font-medium' : 'hover:bg-slate-50/40'
+                    isToday ? 'bg-sky-50/30 font-medium' : 'hover:bg-surface-raised/40'
                   }`}
                 >
                   {/* Day Column */}
-                  <td className="py-4 px-4 font-bold text-sm text-slate-800 align-middle">
+                  <td className="py-4 px-4 font-bold text-sm text-primary align-middle">
                     <div className="flex items-center gap-2">
-                      <Calendar className={`w-4 h-4 ${isToday ? 'text-brand-sky' : 'text-slate-400'}`} />
-                      <span className={isToday ? 'text-brand-sky-dark font-extrabold' : ''}>{day}</span>
+                      <Calendar className={`w-4 h-4 ${isToday ? 'text-accent-blue' : 'text-muted'}`} />
+                      <span className={isToday ? 'text-accent-blue font-extrabold' : ''}>{day}</span>
                     </div>
                     {isToday && (
-                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-brand-sky-light text-brand-sky-dark">
+                      <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-accent-blue-subtle text-accent-blue">
                         TODAY
                       </span>
                     )}
@@ -695,6 +756,7 @@ export const TimetablePage: React.FC = () => {
                   {/* Period Slots */}
                   {schedule[day]?.map((period, idx) => {
                     const isLivePeriod = isToday && period.periodNum === 2;
+                    const theme = getPeriodThemeClasses(period.code, isLivePeriod);
 
                     return (
                       <td key={idx} className="p-2 align-top">
@@ -702,27 +764,27 @@ export const TimetablePage: React.FC = () => {
                           whileHover={{ scale: 1.02, y: -2 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => setActiveSlot(period)}
-                          className={`p-3.5 rounded-2xl border transition-all cursor-pointer relative shadow-sm hover:shadow-md ${period.colorClass} ${period.borderClass}`}
+                          className={`p-3.5 rounded-2xl border transition-all cursor-pointer relative shadow-sm hover:shadow-md ${theme.card}`}
                         >
                           {/* Live pulse for current period */}
                           {isLivePeriod && (
-                            <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-[8px] font-extrabold bg-brand-sky text-white shadow-sm animate-pulse flex items-center gap-0.5">
+                            <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-[8px] font-extrabold bg-accent-blue text-white shadow-sm animate-pulse flex items-center gap-0.5">
                               <Sparkles className="w-2.5 h-2.5" /> LIVE
                             </span>
                           )}
 
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] font-mono font-bold opacity-75">{period.code}</span>
-                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-extrabold ${period.badgeClass}`}>
+                            <span className="text-[10px] font-mono font-bold opacity-80">{period.code}</span>
+                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-extrabold ${theme.badge}`}>
                               P{period.periodNum}
                             </span>
                           </div>
 
                           <h4 className="font-bold text-xs leading-snug tracking-tight line-clamp-1">{period.subject}</h4>
 
-                          <div className="mt-2 pt-1.5 border-t border-black/5 flex items-center justify-between text-[10px] opacity-85">
+                          <div className="mt-2 pt-1.5 border-t border-border/40 flex items-center justify-between text-[10px] opacity-90">
                             <span className="truncate max-w-[85px] font-semibold">{period.teacher}</span>
-                            <span className="font-bold px-1.5 py-0.5 rounded bg-white/60 text-[9px]">
+                            <span className="font-bold px-1.5 py-0.5 rounded bg-surface/80 dark:bg-slate-800 text-primary dark:text-slate-200 border border-border/50 text-[9px]">
                               {period.room}
                             </span>
                           </div>
@@ -747,25 +809,25 @@ export const TimetablePage: React.FC = () => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 space-y-5"
+              className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-border space-y-5"
             >
               {/* Header */}
-              <div className="flex items-start justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-start justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md ${activeSlot.colorClass}`}>
                     <BookOpen className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-mono font-bold text-muted uppercase tracking-wider">
                       {activeSlot.code} • Period {activeSlot.periodNum}
                     </span>
-                    <h3 className="text-lg font-bold text-slate-800">{activeSlot.subject}</h3>
+                    <h3 className="text-lg font-bold text-primary">{activeSlot.subject}</h3>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setActiveSlot(null)}
-                  className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 cursor-pointer"
+                  className="p-2 rounded-xl hover:bg-surface-raised text-muted cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -773,49 +835,49 @@ export const TimetablePage: React.FC = () => {
 
               {/* Details List */}
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Clock className="w-4 h-4 text-brand-sky" />
+                <div className="p-3 rounded-2xl bg-surface-raised border border-border flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-secondary">
+                    <Clock className="w-4 h-4 text-accent-blue" />
                     <span className="font-medium">Period Timing:</span>
                   </div>
-                  <span className="font-bold text-slate-800">{activeSlot.time} (45 mins)</span>
+                  <span className="font-bold text-primary">{activeSlot.time} (45 mins)</span>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <User className="w-4 h-4 text-brand-sky" />
+                <div className="p-3 rounded-2xl bg-surface-raised border border-border flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-secondary">
+                    <User className="w-4 h-4 text-accent-blue" />
                     <span className="font-medium">Faculty Instructor:</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-slate-800 block">{activeSlot.teacher}</span>
-                    <span className="text-[10px] text-slate-400">{activeSlot.teacherRole}</span>
+                    <span className="font-bold text-primary block">{activeSlot.teacher}</span>
+                    <span className="text-[10px] text-muted">{activeSlot.teacherRole}</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <MapPin className="w-4 h-4 text-brand-sky" />
+                <div className="p-3 rounded-2xl bg-surface-raised border border-border flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-secondary">
+                    <MapPin className="w-4 h-4 text-accent-blue" />
                     <span className="font-medium">Classroom / Lab Location:</span>
                   </div>
-                  <span className="font-bold text-slate-800">{activeSlot.room}</span>
+                  <span className="font-bold text-primary">{activeSlot.room}</span>
                 </div>
 
                 {activeSlot.topic && (
                   <div className="p-3.5 rounded-2xl bg-sky-50/50 border border-sky-100 space-y-1">
-                    <span className="text-[10px] font-bold text-brand-sky-dark uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-accent-blue uppercase tracking-wider block">
                       Current Chapter / Lesson Plan
                     </span>
-                    <p className="font-semibold text-slate-800">{activeSlot.topic}</p>
+                    <p className="font-semibold text-primary">{activeSlot.topic}</p>
                   </div>
                 )}
               </div>
 
               {/* Actions Footer */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+              <div className="pt-3 border-t border-border flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setActiveSlot(null)}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 cursor-pointer"
+                  className="px-5 py-2.5 rounded-full border border-border text-secondary font-bold text-xs hover:bg-surface-raised cursor-pointer"
                 >
                   Close
                 </button>
@@ -837,7 +899,7 @@ export const TimetablePage: React.FC = () => {
                       setActiveSlot(null);
                       navigate(`/my-subjects/${targetId}`);
                     }}
-                    className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-bold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                   >
                     <BookOpen className="w-4 h-4" />
                     <span>Open {activeSlot.subject} Classroom</span>

@@ -7,6 +7,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { AppLayout } from './components/layout/AppLayout';
 
 // Pages
@@ -65,53 +66,55 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 export function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public Landing & Marketing */}
-            <Route path="/" element={<LandingPage />} />
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Public Landing & Marketing */}
+              <Route path="/" element={<LandingPage />} />
 
-            {/* Public Authentication */}
-            <Route path="/login" element={<LoginPage />} />
+              {/* Public Authentication */}
+              <Route path="/login" element={<LoginPage />} />
 
-            {/* Authenticated Application Shell */}
-            <Route
-              element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/my-subjects" element={<StudentSubjectsPage />} />
-              <Route path="/my-subjects/:subjectId" element={<SubjectClassroomPage />} />
-              <Route path="/students" element={<StudentsPage />} />
-              <Route path="/teachers" element={<TeachersPage />} />
-              <Route path="/academics" element={<AcademicsPage />} />
-              <Route path="/attendance" element={<AttendancePage />} />
-              <Route path="/finance" element={<FinancePage />} />
-              <Route path="/timetable" element={<TimetablePage />} />
-              <Route path="/announcements" element={<AnnouncementsPage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/library" element={<LibraryPage />} />
-              <Route path="/messages" element={<MessagesPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              {/* Authenticated Application Shell */}
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <AppLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/my-subjects" element={<StudentSubjectsPage />} />
+                <Route path="/my-subjects/:subjectId" element={<SubjectClassroomPage />} />
+                <Route path="/students" element={<StudentsPage />} />
+                <Route path="/teachers" element={<TeachersPage />} />
+                <Route path="/academics" element={<AcademicsPage />} />
+                <Route path="/attendance" element={<AttendancePage />} />
+                <Route path="/finance" element={<FinancePage />} />
+                <Route path="/timetable" element={<TimetablePage />} />
+                <Route path="/announcements" element={<AnnouncementsPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/library" element={<LibraryPage />} />
+                <Route path="/messages" element={<MessagesPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
 
-              {/* Super Admin routes */}
-              <Route path="/admin/dashboard" element={<SuperAdminPage />} />
-              <Route path="/admin/schools" element={<SuperAdminPage />} />
-              <Route path="/admin/subscriptions" element={<SuperAdminPage />} />
-            </Route>
+                {/* Super Admin routes */}
+                <Route path="/admin/dashboard" element={<SuperAdminPage />} />
+                <Route path="/admin/schools" element={<SuperAdminPage />} />
+                <Route path="/admin/subscriptions" element={<SuperAdminPage />} />
+              </Route>
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

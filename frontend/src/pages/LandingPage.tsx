@@ -81,24 +81,24 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-slate-800 selection:bg-brand-sky-light selection:text-brand-sky-dark">
+    <div className="min-h-screen bg-canvas text-primary selection:bg-accent-blue-subtle selection:text-accent-blue">
       {/* ========================================================================= */}
       {/* 1. PUBLIC TOP HEADER */}
       {/* ========================================================================= */}
-      <header className="h-20 border-b border-slate-100 bg-surface/80 backdrop-blur-md sticky top-0 z-30 px-6 sm:px-12 flex items-center justify-between">
+      <header className="h-20 border-b border-border bg-surface/80 backdrop-blur-md sticky top-0 z-30 px-6 sm:px-12 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-brand-sky flex items-center justify-center text-white shadow-glow-sky">
+          <div className="w-10 h-10 rounded-xl bg-accent-blue flex items-center justify-center text-white shadow-glow-sky">
             <Sparkles className="w-5 h-5" />
           </div>
-          <span className="text-2xl font-black tracking-tight text-slate-800">
-            School<span className="text-brand-sky-dark">Hub</span>
+          <span className="text-2xl font-black tracking-tight text-primary">
+            School<span className="text-accent-blue">Hub</span>
           </span>
         </div>
 
         <div className="flex items-center gap-4">
           <Link
             to="/login"
-            className="px-5 py-2.5 rounded-full text-sm font-bold text-slate-600 hover:text-slate-900 transition-all"
+            className="px-5 py-2.5 rounded-full text-sm font-bold text-secondary hover:text-primary transition-all"
           >
             Sign In
           </Link>
@@ -118,7 +118,7 @@ export const LandingPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-sky-light text-brand-sky-dark text-xs font-extrabold tracking-wide uppercase shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-blue-subtle text-accent-blue text-xs font-extrabold tracking-wide uppercase shadow-sm"
         >
           <Sparkles className="w-4 h-4" /> Next-Gen Multi-Tenant School SaaS
         </motion.div>
@@ -127,7 +127,7 @@ export const LandingPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-tight"
+          className="text-4xl sm:text-6xl font-black text-primary tracking-tight leading-tight"
         >
           All-in-One Platform to <br />
           <span className="bg-gradient-to-r from-brand-sky-dark via-sky-500 to-brand-lilac-dark bg-clip-text text-transparent">
@@ -139,7 +139,7 @@ export const LandingPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-lg text-slate-500 max-w-2xl mx-auto font-medium"
+          className="text-lg text-secondary max-w-2xl mx-auto font-medium"
         >
           From daily student attendance and interactive exam report cards to tuition fee collection
           and class schedules — manage everything in one beautiful pastel dashboard.
@@ -159,7 +159,7 @@ export const LandingPage: React.FC = () => {
           </button>
           <Link
             to="/login"
-            className="px-8 py-4 rounded-2xl bg-surface border border-slate-200 text-slate-700 font-bold text-base hover:bg-slate-50 transition-all shadow-card"
+            className="px-8 py-4 rounded-2xl bg-surface border border-border text-secondary font-bold text-base hover:bg-surface-raised transition-all shadow-card"
           >
             Explore Live Demo
           </Link>
@@ -171,34 +171,34 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================================= */}
       <section className="py-16 px-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-surface p-8 rounded-3xl border border-slate-100 shadow-soft space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-brand-sky-light text-brand-sky-dark flex items-center justify-center">
+          <div className="bg-surface p-8 rounded-3xl border border-border shadow-card space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-accent-blue-subtle text-accent-blue flex items-center justify-center">
               <GraduationCap className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800">Student & Academics</h3>
-            <p className="text-sm text-slate-500">
+            <h3 className="text-xl font-bold text-primary">Student & Academics</h3>
+            <p className="text-sm text-secondary">
               Preserve complete multi-year enrollment history, class rosters, subjects, and teacher
               assignments effortlessly.
             </p>
           </div>
 
-          <div className="bg-surface p-8 rounded-3xl border border-slate-100 shadow-soft space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-brand-yellow-light text-brand-yellow-dark flex items-center justify-center">
+          <div className="bg-surface p-8 rounded-3xl border border-border shadow-card space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-accent-amber-subtle text-accent-amber flex items-center justify-center">
               <CalendarCheck className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800">Attendance & Exams</h3>
-            <p className="text-sm text-slate-500">
+            <h3 className="text-xl font-bold text-primary">Attendance & Exams</h3>
+            <p className="text-sm text-secondary">
               1-click daily attendance sheets, subject exam schedules, automated grade calculation, and
               instant report cards.
             </p>
           </div>
 
-          <div className="bg-surface p-8 rounded-3xl border border-slate-100 shadow-soft space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-brand-mint-light text-brand-mint-dark flex items-center justify-center">
+          <div className="bg-surface p-8 rounded-3xl border border-border shadow-card space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-accent-green-subtle text-accent-green flex items-center justify-center">
               <DollarSign className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800">Fee Invoices & Receipts</h3>
-            <p className="text-sm text-slate-500">
+            <h3 className="text-xl font-bold text-primary">Fee Invoices & Receipts</h3>
+            <p className="text-sm text-secondary">
               Itemized fee breakdowns, bulk invoice generation for classes, installment payment
               collections, and instant receipt numbering.
             </p>
@@ -211,19 +211,19 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================================= */}
       <section className="py-20 px-6 max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900">
+          <h2 className="text-3xl sm:text-4xl font-black text-primary">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-slate-500 font-medium">
+          <p className="text-secondary font-medium">
             Choose the perfect plan for your school. Upgrade or cancel anytime.
           </p>
 
           {/* Billing Cycle Toggle */}
-          <div className="inline-flex items-center gap-3 bg-surface p-1.5 rounded-full border border-slate-200 shadow-sm mt-4">
+          <div className="inline-flex items-center gap-3 bg-surface p-1.5 rounded-full border border-border shadow-sm mt-4">
             <button
               onClick={() => setIsAnnual(false)}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                !isAnnual ? 'bg-brand-sky-dark text-white shadow-sm' : 'text-slate-500'
+                !isAnnual ? 'bg-brand-sky-dark text-white shadow-sm' : 'text-secondary'
               }`}
             >
               Monthly
@@ -231,10 +231,10 @@ export const LandingPage: React.FC = () => {
             <button
               onClick={() => setIsAnnual(true)}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
-                isAnnual ? 'bg-brand-sky-dark text-white shadow-sm' : 'text-slate-500'
+                isAnnual ? 'bg-brand-sky-dark text-white shadow-sm' : 'text-secondary'
               }`}
             >
-              Annually <span className="text-[10px] text-brand-yellow font-extrabold">Save 20%</span>
+              Annually <span className="text-[10px] text-accent-amber font-extrabold">Save 20%</span>
             </button>
           </div>
         </div>
@@ -242,40 +242,40 @@ export const LandingPage: React.FC = () => {
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {/* BASIC */}
-          <div className="bg-surface p-8 rounded-3xl border border-slate-200 shadow-soft flex flex-col justify-between space-y-8">
+          <div className="bg-surface p-8 rounded-3xl border border-border shadow-card flex flex-col justify-between space-y-8">
             <div className="space-y-4">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface-raised text-secondary">
                 Basic Starter
               </span>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-black text-slate-900">
+                <span className="text-4xl font-black text-primary">
                   ₹{isAnnual ? '24,999' : '2,499'}
                 </span>
-                <span className="text-sm font-semibold text-slate-400">
+                <span className="text-sm font-semibold text-muted">
                   /{isAnnual ? 'year' : 'month'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500">For small schools up to 500 students.</p>
+              <p className="text-xs text-secondary">For small schools up to 500 students.</p>
 
-              <ul className="space-y-3 pt-4 text-xs font-semibold text-slate-700">
+              <ul className="space-y-3 pt-4 text-xs font-semibold text-secondary">
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-mint" /> Up to 500 Students
+                  <CheckCircle2 className="w-4 h-4 text-accent-green" /> Up to 500 Students
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-mint" /> Daily Attendance Marking
+                  <CheckCircle2 className="w-4 h-4 text-accent-green" /> Daily Attendance Marking
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-mint" /> Class Timetables
+                  <CheckCircle2 className="w-4 h-4 text-accent-green" /> Class Timetables
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-mint" /> School Announcements
+                  <CheckCircle2 className="w-4 h-4 text-accent-green" /> School Announcements
                 </li>
               </ul>
             </div>
 
             <button
               onClick={() => handleOpenRegister('BASIC')}
-              className="w-full py-3.5 rounded-2xl bg-slate-100 text-slate-800 font-bold text-sm hover:bg-slate-200 transition-all"
+              className="w-full py-3.5 rounded-2xl bg-surface-raised text-primary font-bold text-sm hover:bg-slate-200 transition-all"
             >
               Choose Basic
             </button>
@@ -288,34 +288,34 @@ export const LandingPage: React.FC = () => {
             </span>
 
             <div className="space-y-4">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-sky-light text-brand-sky-dark">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
                 Professional Academy
               </span>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-black text-slate-900">
+                <span className="text-4xl font-black text-primary">
                   ₹{isAnnual ? '79,999' : '7,999'}
                 </span>
-                <span className="text-sm font-semibold text-slate-400">
+                <span className="text-sm font-semibold text-muted">
                   /{isAnnual ? 'year' : 'month'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500">For medium to large institutions.</p>
+              <p className="text-xs text-secondary">For medium to large institutions.</p>
 
-              <ul className="space-y-3 pt-4 text-xs font-semibold text-slate-700">
+              <ul className="space-y-3 pt-4 text-xs font-semibold text-secondary">
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-sky" /> Up to 2,500 Students
+                  <CheckCircle2 className="w-4 h-4 text-accent-blue" /> Up to 2,500 Students
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-sky" /> Fee Management & Invoices
+                  <CheckCircle2 className="w-4 h-4 text-accent-blue" /> Fee Management & Invoices
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-sky" /> Exams, Marks & Report Cards
+                  <CheckCircle2 className="w-4 h-4 text-accent-blue" /> Exams, Marks & Report Cards
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-sky" /> Homework Grading
+                  <CheckCircle2 className="w-4 h-4 text-accent-blue" /> Homework Grading
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-sky" /> Advanced Financial Reports
+                  <CheckCircle2 className="w-4 h-4 text-accent-blue" /> Advanced Financial Reports
                 </li>
               </ul>
             </div>
@@ -329,40 +329,40 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* ENTERPRISE */}
-          <div className="bg-surface p-8 rounded-3xl border border-slate-200 shadow-soft flex flex-col justify-between space-y-8">
+          <div className="bg-surface p-8 rounded-3xl border border-border shadow-card flex flex-col justify-between space-y-8">
             <div className="space-y-4">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-lilac-light text-brand-lilac-dark">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-violet-subtle text-accent-violet">
                 Enterprise Multi-Campus
               </span>
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-black text-slate-900">
+                <span className="text-4xl font-black text-primary">
                   ₹{isAnnual ? '2,49,999' : '24,999'}
                 </span>
-                <span className="text-sm font-semibold text-slate-400">
+                <span className="text-sm font-semibold text-muted">
                   /{isAnnual ? 'year' : 'month'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500">For large school networks and chains.</p>
+              <p className="text-xs text-secondary">For large school networks and chains.</p>
 
-              <ul className="space-y-3 pt-4 text-xs font-semibold text-slate-700">
+              <ul className="space-y-3 pt-4 text-xs font-semibold text-secondary">
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-lilac" /> Up to 10,000 Students
+                  <CheckCircle2 className="w-4 h-4 text-accent-violet" /> Up to 10,000 Students
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-lilac" /> Custom Subdomain & Branding
+                  <CheckCircle2 className="w-4 h-4 text-accent-violet" /> Custom Subdomain & Branding
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-lilac" /> Audit Logs & Security
+                  <CheckCircle2 className="w-4 h-4 text-accent-violet" /> Audit Logs & Security
                 </li>
                 <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-brand-lilac" /> Dedicated Account Manager
+                  <CheckCircle2 className="w-4 h-4 text-accent-violet" /> Dedicated Account Manager
                 </li>
               </ul>
             </div>
 
             <button
               onClick={() => handleOpenRegister('ENTERPRISE')}
-              className="w-full py-3.5 rounded-2xl bg-slate-100 text-slate-800 font-bold text-sm hover:bg-slate-200 transition-all"
+              className="w-full py-3.5 rounded-2xl bg-surface-raised text-primary font-bold text-sm hover:bg-slate-200 transition-all"
             >
               Contact Enterprise
             </button>
@@ -380,21 +380,21 @@ export const LandingPage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 p-8 relative my-8"
+              className="bg-surface w-full max-w-xl rounded-3xl shadow-2xl border border-border p-8 relative my-8"
             >
               <button
                 onClick={() => setShowModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 absolute top-6 right-6"
+                className="w-8 h-8 rounded-full bg-surface-raised flex items-center justify-center text-secondary hover:bg-slate-200 absolute top-6 right-6"
               >
                 <X className="w-4 h-4" />
               </button>
 
               <div className="mb-6 space-y-1">
-                <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-brand-sky-light text-brand-sky-dark uppercase">
+                <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-accent-blue-subtle text-accent-blue uppercase">
                   Register on {selectedPlan} Plan
                 </span>
-                <h3 className="text-2xl font-black text-slate-900">Set Up Your School</h3>
-                <p className="text-xs text-slate-500">
+                <h3 className="text-2xl font-black text-primary">Set Up Your School</h3>
+                <p className="text-xs text-secondary">
                   Instant account setup. No credit card required for trial.
                 </p>
               </div>
@@ -409,29 +409,29 @@ export const LandingPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* School Name */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-secondary mb-1">
                       School Name
                     </label>
                     <div className="relative">
-                      <School className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <School className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
                         required
                         placeholder="e.g. St. Xavier High School"
                         value={formData.schoolName}
                         onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })}
-                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                       />
                     </div>
                   </div>
 
                   {/* School Code */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-secondary mb-1">
                       School Code / Slug
                     </label>
                     <div className="relative">
-                      <Building2 className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Building2 className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="text"
                         required
@@ -440,7 +440,7 @@ export const LandingPage: React.FC = () => {
                         onChange={(e) =>
                           setFormData({ ...formData, schoolCode: e.target.value.toUpperCase() })
                         }
-                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                       />
                     </div>
                   </div>
@@ -449,87 +449,87 @@ export const LandingPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* School Email */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-secondary mb-1">
                       School Email
                     </label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Mail className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="email"
                         required
                         placeholder="info@school.edu"
                         value={formData.schoolEmail}
                         onChange={(e) => setFormData({ ...formData, schoolEmail: e.target.value })}
-                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                       />
                     </div>
                   </div>
 
                   {/* School Phone */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-secondary mb-1">
                       Phone Number
                     </label>
                     <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Phone className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="tel"
                         placeholder="+91 98765 43210"
                         value={formData.schoolPhone}
                         onChange={(e) => setFormData({ ...formData, schoolPhone: e.target.value })}
-                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-4 space-y-4">
-                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <div className="border-t border-border pt-4 space-y-4">
+                  <h4 className="text-xs font-bold text-primary uppercase tracking-wider">
                     School Administrator Account
                   </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-secondary mb-1">
                         Admin Full Name
                       </label>
                       <div className="relative">
-                        <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <User className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                         <input
                           type="text"
                           required
                           placeholder="Father Thomas"
                           value={formData.adminName}
                           onChange={(e) => setFormData({ ...formData, adminName: e.target.value })}
-                          className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-secondary mb-1">
                         Admin Login Email
                       </label>
                       <div className="relative">
-                        <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <Mail className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                         <input
                           type="email"
                           required
                           placeholder="admin@school.edu"
                           value={formData.adminEmail}
                           onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
-                          className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                         />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-secondary mb-1">
                       Password (min 8 characters)
                     </label>
                     <div className="relative">
-                      <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <Lock className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
                       <input
                         type="password"
                         required
@@ -539,7 +539,7 @@ export const LandingPage: React.FC = () => {
                         onChange={(e) =>
                           setFormData({ ...formData, adminPassword: e.target.value })
                         }
-                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                        className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-surface-raised border border-border text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
                       />
                     </div>
                   </div>

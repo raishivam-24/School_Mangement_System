@@ -37,50 +37,50 @@ export const LibraryPage: React.FC = () => {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Library Catalog & Book Issues</h1>
-          <p className="text-sm text-slate-500">Search library inventory, monitor issued books and due dates.</p>
+          <h1 className="text-2xl font-bold text-primary">Library Catalog & Book Issues</h1>
+          <p className="text-sm text-secondary">Search library inventory, monitor issued books and due dates.</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-sky text-white font-semibold text-sm shadow-soft hover:bg-brand-sky-dark transition-all">
+        <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-sm shadow-card hover:bg-brand-sky-dark transition-all">
           <Plus className="w-4 h-4" />
           <span>Add New Book</span>
         </button>
       </div>
 
-      <div className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card">
+      <div className="bg-surface rounded-3xl p-6 border border-border shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-100">
-                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Book Details</th>
-                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Category</th>
-                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">ISBN</th>
-                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-400">Availability</th>
-                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-slate-400 text-right">Actions</th>
+              <tr className="border-b border-border">
+                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-muted">Book Details</th>
+                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-muted">Category</th>
+                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-muted">ISBN</th>
+                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-muted">Availability</th>
+                <th className="py-3 px-4 text-xs font-bold uppercase tracking-wider text-muted text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {books.map((b, i) => (
-                <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={i} className="hover:bg-surface-raised/50 transition-colors">
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-brand-sky-light text-brand-sky-dark flex items-center justify-center font-bold">
+                      <div className="w-10 h-10 rounded-xl bg-accent-blue-subtle text-accent-blue flex items-center justify-center font-bold">
                         <BookOpen className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-sm text-slate-800">{b.title}</p>
-                        <p className="text-xs text-slate-400 font-medium">By {b.author}</p>
+                        <p className="font-bold text-sm text-primary">{b.title}</p>
+                        <p className="text-xs text-muted font-medium">By {b.author}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-xs font-semibold text-slate-600">{b.category}</td>
-                  <td className="py-4 px-4 text-xs font-mono text-slate-400">{b.isbn}</td>
+                  <td className="py-4 px-4 text-xs font-semibold text-secondary">{b.category}</td>
+                  <td className="py-4 px-4 text-xs font-mono text-muted">{b.isbn}</td>
                   <td className="py-4 px-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-mint-light text-brand-mint-dark">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-green-subtle text-accent-green">
                       {b.available} / {b.total} Available
                     </span>
                   </td>
                   <td className="py-4 px-4 text-right">
-                    <button className="px-4 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all">
+                    <button className="px-4 py-1.5 rounded-full bg-surface-raised hover:bg-slate-200 text-secondary text-xs font-bold transition-all">
                       Issue Book
                     </button>
                   </td>
@@ -114,19 +114,19 @@ export const MessagesPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Messages & In-App Chat</h1>
-        <p className="text-sm text-slate-500">Communicate directly with staff, teachers, and parents.</p>
+        <h1 className="text-2xl font-bold text-primary">Messages & In-App Chat</h1>
+        <p className="text-sm text-secondary">Communicate directly with staff, teachers, and parents.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[600px]">
         {/* Left Contacts List */}
-        <div className="bg-surface rounded-3xl p-4 border border-slate-100 shadow-card flex flex-col">
+        <div className="bg-surface rounded-3xl p-4 border border-border shadow-card flex flex-col">
           <div className="relative mb-4">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search conversations..."
-              className="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-100 rounded-full text-xs"
+              className="w-full pl-10 pr-3 py-2 bg-surface-raised border border-border rounded-full text-xs"
             />
           </div>
           <div className="space-y-2 flex-1 overflow-y-auto">
@@ -134,15 +134,15 @@ export const MessagesPage: React.FC = () => {
               <div
                 key={i}
                 className={`p-3 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${
-                  i === 0 ? 'bg-brand-sky-light text-brand-sky-dark font-bold' : 'hover:bg-slate-50 text-slate-700'
+                  i === 0 ? 'bg-accent-blue-subtle text-accent-blue font-bold' : 'hover:bg-surface-raised text-secondary'
                 }`}
               >
-                <div className="w-9 h-9 rounded-full bg-brand-sky text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-9 h-9 rounded-full bg-accent-blue text-white flex items-center justify-center font-bold text-xs">
                   {c.charAt(0)}
                 </div>
                 <div className="text-xs truncate">
                   <p className="font-semibold truncate">{c}</p>
-                  <p className="text-[10px] text-slate-400">Active today</p>
+                  <p className="text-[10px] text-muted">Active today</p>
                 </div>
               </div>
             ))}
@@ -150,15 +150,15 @@ export const MessagesPage: React.FC = () => {
         </div>
 
         {/* Right Chat Box */}
-        <div className="md:col-span-2 bg-surface rounded-3xl p-6 border border-slate-100 shadow-card flex flex-col justify-between">
+        <div className="md:col-span-2 bg-surface rounded-3xl p-6 border border-border shadow-card flex flex-col justify-between">
           {/* Header */}
-          <div className="pb-4 border-b border-slate-100 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-brand-sky text-white flex items-center justify-center font-bold">
+          <div className="pb-4 border-b border-border flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-accent-blue text-white flex items-center justify-center font-bold">
               A
             </div>
             <div>
-              <h3 className="font-bold text-sm text-slate-800">Amit Sharma</h3>
-              <p className="text-xs text-brand-mint-dark font-medium">Online</p>
+              <h3 className="font-bold text-sm text-primary">Amit Sharma</h3>
+              <p className="text-xs text-accent-green font-medium">Online</p>
             </div>
           </div>
 
@@ -169,12 +169,12 @@ export const MessagesPage: React.FC = () => {
                 <div
                   className={`max-w-md p-3.5 rounded-2xl text-xs ${
                     m.isMe
-                      ? 'bg-brand-sky text-white rounded-br-none'
-                      : 'bg-slate-100 text-slate-800 rounded-bl-none'
+                      ? 'bg-accent-blue text-white rounded-br-none'
+                      : 'bg-surface-raised text-primary rounded-bl-none'
                   }`}
                 >
                   <p>{m.text}</p>
-                  <span className={`text-[9px] block mt-1 text-right ${m.isMe ? 'text-sky-100' : 'text-slate-400'}`}>
+                  <span className={`text-[9px] block mt-1 text-right ${m.isMe ? 'text-sky-100' : 'text-muted'}`}>
                     {m.time}
                   </span>
                 </div>
@@ -183,17 +183,17 @@ export const MessagesPage: React.FC = () => {
           </div>
 
           {/* Input Form */}
-          <form onSubmit={handleSend} className="pt-3 border-t border-slate-100 flex items-center gap-2">
+          <form onSubmit={handleSend} className="pt-3 border-t border-border flex items-center gap-2">
             <input
               type="text"
               placeholder="Type your message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+              className="flex-1 px-4 py-2.5 bg-surface-raised border border-border rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
             />
             <button
               type="submit"
-              className="w-10 h-10 rounded-full bg-brand-sky text-white flex items-center justify-center shadow-soft hover:bg-brand-sky-dark transition-all"
+              className="w-10 h-10 rounded-full bg-accent-blue text-white flex items-center justify-center shadow-card hover:bg-brand-sky-dark transition-all"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -219,28 +219,28 @@ export const ReportsPage: React.FC = () => {
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Analytics & Institutional Reports</h1>
-          <p className="text-sm text-slate-500">Generate compliance, academic, and financial exports in PDF/Excel.</p>
+          <h1 className="text-2xl font-bold text-primary">Analytics & Institutional Reports</h1>
+          <p className="text-sm text-secondary">Generate compliance, academic, and financial exports in PDF/Excel.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {reportTemplates.map((r, i) => (
-          <div key={i} className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card flex flex-col justify-between">
+          <div key={i} className="bg-surface rounded-3xl p-6 border border-border shadow-card flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-lilac-light text-brand-lilac-dark flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-2xl bg-accent-violet-subtle text-accent-violet flex items-center justify-center font-bold">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-800">{r.title}</h3>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{r.freq}</span>
+                  <h3 className="font-bold text-sm text-primary">{r.title}</h3>
+                  <span className="text-[10px] font-bold text-muted uppercase tracking-wider">{r.freq}</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 leading-relaxed">{r.desc}</p>
+              <p className="text-xs text-secondary leading-relaxed">{r.desc}</p>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-end gap-3">
-              <button className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-brand-sky text-white text-xs font-bold shadow-soft hover:bg-brand-sky-dark transition-all">
+              <button className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent-blue text-white text-xs font-bold shadow-card hover:bg-brand-sky-dark transition-all">
                 <Download className="w-3.5 h-3.5" />
                 <span>Export Report</span>
               </button>
@@ -261,12 +261,12 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">My Profile</h1>
-        <p className="text-sm text-slate-500">Manage your account credentials and personal information.</p>
+        <h1 className="text-2xl font-bold text-primary">My Profile</h1>
+        <p className="text-sm text-secondary">Manage your account credentials and personal information.</p>
       </div>
 
-      <div className="bg-surface rounded-3xl p-8 border border-slate-100 shadow-card">
-        <div className="flex items-center gap-6 pb-6 border-b border-slate-100">
+      <div className="bg-surface rounded-3xl p-8 border border-border shadow-card">
+        <div className="flex items-center gap-6 pb-6 border-b border-border">
           <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-sky to-brand-lilac p-1 shadow-md">
             <img
               src={user?.avatarUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150'}
@@ -275,22 +275,22 @@ export const ProfilePage: React.FC = () => {
             />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-800">{user?.name}</h2>
-            <p className="text-xs text-slate-400">{user?.email}</p>
-            <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-brand-sky-light text-brand-sky-dark">
+            <h2 className="text-xl font-bold text-primary">{user?.name}</h2>
+            <p className="text-xs text-muted">{user?.email}</p>
+            <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
               {user?.role.replace('_', ' ')}
             </span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 text-xs">
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <span className="text-slate-400 font-bold block mb-1">Associated School</span>
-            <span className="font-semibold text-slate-800">{user?.school?.name || 'Platform Super Admin'}</span>
+          <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+            <span className="text-muted font-bold block mb-1">Associated School</span>
+            <span className="font-semibold text-primary">{user?.school?.name || 'Platform Super Admin'}</span>
           </div>
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-            <span className="text-slate-400 font-bold block mb-1">Account Status</span>
-            <span className="font-semibold text-brand-mint-dark">ACTIVE & VERIFIED</span>
+          <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+            <span className="text-muted font-bold block mb-1">Account Status</span>
+            <span className="font-semibold text-accent-green">ACTIVE & VERIFIED</span>
           </div>
         </div>
       </div>
@@ -305,31 +305,31 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Platform Settings</h1>
-        <p className="text-sm text-slate-500">Configure notifications, security policies, and school preferences.</p>
+        <h1 className="text-2xl font-bold text-primary">Platform Settings</h1>
+        <p className="text-sm text-secondary">Configure notifications, security policies, and school preferences.</p>
       </div>
 
-      <div className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+      <div className="bg-surface rounded-3xl p-6 border border-border shadow-card space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-border">
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Email Notifications</h3>
-            <p className="text-xs text-slate-400">Receive daily digest of attendance and fee payments.</p>
+            <h3 className="text-sm font-bold text-primary">Email Notifications</h3>
+            <p className="text-xs text-muted">Receive daily digest of attendance and fee payments.</p>
           </div>
           <input type="checkbox" defaultChecked className="w-5 h-5 accent-brand-sky rounded" />
         </div>
 
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-4 border-b border-border">
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Two-Factor Authentication (2FA)</h3>
-            <p className="text-xs text-slate-400">Require OTP confirmation for administrator logins.</p>
+            <h3 className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</h3>
+            <p className="text-xs text-muted">Require OTP confirmation for administrator logins.</p>
           </div>
           <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
         </div>
 
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Dark Mode (Beta)</h3>
-            <p className="text-xs text-slate-400">Switch from pastel daylight theme to night contrast.</p>
+            <h3 className="text-sm font-bold text-primary">Dark Mode (Beta)</h3>
+            <p className="text-xs text-muted">Switch from pastel daylight theme to night contrast.</p>
           </div>
           <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
         </div>

@@ -1,19 +1,152 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+/* ========================================================================= */
+/* 🎨 DESIGN TOKEN SYSTEM — Single Source of Truth                           */
+/* All colors are defined here as CSS custom properties.                     */
+/* Tailwind config references these vars → components use semantic classes.  */
+/* Theme toggle flips :root → .dark → ALL colors change automatically.      */
+/* ========================================================================= */
+
+/* ☀️ LIGHT MODE (Default) */
+:root {
+  /* --- Layout Backgrounds --- */
+  --color-canvas: 241 245 249;          /* #F1F5F9 — slate-100, main page bg */
+  --color-surface: 255 255 255;         /* #FFFFFF — card backgrounds */
+  --color-surface-raised: 248 250 252;  /* #F8FAFC — nested cards, table alt rows */
+  --color-surface-overlay: 255 255 255; /* modals, dropdowns */
+  
+  /* --- Sidebar --- */
+  --color-sidebar: 255 255 255;         /* #FFFFFF — clean light sidebar matching dashboard */
+  --color-sidebar-foreground: 100 116 139;  /* #64748B — slate-500 */
+  --color-sidebar-muted: 148 163 184;       /* #94A3B8 — slate-400 */
+  --color-sidebar-active-bg: 239 246 255;    /* #EFF6FF — subtle blue-50 */
+  --color-sidebar-hover: 248 250 252;       /* #F8FAFC — slate-50 */
+  
+  /* --- Text Hierarchy --- */
+  --color-text-primary: 15 23 42;       /* #0F172A — headings, primary text */
+  --color-text-secondary: 71 85 105;    /* #475569 — body text, descriptions */
+  --color-text-muted: 148 163 184;      /* #94A3B8 — labels, captions */
+  --color-text-inverse: 248 250 252;    /* #F8FAFC — text on dark backgrounds */
+  
+  /* --- Borders --- */
+  --color-border: 226 232 240;          /* #E2E8F0 — visible, not invisible */
+  --color-border-light: 241 245 249;    /* #F1F5F9 — subtle inner borders */
+  --color-border-dark: 203 213 225;     /* #CBD5E1 — emphasis borders */
+  
+  /* --- Accent / Brand Colors --- */
+  --color-accent-blue: 59 130 246;      /* #3B82F6 — primary actions */
+  --color-accent-blue-subtle: 219 234 254;  /* #DBEAFE — blue-100 */
+  --color-accent-green: 34 197 94;      /* #22C55E — success, present */
+  --color-accent-green-subtle: 220 252 231; /* #DCFCE7 — green-100 */
+  --color-accent-amber: 245 158 11;     /* #F59E0B — warning, pending */
+  --color-accent-amber-subtle: 254 243 199; /* #FEF3C7 — amber-100 */
+  --color-accent-rose: 239 68 68;       /* #EF4444 — error, absent */
+  --color-accent-rose-subtle: 254 226 226;  /* #FEE2E2 — red-100 */
+  --color-accent-violet: 139 92 246;    /* #8B5CF6 — badges, highlights */
+  --color-accent-violet-subtle: 237 233 254; /* #EDE9FE — violet-100 */
+  --color-accent-teal: 20 184 166;      /* #14B8A6 — info, secondary success */
+  --color-accent-teal-subtle: 204 251 241;  /* #CCFBF1 — teal-100 */
+  
+  /* --- Shadows (via box-shadow, not RGB triplets) --- */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  --shadow-elevated: 0 4px 16px -2px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 20px 60px -12px rgba(0, 0, 0, 0.2);
+  
+  /* --- Input / Form --- */
+  --color-input-bg: 255 255 255;
+  --color-input-border: 203 213 225;    /* #CBD5E1 */
+  --color-input-focus: 59 130 246;      /* blue-500 focus ring */
+  --color-input-placeholder: 148 163 184;
+  
+  /* --- Misc --- */
+  --color-ring: 59 130 246;             /* focus ring color */
+  --radius: 0.75rem;                    /* default border radius */
+}
+
+/* 🌙 DARK MODE */
+.dark {
+  /* --- Layout Backgrounds --- */
+  --color-canvas: 11 17 32;             /* #0B1120 — deep navy */
+  --color-surface: 30 41 59;            /* #1E293B — slate-800 cards */
+  --color-surface-raised: 39 53 72;     /* #273548 — nested elements */
+  --color-surface-overlay: 39 53 72;    /* modals on dark */
+  
+  /* --- Sidebar --- */
+  --color-sidebar: 15 23 42;            /* #0F172A — slate-900 */
+  --color-sidebar-foreground: 226 232 240;  /* #E2E8F0 — light slate */
+  --color-sidebar-muted: 160 174 192;       /* #A0AEC0 — clear muted */
+  --color-sidebar-active-bg: 30 58 138;     /* #1E3A8A — subtle blue container */
+  --color-sidebar-hover: 30 41 59;          /* #1E293B — slate-800 */
+  
+  /* --- Text Hierarchy (Crisp & Whitish on Dark) --- */
+  --color-text-primary: 248 250 252;    /* #F8FAFC — crisp white */
+  --color-text-secondary: 203 213 225;  /* #CBD5E1 — slate-300, clear & whitish */
+  --color-text-muted: 160 174 192;      /* #A0AEC0 — slate-400, legible text */
+  --color-text-inverse: 15 23 42;       /* dark text for light badges */
+  
+  /* --- Borders --- */
+  --color-border: 51 65 85;             /* #334155 — slate-700 */
+  --color-border-light: 39 53 72;       /* subtle */
+  --color-border-dark: 71 85 105;       /* emphasis */
+  
+  /* --- Accent Colors (same hues, slightly adjusted for dark bg) --- */
+  --color-accent-blue: 96 165 250;      /* #60A5FA — blue-400, brighter on dark */
+  --color-accent-blue-subtle: 23 37 84;     /* blue-950 */
+  --color-accent-green: 74 222 128;     /* #4ADE80 — green-400 */
+  --color-accent-green-subtle: 5 46 22;     /* green-950 */
+  --color-accent-amber: 251 191 36;     /* #FBBF24 — amber-400 */
+  --color-accent-amber-subtle: 69 26 3;     /* amber-950 */
+  --color-accent-rose: 251 113 133;     /* #FB7185 — rose-400 */
+  --color-accent-rose-subtle: 76 5 25;      /* rose-950 */
+  --color-accent-violet: 167 139 250;   /* #A78BFA — violet-400 */
+  --color-accent-violet-subtle: 46 16 101;  /* violet-950 */
+  --color-accent-teal: 45 212 191;      /* #2DD4BF — teal-400 */
+  --color-accent-teal-subtle: 4 47 46;      /* teal-950 */
+  
+  /* --- Shadows (deeper for dark surfaces) --- */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.25), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 4px 16px -2px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-modal: 0 20px 60px -12px rgba(0, 0, 0, 0.6);
+  
+  /* --- Input / Form --- */
+  --color-input-bg: 30 41 59;
+  --color-input-border: 71 85 105;
+  --color-input-focus: 96 165 250;
+  --color-input-placeholder: 100 116 139;
+  
+  /* --- Misc --- */
+  --color-ring: 96 165 250;
+}
+
+/* ========================================================================= */
+/* 🔧 GLOBAL BASE STYLES                                                     */
+/* ========================================================================= */
+
 * {
-  border-color: #F1F5F9;
+  border-color: rgb(var(--color-border));
 }
 
 body {
-  background-color: #F4F7FC;
-  color: #0F172A;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: rgb(var(--color-canvas));
+  color: rgb(var(--color-text-primary));
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Global button and interactive element click affordance */
+/* Smooth theme transition */
+html.transitioning,
+html.transitioning *,
+html.transitioning *::before,
+html.transitioning *::after {
+  transition: background-color 0.3s ease, color 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ========================================================================= */
+/* 🖱️ INTERACTIVE AFFORDANCE                                                 */
+/* ========================================================================= */
+
 button,
 [role="button"],
 select,
@@ -26,7 +159,10 @@ input[type="radio"] {
   cursor: pointer;
 }
 
-/* Custom Scrollbars */
+/* ========================================================================= */
+/* 📜 CUSTOM SCROLLBARS                                                      */
+/* ========================================================================= */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -35,19 +171,22 @@ input[type="radio"] {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: rgb(var(--color-border-dark));
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: rgb(var(--color-text-muted));
 }
 
-/* Glass & Card Effects */
+/* ========================================================================= */
+/* 🃏 CARD COMPONENT STYLES                                                  */
+/* ========================================================================= */
+
 .card-soft {
-  background-color: #FFFFFF;
-  border: 1px solid #EEF2F6;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-  border-radius: 1.25rem;
+  background-color: rgb(var(--color-surface));
+  border: 1px solid rgb(var(--color-border));
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius);
 }
 
 .card-hover {
@@ -55,5 +194,43 @@ input[type="radio"] {
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow-elevated);
+  border-color: rgb(var(--color-border-dark));
+}
+
+/* ========================================================================= */
+/* 🎯 FOCUS RING UTILITY                                                     */
+/* ========================================================================= */
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid rgb(var(--color-ring));
+  outline-offset: 2px;
+}
+
+/* ========================================================================= */
+/* 📊 STATUS PILL UTILITIES                                                  */
+/* ========================================================================= */
+
+.pill-success {
+  background-color: rgb(var(--color-accent-green-subtle));
+  color: rgb(var(--color-accent-green));
+}
+.pill-danger {
+  background-color: rgb(var(--color-accent-rose-subtle));
+  color: rgb(var(--color-accent-rose));
+}
+.pill-warning {
+  background-color: rgb(var(--color-accent-amber-subtle));
+  color: rgb(var(--color-accent-amber));
+}
+.pill-info {
+  background-color: rgb(var(--color-accent-blue-subtle));
+  color: rgb(var(--color-accent-blue));
+}
+.pill-violet {
+  background-color: rgb(var(--color-accent-violet-subtle));
+  color: rgb(var(--color-accent-violet));
 }

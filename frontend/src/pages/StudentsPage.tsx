@@ -297,20 +297,20 @@ export const StudentsPage: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
             <span>Student Admissions &amp; Directory</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-sky-light text-brand-sky-dark">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
               {students.length} Enrolled
             </span>
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-secondary mt-1">
             Manage student registrations, academic records, and parent contacts.
           </p>
         </div>
 
         <button
           onClick={() => setShowAdmissionModal(true)}
-          className="px-5 py-2.5 rounded-full bg-brand-sky text-white font-semibold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-2"
+          className="px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           <span>Admit New Student</span>
@@ -318,25 +318,25 @@ export const StudentsPage: React.FC = () => {
       </div>
 
       {/* Filter Row */}
-      <div className="bg-surface p-4 rounded-3xl border border-slate-100 shadow-card flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-surface p-4 rounded-3xl border border-border shadow-card flex flex-wrap items-center justify-between gap-4">
         <div className="relative w-72 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search by student name, roll no, or admission no..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+            className="w-full pl-10 pr-3 py-2 bg-surface-raised border border-border rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
           />
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-            <Filter className="w-3.5 h-3.5 text-slate-400" /> Class:
+          <div className="flex items-center gap-2 text-xs font-bold text-secondary">
+            <Filter className="w-3.5 h-3.5 text-muted" /> Class:
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none"
+              className="bg-surface-raised border border-border px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none"
             >
               <option value="ALL">All Classes</option>
               <option value="Class 10">Class 10</option>
@@ -349,10 +349,10 @@ export const StudentsPage: React.FC = () => {
       </div>
 
       {/* Students Table */}
-      <div className="bg-surface rounded-3xl border border-slate-100 shadow-card overflow-hidden">
+      <div className="bg-surface rounded-3xl border border-border shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <thead className="bg-surface-raised/70 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
               <tr>
                 <th className="py-4 px-6 w-20">Roll No</th>
                 <th className="py-4 px-6">Student Name</th>
@@ -363,43 +363,43 @@ export const StudentsPage: React.FC = () => {
                 <th className="py-4 px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+            <tbody className="divide-y divide-slate-100 font-medium text-secondary">
               {filteredStudents.map((s) => (
                 <tr
                   key={s.id}
                   onClick={() => setSelectedStudent(s)}
-                  className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                  className="hover:bg-surface-raised/60 transition-colors cursor-pointer"
                 >
-                  <td className="py-4 px-6 font-mono font-bold text-slate-600">
-                    <span className="w-7 h-7 rounded-xl bg-slate-100 flex items-center justify-center font-extrabold text-xs">
+                  <td className="py-4 px-6 font-mono font-bold text-secondary">
+                    <span className="w-7 h-7 rounded-xl bg-surface-raised flex items-center justify-center font-extrabold text-xs">
                       {s.rollNo}
                     </span>
                   </td>
-                  <td className="py-4 px-6 font-bold text-slate-900 flex items-center gap-3">
+                  <td className="py-4 px-6 font-bold text-primary flex items-center gap-3">
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${
                         s.gender === 'FEMALE'
-                          ? 'bg-brand-lilac-light text-brand-lilac-dark'
-                          : 'bg-brand-sky-light text-brand-sky-dark'
+                          ? 'bg-accent-violet-subtle text-accent-violet'
+                          : 'bg-accent-blue-subtle text-accent-blue'
                       }`}
                     >
                       {s.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">{s.name}</p>
-                      <span className="text-[10px] text-slate-400">{s.parentName}</span>
+                      <p className="font-bold text-primary">{s.name}</p>
+                      <span className="text-[10px] text-muted">{s.parentName}</span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 font-mono text-slate-500 font-semibold">{s.admissionNo}</td>
-                  <td className="py-4 px-6 font-bold text-slate-800">
+                  <td className="py-4 px-6 font-mono text-secondary font-semibold">{s.admissionNo}</td>
+                  <td className="py-4 px-6 font-bold text-primary">
                     {s.class} - {s.section}
                   </td>
                   <td className="py-4 px-6">
                     <span
                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
                         s.attendanceRate >= 75
-                          ? 'bg-brand-mint-light text-brand-mint-dark'
-                          : 'bg-brand-rose-light text-brand-rose-dark'
+                          ? 'bg-accent-green-subtle text-accent-green'
+                          : 'bg-accent-rose-subtle text-accent-rose'
                       }`}
                     >
                       {s.attendanceRate}% {s.attendanceRate >= 75 ? 'Safe' : 'Shortage'}
@@ -407,7 +407,7 @@ export const StudentsPage: React.FC = () => {
                   </td>
                   <td className="py-4 px-6 font-bold">
                     {s.feeBalance === 0 ? (
-                      <span className="text-brand-mint-dark">Paid</span>
+                      <span className="text-accent-green">Paid</span>
                     ) : (
                       <span className="text-rose-600">₹{s.feeBalance.toLocaleString('en-IN')} Due</span>
                     )}
@@ -415,7 +415,7 @@ export const StudentsPage: React.FC = () => {
                   <td className="py-4 px-6 text-right" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => setSelectedStudent(s)}
-                      className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all"
+                      className="px-3 py-1 rounded-full bg-surface-raised hover:bg-slate-200 text-secondary font-bold text-xs transition-all"
                     >
                       Profile
                     </button>
@@ -435,16 +435,16 @@ export const StudentsPage: React.FC = () => {
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto"
+            className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-border max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Admit New Student</h2>
-                <p className="text-xs text-slate-500">Register student details, parent info, and class allotment.</p>
+                <h2 className="text-xl font-bold text-primary">Admit New Student</h2>
+                <p className="text-xs text-secondary">Register student details, parent info, and class allotment.</p>
               </div>
               <button
                 onClick={() => setShowAdmissionModal(false)}
-                className="p-2 rounded-xl hover:bg-slate-100 text-slate-400"
+                className="p-2 rounded-xl hover:bg-surface-raised text-muted"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -453,36 +453,36 @@ export const StudentsPage: React.FC = () => {
             <form onSubmit={handleAdmitStudent} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">First Name</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">First Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Rahul"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Last Name</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Last Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Sharma"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Class</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Class</label>
                   <select
                     value={formData.class}
                     onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none font-semibold"
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold"
                   >
                     <option>Class 10</option>
                     <option>Class 11 - Science</option>
@@ -491,11 +491,11 @@ export const StudentsPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Section</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Section</label>
                   <select
                     value={formData.section}
                     onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none font-semibold"
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold"
                   >
                     <option>A</option>
                     <option>B</option>
@@ -503,24 +503,24 @@ export const StudentsPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Roll Number</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Roll Number</label>
                   <input
                     type="text"
                     placeholder="e.g. 26"
                     value={formData.rollNumber}
                     onChange={(e) => setFormData({ ...formData, rollNumber: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none font-semibold"
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Gender</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Gender</label>
                   <select
                     value={formData.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none"
                   >
                     <option value="MALE">Male</option>
                     <option value="FEMALE">Female</option>
@@ -528,21 +528,21 @@ export const StudentsPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Date of Birth</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Date of Birth</label>
                   <input
                     type="date"
                     required
                     value={formData.dateOfBirth}
                     onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Blood Group</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Blood Group</label>
                   <select
                     value={formData.bloodGroup}
                     onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none font-semibold"
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold"
                   >
                     <option>A+</option>
                     <option>B+</option>
@@ -554,52 +554,52 @@ export const StudentsPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Parent / Guardian Name</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Parent / Guardian Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Ramesh Sharma"
                     value={formData.parentName}
                     onChange={(e) => setFormData({ ...formData, parentName: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Parent Contact Phone</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Parent Contact Phone</label>
                   <input
                     type="tel"
                     required
                     placeholder="+91 98765 43210"
                     value={formData.parentPhone}
                     onChange={(e) => setFormData({ ...formData, parentPhone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Residential Address</label>
+                <label className="block text-xs font-bold text-secondary mb-1">Residential Address</label>
                 <input
                   type="text"
                   placeholder="Street, locality, city, pincode"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowAdmissionModal(false)}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50 transition-all"
+                  className="px-5 py-2.5 rounded-full border border-border text-secondary font-semibold text-xs hover:bg-surface-raised transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-semibold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-1.5"
+                  className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-1.5"
                 >
                   {submitting ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -628,11 +628,11 @@ export const StudentsPage: React.FC = () => {
             className="w-full max-w-md h-full bg-surface shadow-2xl p-6 sm:p-8 flex flex-col justify-between overflow-y-auto"
           >
             <div>
-              <div className="flex items-center justify-between pb-6 border-b border-slate-100">
-                <h3 className="text-lg font-bold text-slate-800">Student Profile</h3>
+              <div className="flex items-center justify-between pb-6 border-b border-border">
+                <h3 className="text-lg font-bold text-primary">Student Profile</h3>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="p-2 rounded-xl hover:bg-slate-100 text-slate-400"
+                  className="p-2 rounded-xl hover:bg-surface-raised text-muted"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -644,16 +644,16 @@ export const StudentsPage: React.FC = () => {
                   {selectedStudent.name.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-slate-800">{selectedStudent.name}</h4>
-                  <p className="text-xs text-brand-sky-dark font-semibold">
+                  <h4 className="text-base font-bold text-primary">{selectedStudent.name}</h4>
+                  <p className="text-xs text-accent-blue font-semibold">
                     {selectedStudent.class} - Section {selectedStudent.section}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="font-mono text-xs font-bold text-slate-400">
+                    <span className="font-mono text-xs font-bold text-muted">
                       Roll No: {selectedStudent.rollNo}
                     </span>
-                    <span className="text-[10px] text-slate-400">•</span>
-                    <span className="font-mono text-xs font-bold text-slate-400">
+                    <span className="text-[10px] text-muted">•</span>
+                    <span className="font-mono text-xs font-bold text-muted">
                       {selectedStudent.admissionNo}
                     </span>
                   </div>
@@ -662,25 +662,25 @@ export const StudentsPage: React.FC = () => {
 
               {/* 3 Metric Pills */}
               <div className="grid grid-cols-3 gap-3 my-4">
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 block mb-0.5">ATTENDANCE</span>
+                <div className="p-3 rounded-2xl bg-surface-raised border border-border text-center">
+                  <span className="text-[10px] font-bold text-muted block mb-0.5">ATTENDANCE</span>
                   <span
                     className={`text-sm font-extrabold ${
-                      selectedStudent.attendanceRate >= 75 ? 'text-brand-mint-dark' : 'text-brand-rose-dark'
+                      selectedStudent.attendanceRate >= 75 ? 'text-accent-green' : 'text-accent-rose'
                     }`}
                   >
                     {selectedStudent.attendanceRate}%
                   </span>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 block mb-0.5">FEE DUES</span>
-                  <span className="text-sm font-extrabold text-slate-800">
+                <div className="p-3 rounded-2xl bg-surface-raised border border-border text-center">
+                  <span className="text-[10px] font-bold text-muted block mb-0.5">FEE DUES</span>
+                  <span className="text-sm font-extrabold text-primary">
                     ₹{selectedStudent.feeBalance.toLocaleString('en-IN')}
                   </span>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 block mb-0.5">BLOOD GROUP</span>
-                  <span className="text-sm font-extrabold text-brand-lilac-dark">
+                <div className="p-3 rounded-2xl bg-surface-raised border border-border text-center">
+                  <span className="text-[10px] font-bold text-muted block mb-0.5">BLOOD GROUP</span>
+                  <span className="text-sm font-extrabold text-accent-violet">
                     {selectedStudent.bloodGroup || 'B+'}
                   </span>
                 </div>
@@ -688,28 +688,28 @@ export const StudentsPage: React.FC = () => {
 
               {/* Details List */}
               <div className="space-y-3 text-xs">
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Parent / Guardian</span>
-                  <span className="font-bold text-slate-800 text-sm">{selectedStudent.parentName}</span>
-                  <span className="text-slate-500 block mt-0.5">{selectedStudent.parentPhone}</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Parent / Guardian</span>
+                  <span className="font-bold text-primary text-sm">{selectedStudent.parentName}</span>
+                  <span className="text-secondary block mt-0.5">{selectedStudent.parentPhone}</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Date of Birth</span>
-                  <span className="font-semibold text-slate-800">{selectedStudent.dob || '2010-08-15'}</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Date of Birth</span>
+                  <span className="font-semibold text-primary">{selectedStudent.dob || '2010-08-15'}</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">House Affiliation</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">House Affiliation</span>
                   <span className="font-semibold text-rose-600">Tagore House (Red)</span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100">
+            <div className="pt-4 border-t border-border">
               <button
                 onClick={() => setSelectedStudent(null)}
-                className="w-full py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition-all"
+                className="w-full py-2.5 rounded-full bg-surface-raised text-secondary text-xs font-bold hover:bg-slate-200 transition-all"
               >
                 Close Drawer
               </button>

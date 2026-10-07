@@ -78,11 +78,11 @@ export const AcademicsPage: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Academics & Curriculum</h1>
-          <p className="text-sm text-slate-500">Configure classes, streams, sections, and subject syllabi.</p>
+          <h1 className="text-2xl font-bold text-primary">Academics & Curriculum</h1>
+          <p className="text-sm text-secondary">Configure classes, streams, sections, and subject syllabi.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-sky text-white font-semibold text-sm shadow-soft hover:bg-brand-sky-dark transition-all">
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-sm shadow-card hover:bg-brand-sky-dark transition-all">
             <Plus className="w-4 h-4" />
             <span>Create Class</span>
           </button>
@@ -90,13 +90,13 @@ export const AcademicsPage: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 bg-surface p-1.5 rounded-2xl border border-slate-100 shadow-card w-fit">
+      <div className="flex items-center gap-2 bg-surface p-1.5 rounded-2xl border border-border shadow-card w-fit">
         <button
           onClick={() => setSelectedTab('CLASSES')}
           className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
             selectedTab === 'CLASSES'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           Classes & Sections
@@ -105,8 +105,8 @@ export const AcademicsPage: React.FC = () => {
           onClick={() => setSelectedTab('SUBJECTS')}
           className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
             selectedTab === 'SUBJECTS'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           Course Catalog
@@ -115,8 +115,8 @@ export const AcademicsPage: React.FC = () => {
           onClick={() => setSelectedTab('CURRICULUM')}
           className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
             selectedTab === 'CURRICULUM'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           Syllabus & Lesson Plans
@@ -132,40 +132,40 @@ export const AcademicsPage: React.FC = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card hover:shadow-soft transition-all"
+              className="bg-surface rounded-3xl p-6 border border-border shadow-card hover:shadow-card transition-all"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${cls.color} flex items-center justify-center text-slate-800 font-bold shadow-sm`}>
-                    <Layers className="w-6 h-6 text-slate-700" />
+                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${cls.color} flex items-center justify-center text-primary font-bold shadow-sm`}>
+                    <Layers className="w-6 h-6 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-800">{cls.name}</h3>
-                    <p className="text-xs text-slate-400 font-mono font-medium">{cls.code}</p>
+                    <h3 className="text-lg font-bold text-primary">{cls.name}</h3>
+                    <p className="text-xs text-muted font-mono font-medium">{cls.code}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-bold text-slate-800">{cls.totalStudents}</span>
-                  <p className="text-[11px] text-slate-400">Total Enrolled</p>
+                  <span className="text-sm font-bold text-primary">{cls.totalStudents}</span>
+                  <p className="text-[11px] text-muted">Total Enrolled</p>
                 </div>
               </div>
 
               {/* Sections Breakdown */}
               <div className="space-y-2.5 mt-4">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
                   Sections & Class Teachers
                 </p>
                 {cls.sections.map((sec, i) => (
                   <div
                     key={i}
-                    className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
+                    className="p-3 rounded-2xl bg-surface-raised border border-border flex items-center justify-between text-xs"
                   >
                     <div>
-                      <span className="font-bold text-slate-800">{sec.name}</span>
-                      <p className="text-[11px] text-slate-500">Teacher: {sec.classTeacher}</p>
+                      <span className="font-bold text-primary">{sec.name}</span>
+                      <p className="text-[11px] text-secondary">Teacher: {sec.classTeacher}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-full bg-white border border-slate-200 font-semibold text-slate-700">
+                      <span className="px-2.5 py-1 rounded-full bg-surface border border-border font-semibold text-secondary">
                         {sec.studentsCount} Students
                       </span>
                     </div>
@@ -174,8 +174,8 @@ export const AcademicsPage: React.FC = () => {
               </div>
 
               <div className="mt-5 pt-4 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-xs text-slate-500 font-medium">{cls.subjectsCount} Active Subjects</span>
-                <button className="flex items-center gap-1 text-xs font-bold text-brand-sky-dark hover:underline">
+                <span className="text-xs text-secondary font-medium">{cls.subjectsCount} Active Subjects</span>
+                <button className="flex items-center gap-1 text-xs font-bold text-accent-blue hover:underline">
                   <span>Manage Class</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
@@ -187,17 +187,17 @@ export const AcademicsPage: React.FC = () => {
 
       {/* Subjects View */}
       {selectedTab === 'SUBJECTS' && (
-        <div className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">Core Academic Subjects</h3>
+        <div className="bg-surface rounded-3xl p-6 border border-border shadow-card">
+          <h3 className="text-lg font-bold text-primary mb-4">Core Academic Subjects</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English Literature', 'Computer Science'].map((s, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-sky-light text-brand-sky-dark flex items-center justify-center font-bold">
+              <div key={i} className="p-4 rounded-2xl bg-surface-raised border border-border flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent-blue-subtle text-accent-blue flex items-center justify-center font-bold">
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800">{s}</h4>
-                  <p className="text-xs text-slate-400">Weekly 6 Sessions • Core Credit</p>
+                  <h4 className="text-sm font-bold text-primary">{s}</h4>
+                  <p className="text-xs text-muted">Weekly 6 Sessions • Core Credit</p>
                 </div>
               </div>
             ))}
@@ -207,22 +207,22 @@ export const AcademicsPage: React.FC = () => {
 
       {/* Curriculum View */}
       {selectedTab === 'CURRICULUM' && (
-        <div className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card">
-          <h3 className="text-lg font-bold text-slate-800 mb-2">Term 1 Curriculum & Milestones</h3>
-          <p className="text-xs text-slate-500 mb-6">Track chapter completion rates and quarterly assessments.</p>
+        <div className="bg-surface rounded-3xl p-6 border border-border shadow-card">
+          <h3 className="text-lg font-bold text-primary mb-2">Term 1 Curriculum & Milestones</h3>
+          <p className="text-xs text-secondary mb-6">Track chapter completion rates and quarterly assessments.</p>
           <div className="space-y-3">
             {[
               { subject: 'Mathematics (Class 10)', chapter: 'Chapter 4: Quadratic Equations', status: 'Completed', progress: 100 },
               { subject: 'Physics (Class 11)', chapter: 'Chapter 6: Laws of Motion & Friction', status: 'In Progress', progress: 75 },
               { subject: 'English (Class 10)', chapter: 'Unit 3: Poetry & Critical Analysis', status: 'In Progress', progress: 50 },
             ].map((item, idx) => (
-              <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <div key={idx} className="p-4 rounded-2xl bg-surface-raised border border-border flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-brand-sky-dark">{item.subject}</p>
-                  <p className="text-sm font-semibold text-slate-800">{item.chapter}</p>
+                  <p className="text-xs font-bold text-accent-blue">{item.subject}</p>
+                  <p className="text-sm font-semibold text-primary">{item.chapter}</p>
                 </div>
                 <div className="text-right">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-brand-mint-light text-brand-mint-dark">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-accent-green-subtle text-accent-green">
                     {item.status} ({item.progress}%)
                   </span>
                 </div>

@@ -123,7 +123,7 @@ export const ProfilePage: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden"
+        className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden"
       >
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-brand-sky via-sky-300 to-brand-lilac p-1 shadow-md shrink-0">
@@ -139,19 +139,19 @@ export const ProfilePage: React.FC = () => {
 
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800">{user?.name}</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-sky-light text-brand-sky-dark uppercase tracking-wider">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-primary">{user?.name}</h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent-blue-subtle text-accent-blue uppercase tracking-wider">
                 {user?.role.replace('_', ' ')}
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-medium">{user?.email}</p>
-            <div className="flex items-center gap-3 pt-1 text-xs text-slate-500 font-semibold">
+            <p className="text-xs text-muted font-medium">{user?.email}</p>
+            <div className="flex items-center gap-3 pt-1 text-xs text-secondary font-semibold">
               <span className="flex items-center gap-1">
-                <Building2 className="w-3.5 h-3.5 text-brand-sky" />
+                <Building2 className="w-3.5 h-3.5 text-accent-blue" />
                 {user?.school?.name || 'Platform Super Admin'}
               </span>
               <span>•</span>
-              <span className="text-brand-mint-dark font-bold flex items-center gap-1">
+              <span className="text-accent-green font-bold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Active &amp; Verified
               </span>
             </div>
@@ -159,7 +159,7 @@ export const ProfilePage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
-          <span className="px-3.5 py-1.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-600">
+          <span className="px-3.5 py-1.5 rounded-2xl bg-surface-raised border border-border text-xs font-bold text-secondary">
             ID: {user?.id.slice(0, 8)}...
           </span>
         </div>
@@ -168,13 +168,13 @@ export const ProfilePage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 2. NAVIGATION TABS                                                        */}
       {/* ========================================================================= */}
-      <div className="flex items-center gap-2 bg-surface p-1.5 rounded-2xl border border-slate-100 shadow-card w-fit overflow-x-auto">
+      <div className="flex items-center gap-2 bg-surface p-1.5 rounded-2xl border border-border shadow-card w-fit overflow-x-auto">
         <button
           onClick={() => setActiveTab('PERSONAL')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'PERSONAL'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           <User className="w-4 h-4" />
@@ -185,8 +185,8 @@ export const ProfilePage: React.FC = () => {
           onClick={() => setActiveTab('SECURITY')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'SECURITY'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           <KeyRound className="w-4 h-4" />
@@ -197,8 +197,8 @@ export const ProfilePage: React.FC = () => {
           onClick={() => setActiveTab('ACADEMIC')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'ACADEMIC'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           <GraduationCap className="w-4 h-4" />
@@ -209,8 +209,8 @@ export const ProfilePage: React.FC = () => {
           onClick={() => setActiveTab('PREFERENCES')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'PREFERENCES'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           <Bell className="w-4 h-4" />
@@ -225,15 +225,15 @@ export const ProfilePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card"
+          className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card"
         >
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-border">
             <div>
-              <h3 className="text-base font-bold text-slate-800">Personal Information</h3>
-              <p className="text-xs text-slate-400">Update your profile identity and contact information.</p>
+              <h3 className="text-base font-bold text-primary">Personal Information</h3>
+              <p className="text-xs text-muted">Update your profile identity and contact information.</p>
             </div>
             {personalSaved && (
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-mint-light text-brand-mint-dark flex items-center gap-1">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-green-subtle text-accent-green flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Changes Saved
               </span>
             )}
@@ -242,44 +242,44 @@ export const ProfilePage: React.FC = () => {
           <form onSubmit={handleSavePersonal} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Full Name</label>
+                <label className="block text-xs font-bold text-secondary mb-1.5">Full Name</label>
                 <input
                   type="text"
                   required
                   value={personalData.name}
                   onChange={(e) => setPersonalData({ ...personalData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Email Address</label>
+                <label className="block text-xs font-bold text-secondary mb-1.5">Email Address</label>
                 <input
                   type="email"
                   disabled
                   value={personalData.email}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-500 cursor-not-allowed"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold text-secondary cursor-not-allowed"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Phone Number</label>
+                <label className="block text-xs font-bold text-secondary mb-1.5">Phone Number</label>
                 <input
                   type="text"
                   value={personalData.phone}
                   onChange={(e) => setPersonalData({ ...personalData, phone: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Gender</label>
+                <label className="block text-xs font-bold text-secondary mb-1.5">Gender</label>
                 <select
                   value={personalData.gender}
                   onChange={(e) => setPersonalData({ ...personalData, gender: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                 >
                   <option>Male</option>
                   <option>Female</option>
@@ -288,11 +288,11 @@ export const ProfilePage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">Blood Group</label>
+                <label className="block text-xs font-bold text-secondary mb-1.5">Blood Group</label>
                 <select
                   value={personalData.bloodGroup}
                   onChange={(e) => setPersonalData({ ...personalData, bloodGroup: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                 >
                   <option>A+</option>
                   <option>A-</option>
@@ -307,29 +307,29 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">Residential Address</label>
+              <label className="block text-xs font-bold text-secondary mb-1.5">Residential Address</label>
               <input
                 type="text"
                 value={personalData.address}
                 onChange={(e) => setPersonalData({ ...personalData, address: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">Emergency Contact Details</label>
+              <label className="block text-xs font-bold text-secondary mb-1.5">Emergency Contact Details</label>
               <input
                 type="text"
                 value={personalData.emergencyContact}
                 onChange={(e) => setPersonalData({ ...personalData, emergencyContact: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
               />
             </div>
 
             <div className="pt-4 flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-2"
+                className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-bold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Profile Changes</span>
@@ -346,22 +346,22 @@ export const ProfilePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card space-y-6"
+          className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card space-y-6"
         >
-          <div className="pb-4 border-b border-slate-100">
-            <h3 className="text-base font-bold text-slate-800">Change Account Password</h3>
-            <p className="text-xs text-slate-400">Ensure your account is protected with a strong, unique password.</p>
+          <div className="pb-4 border-b border-border">
+            <h3 className="text-base font-bold text-primary">Change Account Password</h3>
+            <p className="text-xs text-muted">Ensure your account is protected with a strong, unique password.</p>
           </div>
 
           {passwordSuccess && (
-            <div className="p-4 rounded-2xl bg-brand-mint-light/80 border border-brand-mint/40 text-brand-mint-dark text-xs font-bold flex items-center gap-2">
+            <div className="p-4 rounded-2xl bg-accent-green-subtle/80 border border-brand-mint/40 text-accent-green text-xs font-bold flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>Password updated successfully! Next login will require your new credentials.</span>
             </div>
           )}
 
           {passwordError && (
-            <div className="p-4 rounded-2xl bg-brand-rose-light/80 border border-brand-rose/40 text-brand-rose-dark text-xs font-bold flex items-center gap-2">
+            <div className="p-4 rounded-2xl bg-accent-rose-subtle/80 border border-brand-rose/40 text-accent-rose text-xs font-bold flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{passwordError}</span>
             </div>
@@ -369,7 +369,7 @@ export const ProfilePage: React.FC = () => {
 
           <form onSubmit={handleChangePassword} className="space-y-4 max-w-lg">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">Current Password</label>
+              <label className="block text-xs font-bold text-secondary mb-1.5">Current Password</label>
               <div className="relative">
                 <input
                   type={showCurrentPassword ? 'text' : 'password'}
@@ -377,12 +377,12 @@ export const ProfilePage: React.FC = () => {
                   value={passwordData.currentPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                   placeholder="Enter your current password"
-                  className="w-full pl-4 pr-11 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                  className="w-full pl-4 pr-11 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
                 >
                   {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -390,7 +390,7 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">New Password (min 8 chars)</label>
+              <label className="block text-xs font-bold text-secondary mb-1.5">New Password (min 8 chars)</label>
               <div className="relative">
                 <input
                   type={showNewPassword ? 'text' : 'password'}
@@ -398,12 +398,12 @@ export const ProfilePage: React.FC = () => {
                   value={passwordData.newPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                   placeholder="Enter strong new password"
-                  className="w-full pl-4 pr-11 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                  className="w-full pl-4 pr-11 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
                 >
                   {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -411,21 +411,21 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">Confirm New Password</label>
+              <label className="block text-xs font-bold text-secondary mb-1.5">Confirm New Password</label>
               <input
                 type="password"
                 required
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                 placeholder="Re-enter your new password"
-                className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
               />
             </div>
 
             <button
               type="submit"
               disabled={passwordLoading}
-              className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-bold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-2"
+              className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-bold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-2"
             >
               {passwordLoading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -439,19 +439,19 @@ export const ProfilePage: React.FC = () => {
           </form>
 
           {/* Two-Factor Authentication Toggle */}
-          <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <div className="pt-6 border-t border-border flex items-center justify-between">
             <div>
-              <h4 className="text-sm font-bold text-slate-800">Two-Factor Authentication (2FA)</h4>
-              <p className="text-xs text-slate-400">Require OTP confirmation on your mobile phone upon login.</p>
+              <h4 className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</h4>
+              <p className="text-xs text-muted">Require OTP confirmation on your mobile phone upon login.</p>
             </div>
             <button
               onClick={() => setTwoFactorAuth(!twoFactorAuth)}
               className={`w-12 h-6 rounded-full transition-colors relative ${
-                twoFactorAuth ? 'bg-brand-sky' : 'bg-slate-200'
+                twoFactorAuth ? 'bg-accent-blue' : 'bg-slate-200'
               }`}
             >
               <div
-                className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform ${
+                className={`w-5 h-5 rounded-full bg-surface absolute top-0.5 transition-transform ${
                   twoFactorAuth ? 'right-0.5' : 'left-0.5'
                 }`}
               ></div>
@@ -467,56 +467,56 @@ export const ProfilePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card space-y-6"
+          className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card space-y-6"
         >
-          <div className="pb-4 border-b border-slate-100">
-            <h3 className="text-base font-bold text-slate-800">Institutional &amp; Academic Affiliation</h3>
-            <p className="text-xs text-slate-400">Your school registration, academic year, and role responsibilities.</p>
+          <div className="pb-4 border-b border-border">
+            <h3 className="text-base font-bold text-primary">Institutional &amp; Academic Affiliation</h3>
+            <p className="text-xs text-muted">Your school registration, academic year, and role responsibilities.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <span className="text-slate-400 font-bold block mb-1">Associated School</span>
-              <span className="font-extrabold text-slate-800 text-sm">
+            <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+              <span className="text-muted font-bold block mb-1">Associated School</span>
+              <span className="font-extrabold text-primary text-sm">
                 {user?.school?.name || 'Platform Super Admin'}
               </span>
-              <span className="text-[10px] text-slate-400 block mt-0.5 font-mono">
+              <span className="text-[10px] text-muted block mt-0.5 font-mono">
                 Code: {user?.school?.code || 'N/A'}
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <span className="text-slate-400 font-bold block mb-1">Current Academic Year</span>
-              <span className="font-extrabold text-slate-800 text-sm">2026–2027 (Term 1)</span>
-              <span className="text-[10px] text-slate-400 block mt-0.5">CBSE Affiliation #1930482</span>
+            <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+              <span className="text-muted font-bold block mb-1">Current Academic Year</span>
+              <span className="font-extrabold text-primary text-sm">2026–2027 (Term 1)</span>
+              <span className="text-[10px] text-muted block mt-0.5">CBSE Affiliation #1930482</span>
             </div>
 
             {user?.role === 'STUDENT' && (
               <>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Class &amp; Section</span>
-                  <span className="font-extrabold text-slate-800 text-sm">Class 10 - Section A</span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">Roll No: 24 • Tagore House (Red)</span>
+                <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Class &amp; Section</span>
+                  <span className="font-extrabold text-primary text-sm">Class 10 - Section A</span>
+                  <span className="text-[10px] text-muted block mt-0.5">Roll No: 24 • Tagore House (Red)</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Class Teacher</span>
-                  <span className="font-extrabold text-slate-800 text-sm">Amit Sharma Sir</span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">Senior PGT Mathematics</span>
+                <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Class Teacher</span>
+                  <span className="font-extrabold text-primary text-sm">Amit Sharma Sir</span>
+                  <span className="text-[10px] text-muted block mt-0.5">Senior PGT Mathematics</span>
                 </div>
               </>
             )}
 
             {user?.role === 'TEACHER' && (
               <>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Designation &amp; Department</span>
-                  <span className="font-extrabold text-slate-800 text-sm">Senior PGT Mathematics</span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">Department of Mathematics</span>
+                <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Designation &amp; Department</span>
+                  <span className="font-extrabold text-primary text-sm">Senior PGT Mathematics</span>
+                  <span className="text-[10px] text-muted block mt-0.5">Department of Mathematics</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Class Teacher Incharge</span>
-                  <span className="font-extrabold text-slate-800 text-sm">Class 10 - Section A</span>
-                  <span className="text-[10px] text-slate-400 block mt-0.5">42 Students Enrolled</span>
+                <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Class Teacher Incharge</span>
+                  <span className="font-extrabold text-primary text-sm">Class 10 - Section A</span>
+                  <span className="text-[10px] text-muted block mt-0.5">42 Students Enrolled</span>
                 </div>
               </>
             )}
@@ -531,18 +531,18 @@ export const ProfilePage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card space-y-6"
+          className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card space-y-6"
         >
-          <div className="pb-4 border-b border-slate-100">
-            <h3 className="text-base font-bold text-slate-800">Alerts &amp; Localization</h3>
-            <p className="text-xs text-slate-400">Configure notification channels, timezone, and currency defaults.</p>
+          <div className="pb-4 border-b border-border">
+            <h3 className="text-base font-bold text-primary">Alerts &amp; Localization</h3>
+            <p className="text-xs text-muted">Configure notification channels, timezone, and currency defaults.</p>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-raised border border-border">
               <div>
-                <h4 className="text-xs font-bold text-slate-800">Email Digest &amp; Circulars</h4>
-                <p className="text-[11px] text-slate-400">Receive daily attendance reports and school announcements.</p>
+                <h4 className="text-xs font-bold text-primary">Email Digest &amp; Circulars</h4>
+                <p className="text-[11px] text-muted">Receive daily attendance reports and school announcements.</p>
               </div>
               <input
                 type="checkbox"
@@ -552,10 +552,10 @@ export const ProfilePage: React.FC = () => {
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-raised border border-border">
               <div>
-                <h4 className="text-xs font-bold text-slate-800">SMS / WhatsApp Alerts</h4>
-                <p className="text-[11px] text-slate-400">Instant SMS broadcast for fee dues, bus delays, and emergency notices.</p>
+                <h4 className="text-xs font-bold text-primary">SMS / WhatsApp Alerts</h4>
+                <p className="text-[11px] text-muted">Instant SMS broadcast for fee dues, bus delays, and emergency notices.</p>
               </div>
               <input
                 type="checkbox"
@@ -566,13 +566,13 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-slate-400 font-bold block mb-1">Timezone</span>
-                <span className="font-extrabold text-slate-800">Asia / Kolkata (IST, GMT +05:30)</span>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+                <span className="text-muted font-bold block mb-1">Timezone</span>
+                <span className="font-extrabold text-primary">Asia / Kolkata (IST, GMT +05:30)</span>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-slate-400 font-bold block mb-1">System Currency</span>
-                <span className="font-extrabold text-slate-800">Indian Rupee (₹ INR)</span>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+                <span className="text-muted font-bold block mb-1">System Currency</span>
+                <span className="font-extrabold text-primary">Indian Rupee (₹ INR)</span>
               </div>
             </div>
           </div>

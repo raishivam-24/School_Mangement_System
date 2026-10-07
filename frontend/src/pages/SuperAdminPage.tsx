@@ -66,69 +66,69 @@ export const SuperAdminPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <span className="px-3 py-1 rounded-full text-[10px] font-extrabold bg-brand-sky-light text-brand-sky-dark uppercase tracking-wider">
+          <span className="px-3 py-1 rounded-full text-[10px] font-extrabold bg-accent-blue-subtle text-accent-blue uppercase tracking-wider">
             SaaS Platform Administration
           </span>
-          <h2 className="text-2xl font-black text-slate-900 mt-1">Platform Overview</h2>
+          <h2 className="text-2xl font-black text-primary mt-1">Platform Overview</h2>
         </div>
       </div>
 
       {/* 4 Platform Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">Total Schools</span>
-          <p className="text-3xl font-extrabold text-slate-800">42</p>
-          <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2 py-0.5 rounded-full mt-2 inline-block">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">Total Schools</span>
+          <p className="text-3xl font-extrabold text-primary">42</p>
+          <span className="text-[11px] font-bold text-accent-green bg-accent-green-subtle px-2 py-0.5 rounded-full mt-2 inline-block">
             +4 this month
           </span>
         </div>
 
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">
             Platform Students
           </span>
-          <p className="text-3xl font-extrabold text-slate-800">18,421</p>
-          <span className="text-[11px] font-bold text-brand-sky-dark mt-2 inline-block">
+          <p className="text-3xl font-extrabold text-primary">18,421</p>
+          <span className="text-[11px] font-bold text-accent-blue mt-2 inline-block">
             Across all tenants
           </span>
         </div>
 
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">Monthly SaaS MRR</span>
-          <p className="text-3xl font-extrabold text-brand-mint-dark">₹24,50,000</p>
-          <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2 py-0.5 rounded-full mt-2 inline-block">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">Monthly SaaS MRR</span>
+          <p className="text-3xl font-extrabold text-accent-green">₹24,50,000</p>
+          <span className="text-[11px] font-bold text-accent-green bg-accent-green-subtle px-2 py-0.5 rounded-full mt-2 inline-block">
             +18.4% YoY
           </span>
         </div>
 
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">Active Trials</span>
-          <p className="text-3xl font-extrabold text-brand-yellow-dark">7</p>
-          <span className="text-[11px] font-bold text-slate-400 mt-2 inline-block">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">Active Trials</span>
+          <p className="text-3xl font-extrabold text-accent-amber">7</p>
+          <span className="text-[11px] font-bold text-muted mt-2 inline-block">
             Expiring in 14 days
           </span>
         </div>
       </div>
 
       {/* Registered School Tenants Table */}
-      <div className="bg-surface rounded-3xl border border-slate-100 shadow-soft overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="font-bold text-slate-800 text-base">Registered School Tenants</h3>
+      <div className="bg-surface rounded-3xl border border-border shadow-card overflow-hidden">
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <h3 className="font-bold text-primary text-base">Registered School Tenants</h3>
           <div className="relative w-64">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search school name or code..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:outline-none"
+              className="w-full pl-9 pr-3 py-1.5 bg-surface-raised border border-border rounded-xl text-xs focus:outline-none"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <thead className="bg-surface-raised/70 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
               <tr>
                 <th className="py-4 px-6">School Tenant</th>
                 <th className="py-4 px-6">Code</th>
@@ -139,35 +139,35 @@ export const SuperAdminPage: React.FC = () => {
                 <th className="py-4 px-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 font-medium text-slate-700">
+            <tbody className="divide-y divide-slate-50 font-medium text-secondary">
               {schools.map((s) => (
-                <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={s.id} className="hover:bg-surface-raised/70 transition-colors">
                   <td className="py-4 px-6 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-2xl bg-brand-sky-light text-brand-sky-dark font-black flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-2xl bg-accent-blue-subtle text-accent-blue font-black flex items-center justify-center">
                       <Building2 className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">{s.name}</p>
-                      <p className="text-[10px] text-slate-400">{s.email}</p>
+                      <p className="font-bold text-primary">{s.name}</p>
+                      <p className="text-[10px] text-muted">{s.email}</p>
                     </div>
                   </td>
-                  <td className="py-4 px-6 font-mono font-bold text-slate-600">{s.code}</td>
-                  <td className="py-4 px-6 font-bold text-slate-900">
+                  <td className="py-4 px-6 font-mono font-bold text-secondary">{s.code}</td>
+                  <td className="py-4 px-6 font-bold text-primary">
                     {s.students.toLocaleString()}
                   </td>
-                  <td className="py-4 px-6 font-bold text-slate-900">{s.teachers}</td>
+                  <td className="py-4 px-6 font-bold text-primary">{s.teachers}</td>
                   <td className="py-4 px-6">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-lilac-light text-brand-lilac-dark">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-accent-violet-subtle text-accent-violet">
                       {s.plan} (₹{(s.mrr * 250).toLocaleString('en-IN')}/mo)
                     </span>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-mint-light text-brand-mint-dark">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-accent-green-subtle text-accent-green">
                       ACTIVE
                     </span>
                   </td>
                   <td className="py-4 px-6 text-right">
-                    <button className="text-slate-400 hover:text-slate-700 p-1">
+                    <button className="text-muted hover:text-secondary p-1">
                       <MoreHorizontal className="w-4 h-4" />
                     </button>
                   </td>

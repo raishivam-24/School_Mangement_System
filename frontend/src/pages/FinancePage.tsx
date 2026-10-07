@@ -202,14 +202,14 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-2xl font-bold text-slate-800">My School Fee &amp; Receipts</h1>
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-sky-light text-brand-sky-dark">
+            <h1 className="text-2xl font-bold text-primary">My School Fee &amp; Receipts</h1>
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
               Academic Session 2026 – 2027
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-secondary mt-1">
             Official fee payment ledger, quarterly installments, and verified tax receipts for{' '}
-            <strong className="text-slate-700">{user?.name || 'Rahul Sharma'}</strong> (Class 10-A).
+            <strong className="text-secondary">{user?.name || 'Rahul Sharma'}</strong> (Class 10-A).
           </p>
         </div>
 
@@ -217,9 +217,9 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
           <button
             type="button"
             onClick={handleDownloadLedger}
-            className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:text-brand-sky-dark hover:border-brand-sky text-xs font-bold transition-all shadow-sm cursor-pointer active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-surface border border-border text-secondary hover:text-accent-blue hover:border-accent-blue text-xs font-bold transition-all shadow-sm cursor-pointer active:scale-95"
           >
-            <Download className="w-4 h-4 text-slate-400" />
+            <Download className="w-4 h-4 text-muted" />
             <span>Download Fee Ledger (PDF)</span>
           </button>
 
@@ -230,7 +230,7 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                 const pending = installments.find((i) => i.balanceAmount > 0);
                 if (pending) setPayingInstallment(pending);
               }}
-              className="flex items-center gap-2 px-5 py-2 rounded-2xl bg-brand-sky text-white text-xs font-bold transition-all shadow-glow-sky hover:bg-brand-sky-dark cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-5 py-2 rounded-2xl bg-accent-blue text-white text-xs font-bold transition-all shadow-glow-sky hover:bg-brand-sky-dark cursor-pointer active:scale-95"
             >
               <CreditCard className="w-4 h-4" />
               <span>Pay Outstanding Dues (₹{totalBalance.toLocaleString('en-IN')})</span>
@@ -240,32 +240,32 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       </div>
 
       {/* Student Identification Banner */}
-      <div className="bg-slate-50/80 rounded-3xl p-4 sm:p-5 border border-slate-200/70 flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div className="bg-surface-raised/80 rounded-3xl p-4 sm:p-5 border border-border/70 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-brand-sky text-white font-extrabold flex items-center justify-center text-sm shadow-soft">
+          <div className="w-11 h-11 rounded-2xl bg-accent-blue text-white font-extrabold flex items-center justify-center text-sm shadow-card">
             {user?.name?.charAt(0) || 'R'}
           </div>
           <div>
-            <h3 className="font-bold text-slate-800 text-sm">{user?.name || 'Rahul Sharma'}</h3>
-            <span className="text-slate-500">
-              Admission No: <strong className="text-slate-700 font-mono">DPA/2024/0912</strong> • Roll No: <strong>18</strong>
+            <h3 className="font-bold text-primary text-sm">{user?.name || 'Rahul Sharma'}</h3>
+            <span className="text-secondary">
+              Admission No: <strong className="text-secondary font-mono">DPA/2024/0912</strong> • Roll No: <strong>18</strong>
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-slate-600 flex-wrap">
+        <div className="flex items-center gap-4 text-secondary flex-wrap">
           <div>
-            <span className="text-[10px] text-slate-400 block font-semibold uppercase">Class &amp; Section</span>
-            <strong className="text-slate-800">Class 10 - Section A</strong>
+            <span className="text-[10px] text-muted block font-semibold uppercase">Class &amp; Section</span>
+            <strong className="text-primary">Class 10 - Section A</strong>
           </div>
-          <div className="border-l border-slate-200 pl-4">
-            <span className="text-[10px] text-slate-400 block font-semibold uppercase">Curriculum</span>
-            <strong className="text-slate-800">CBSE Affiliated</strong>
+          <div className="border-l border-border pl-4">
+            <span className="text-[10px] text-muted block font-semibold uppercase">Curriculum</span>
+            <strong className="text-primary">CBSE Affiliated</strong>
           </div>
-          <div className="border-l border-slate-200 pl-4">
-            <span className="text-[10px] text-slate-400 block font-semibold uppercase">Board Clearance</span>
-            <span className="inline-flex items-center gap-1 font-bold text-brand-mint-dark">
-              <ShieldCheck className="w-3.5 h-3.5 text-brand-mint-dark" />
+          <div className="border-l border-border pl-4">
+            <span className="text-[10px] text-muted block font-semibold uppercase">Board Clearance</span>
+            <span className="inline-flex items-center gap-1 font-bold text-accent-green">
+              <ShieldCheck className="w-3.5 h-3.5 text-accent-green" />
               <span>Admit Card Cleared</span>
             </span>
           </div>
@@ -277,49 +277,49 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {/* Total Annual Fee */}
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-card flex flex-col justify-between">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400">Approved Annual Fee</span>
-              <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+              <span className="text-xs font-semibold text-muted">Approved Annual Fee</span>
+              <div className="w-9 h-9 rounded-xl bg-surface-raised text-secondary flex items-center justify-center">
                 <Receipt className="w-4 h-4" />
               </div>
             </div>
-            <p className="text-3xl font-black text-slate-800 mt-2">
+            <p className="text-3xl font-black text-primary mt-2">
               ₹{totalBilled.toLocaleString('en-IN')}
             </p>
           </div>
-          <span className="text-[11px] font-semibold text-slate-400 mt-3 inline-block">
+          <span className="text-[11px] font-semibold text-muted mt-3 inline-block">
             Class 10 Tuition, Labs &amp; CBSE Exam Charges
           </span>
         </div>
 
         {/* Total Paid So Far */}
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-card flex flex-col justify-between">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400">Total Fees Paid to Date</span>
-              <div className="w-9 h-9 rounded-xl bg-brand-mint-light text-brand-mint-dark flex items-center justify-center font-bold">
+              <span className="text-xs font-semibold text-muted">Total Fees Paid to Date</span>
+              <div className="w-9 h-9 rounded-xl bg-accent-green-subtle text-accent-green flex items-center justify-center font-bold">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-            <p className="text-3xl font-black text-brand-mint-dark mt-2">
+            <p className="text-3xl font-black text-accent-green mt-2">
               ₹{totalPaid.toLocaleString('en-IN')}
             </p>
           </div>
           <div className="flex items-center gap-2 mt-3">
-            <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-bold text-accent-green bg-accent-green-subtle px-2.5 py-0.5 rounded-full">
               {percentCleared}% Cleared
             </span>
-            <span className="text-[11px] text-slate-400">2 Verified Receipts</span>
+            <span className="text-[11px] text-muted">2 Verified Receipts</span>
           </div>
         </div>
 
         {/* Outstanding Pending Balance */}
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-card flex flex-col justify-between">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400">Current Balance Due</span>
+              <span className="text-xs font-semibold text-muted">Current Balance Due</span>
               <div
                 className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${
                   totalBalance > 0
@@ -344,11 +344,11 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                 Due by 15 Oct 2026
               </span>
             ) : (
-              <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold text-accent-green bg-accent-green-subtle px-2.5 py-0.5 rounded-full">
                 All Dues Cleared!
               </span>
             )}
-            <span className="text-[11px] text-slate-400">No Late Penalty</span>
+            <span className="text-[11px] text-muted">No Late Penalty</span>
           </div>
         </div>
       </div>
@@ -356,14 +356,14 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       {/* ========================================================================= */}
       {/* 3. TABS: INSTALLMENTS, FEE STRUCTURE & BANK INFO                          */}
       {/* ========================================================================= */}
-      <div className="bg-surface rounded-2xl p-1.5 border border-slate-100 shadow-card flex items-center gap-2 overflow-x-auto">
+      <div className="bg-surface rounded-2xl p-1.5 border border-border shadow-card flex items-center gap-2 overflow-x-auto">
         <button
           type="button"
           onClick={() => setActiveTab('INSTALLMENTS')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'INSTALLMENTS'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary hover:bg-surface-raised'
           }`}
         >
           <Receipt className="w-4 h-4" />
@@ -375,8 +375,8 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
           onClick={() => setActiveTab('STRUCTURE')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'STRUCTURE'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary hover:bg-surface-raised'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -388,8 +388,8 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
           onClick={() => setActiveTab('BANK_INFO')}
           className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'BANK_INFO'
-              ? 'bg-brand-sky text-white shadow-soft'
-              : 'text-slate-600 hover:text-slate-800 hover:bg-slate-50'
+              ? 'bg-accent-blue text-white shadow-card'
+              : 'text-secondary hover:text-primary hover:bg-surface-raised'
           }`}
         >
           <Landmark className="w-4 h-4" />
@@ -404,18 +404,18 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       {/* TAB A: INSTALLMENTS & INVOICES */}
       {activeTab === 'INSTALLMENTS' && (
         <div className="space-y-4">
-          <div className="bg-surface rounded-3xl border border-slate-100 shadow-card overflow-hidden">
-            <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-surface rounded-3xl border border-border shadow-card overflow-hidden">
+            <div className="p-5 sm:p-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-bold text-slate-800 text-sm sm:text-base">
+                <h3 className="font-bold text-primary text-sm sm:text-base">
                   My Term Installments &amp; Fee Receipts
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-muted mt-0.5">
                   Click &ldquo;View Receipt&rdquo; to review and print authorized payment slips.
                 </p>
               </div>
 
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="text-xs font-semibold text-muted">
                 Quarterly Installment Schedule (Apr 2026 – Mar 2027)
               </span>
             </div>
@@ -427,16 +427,16 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                 return (
                   <div
                     key={inst.id}
-                    className="p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors"
+                    className="p-5 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:bg-surface-raised/50 transition-colors"
                   >
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                        <span className="font-mono text-xs font-bold text-secondary bg-surface-raised px-2.5 py-0.5 rounded-full">
                           {inst.invoiceNo}
                         </span>
-                        <span className="text-xs text-slate-400">• {inst.quarter}</span>
+                        <span className="text-xs text-muted">• {inst.quarter}</span>
                         {isPaid ? (
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-mint-light text-brand-mint-dark flex items-center gap-1">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent-green-subtle text-accent-green flex items-center gap-1">
                             <Check className="w-3 h-3" /> PAID
                           </span>
                         ) : (
@@ -446,21 +446,21 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                         )}
                       </div>
 
-                      <h4 className="text-base font-bold text-slate-800">{inst.installmentName}</h4>
+                      <h4 className="text-base font-bold text-primary">{inst.installmentName}</h4>
 
                       {/* Payment info snippet */}
-                      <div className="text-xs text-slate-500 flex items-center gap-3 flex-wrap">
+                      <div className="text-xs text-secondary flex items-center gap-3 flex-wrap">
                         {isPaid ? (
                           <>
                             <span>
-                              Paid on: <strong className="text-slate-700">{inst.paidOn}</strong>
+                              Paid on: <strong className="text-secondary">{inst.paidOn}</strong>
                             </span>
                             <span>•</span>
                             <span>
                               Mode: <strong>{inst.paymentMode}</strong>
                             </span>
                             <span>•</span>
-                            <span className="font-mono text-slate-600">{inst.transactionRef}</span>
+                            <span className="font-mono text-secondary">{inst.transactionRef}</span>
                           </>
                         ) : (
                           <span className="text-amber-800 font-semibold flex items-center gap-1">
@@ -474,12 +474,12 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                     {/* Amount & Actions */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:self-center">
                       <div className="text-left sm:text-right">
-                        <span className="text-xs text-slate-400 block">Installment Amount:</span>
-                        <span className="text-xl font-extrabold text-slate-900 block">
+                        <span className="text-xs text-muted block">Installment Amount:</span>
+                        <span className="text-xl font-extrabold text-primary block">
                           ₹{inst.totalAmount.toLocaleString('en-IN')}
                         </span>
                         {isPaid ? (
-                          <span className="text-[11px] font-bold text-brand-mint-dark">
+                          <span className="text-[11px] font-bold text-accent-green">
                             Receipt: {inst.receiptNo}
                           </span>
                         ) : (
@@ -495,9 +495,9 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                             <button
                               type="button"
                               onClick={() => setSelectedReceipt(inst)}
-                              className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-brand-sky-dark hover:border-brand-sky text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5 active:scale-95"
+                              className="px-3.5 py-2 rounded-xl bg-surface border border-border text-secondary hover:text-accent-blue hover:border-accent-blue text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5 active:scale-95"
                             >
-                              <Eye className="w-3.5 h-3.5 text-slate-400" />
+                              <Eye className="w-3.5 h-3.5 text-muted" />
                               <span>View Receipt</span>
                             </button>
                             <button
@@ -506,17 +506,17 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                                 confetti({ particleCount: 30, spread: 50 });
                                 alert(`Downloading Official PDF Receipt for ${inst.invoiceNo}...`);
                               }}
-                              className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                              className="px-3 py-2 rounded-xl bg-surface-raised hover:bg-slate-200 text-secondary text-xs font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95"
                               title="Download PDF"
                             >
-                              <Download className="w-3.5 h-3.5 text-slate-600" />
+                              <Download className="w-3.5 h-3.5 text-secondary" />
                             </button>
                           </>
                         ) : (
                           <button
                             type="button"
                             onClick={() => setPayingInstallment(inst)}
-                            className="px-5 py-2.5 rounded-2xl bg-brand-sky text-white text-xs font-bold shadow-glow-sky hover:bg-brand-sky-dark transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap"
+                            className="px-5 py-2.5 rounded-2xl bg-accent-blue text-white text-xs font-bold shadow-glow-sky hover:bg-brand-sky-dark transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 whitespace-nowrap"
                           >
                             <CreditCard className="w-3.5 h-3.5" />
                             <span>Pay ₹{inst.balanceAmount.toLocaleString('en-IN')} Now</span>
@@ -535,62 +535,62 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       {/* TAB B: OFFICIAL CBSE FEE BREAKDOWN */}
       {activeTab === 'STRUCTURE' && (
         <div className="space-y-6">
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card space-y-6 max-w-4xl">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card space-y-6 max-w-4xl">
+            <div className="flex items-center justify-between pb-4 border-b border-border">
               <div>
-                <h3 className="text-lg font-bold text-slate-800">Class 10 Approved Annual Fee Schedule</h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <h3 className="text-lg font-bold text-primary">Class 10 Approved Annual Fee Schedule</h3>
+                <p className="text-xs text-secondary mt-0.5">
                   Prescribed and approved by Delhi Public Academy Management Committee as per State School Education Act.
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface-raised text-secondary">
                 Class 10 (2026-27)
               </span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-100 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <thead className="bg-surface-raised border-b border-border text-[11px] font-bold text-secondary uppercase tracking-wider">
                   <tr>
                     <th className="py-3 px-4">Fee Component</th>
                     <th className="py-3 px-4">Description / Purpose</th>
                     <th className="py-3 px-4 text-right">Annual Amount</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                <tbody className="divide-y divide-slate-100 font-medium text-secondary">
                   <tr>
-                    <td className="py-3 px-4 font-bold text-slate-900">Tuition Fee (Annual)</td>
-                    <td className="py-3 px-4 text-slate-500">Regular academic instruction across 6 CBSE subjects</td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-900">₹24,000</td>
+                    <td className="py-3 px-4 font-bold text-primary">Tuition Fee (Annual)</td>
+                    <td className="py-3 px-4 text-secondary">Regular academic instruction across 6 CBSE subjects</td>
+                    <td className="py-3 px-4 text-right font-bold text-primary">₹24,000</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-slate-900">Science &amp; IT Lab Consumables</td>
-                    <td className="py-3 px-4 text-slate-500">Physics, Chemistry, Biology and Computer lab practical sessions</td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-900">₹8,000</td>
+                    <td className="py-3 px-4 font-bold text-primary">Science &amp; IT Lab Consumables</td>
+                    <td className="py-3 px-4 text-secondary">Physics, Chemistry, Biology and Computer lab practical sessions</td>
+                    <td className="py-3 px-4 text-right font-bold text-primary">₹8,000</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-slate-900">Smart Class &amp; Digital LMS</td>
-                    <td className="py-3 px-4 text-slate-500">Interactive digital boards, online quizzes, study materials</td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-900">₹4,000</td>
+                    <td className="py-3 px-4 font-bold text-primary">Smart Class &amp; Digital LMS</td>
+                    <td className="py-3 px-4 text-secondary">Interactive digital boards, online quizzes, study materials</td>
+                    <td className="py-3 px-4 text-right font-bold text-primary">₹4,000</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-slate-900">CBSE Board Exam &amp; Registration</td>
-                    <td className="py-3 px-4 text-slate-500">Official CBSE Class 10 roll number registration &amp; pre-board testing</td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-900">₹4,000</td>
+                    <td className="py-3 px-4 font-bold text-primary">CBSE Board Exam &amp; Registration</td>
+                    <td className="py-3 px-4 text-secondary">Official CBSE Class 10 roll number registration &amp; pre-board testing</td>
+                    <td className="py-3 px-4 text-right font-bold text-primary">₹4,000</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-slate-900">Library, Sports &amp; Co-curricular</td>
-                    <td className="py-3 px-4 text-slate-500">Access to reference section, sports equipment, intra-school events</td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-900">₹3,000</td>
+                    <td className="py-3 px-4 font-bold text-primary">Library, Sports &amp; Co-curricular</td>
+                    <td className="py-3 px-4 text-secondary">Access to reference section, sports equipment, intra-school events</td>
+                    <td className="py-3 px-4 text-right font-bold text-primary">₹3,000</td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 font-bold text-slate-900">School Development Fund</td>
-                    <td className="py-3 px-4 text-slate-500">Campus infrastructure, sanitization &amp; power backup upkeep</td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-900">₹2,000</td>
+                    <td className="py-3 px-4 font-bold text-primary">School Development Fund</td>
+                    <td className="py-3 px-4 text-secondary">Campus infrastructure, sanitization &amp; power backup upkeep</td>
+                    <td className="py-3 px-4 text-right font-bold text-primary">₹2,000</td>
                   </tr>
-                  <tr className="bg-slate-50/70 font-bold text-slate-900">
+                  <tr className="bg-surface-raised/70 font-bold text-primary">
                     <td className="py-4 px-4 text-sm" colSpan={2}>Total Prescribed Annual Fee</td>
-                    <td className="py-4 px-4 text-right text-base text-brand-sky-dark font-black">₹45,000</td>
+                    <td className="py-4 px-4 text-right text-base text-accent-blue font-black">₹45,000</td>
                   </tr>
                 </tbody>
               </table>
@@ -610,38 +610,38 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
       {/* TAB C: SCHOOL BANK ACCOUNT INFO FOR NEFT / RTGS */}
       {activeTab === 'BANK_INFO' && (
         <div className="space-y-6">
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-card space-y-6 max-w-3xl">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card space-y-6 max-w-3xl">
             <div>
-              <h3 className="text-lg font-bold text-slate-800">Direct Bank Transfer &amp; Accounts Office Details</h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <h3 className="text-lg font-bold text-primary">Direct Bank Transfer &amp; Accounts Office Details</h3>
+              <p className="text-xs text-muted mt-0.5">
                 For parents wishing to transfer fees via NEFT / RTGS / IMPS or deposit demand drafts.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-slate-400 font-semibold block">Beneficiary Name</span>
-                <p className="font-bold text-slate-900">Delhi Public Academy Fee Account</p>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border space-y-1">
+                <span className="text-muted font-semibold block">Beneficiary Name</span>
+                <p className="font-bold text-primary">Delhi Public Academy Fee Account</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-slate-400 font-semibold block">Bank &amp; Branch</span>
-                <p className="font-bold text-slate-900">State Bank of India (Main Institutional Branch)</p>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border space-y-1">
+                <span className="text-muted font-semibold block">Bank &amp; Branch</span>
+                <p className="font-bold text-primary">State Bank of India (Main Institutional Branch)</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-slate-400 font-semibold block">Bank Account Number</span>
-                <p className="font-mono font-bold text-slate-900 text-sm">0349104000192842</p>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border space-y-1">
+                <span className="text-muted font-semibold block">Bank Account Number</span>
+                <p className="font-mono font-bold text-primary text-sm">0349104000192842</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                <span className="text-slate-400 font-semibold block">IFSC Code</span>
-                <p className="font-mono font-bold text-slate-900 text-sm">SBIN0001234</p>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border space-y-1">
+                <span className="text-muted font-semibold block">IFSC Code</span>
+                <p className="font-mono font-bold text-primary text-sm">SBIN0001234</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 sm:col-span-2 space-y-1">
-                <span className="text-slate-400 font-semibold block">Official School UPI VPA</span>
-                <p className="font-mono font-extrabold text-brand-sky-dark text-sm">dpa.fees@sbi</p>
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border sm:col-span-2 space-y-1">
+                <span className="text-muted font-semibold block">Official School UPI VPA</span>
+                <p className="font-mono font-extrabold text-accent-blue text-sm">dpa.fees@sbi</p>
               </div>
             </div>
 
@@ -653,7 +653,7 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
               <p className="text-[11px] text-amber-800 leading-relaxed">
                 Please mention student Admission Number (<strong>DPA/2024/0912</strong>) and Student Name (
                 <strong>{user?.name || 'Rahul Sharma'}</strong>) in the payment remarks/narration. Send the bank UTR
-                reference slip to <strong className="text-slate-800">accounts@dpa.edu</strong> for instant receipt issuance.
+                reference slip to <strong className="text-primary">accounts@dpa.edu</strong> for instant receipt issuance.
               </p>
             </div>
           </div>
@@ -670,25 +670,25 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 space-y-5"
+              className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-border space-y-5"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-brand-sky-light text-brand-sky-dark flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-2xl bg-accent-blue-subtle text-accent-blue flex items-center justify-center font-bold">
                     <CreditCard className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-muted uppercase tracking-wider">
                       Online Fee Payment Portal
                     </span>
-                    <h3 className="text-base font-bold text-slate-800">{payingInstallment.installmentName}</h3>
+                    <h3 className="text-base font-bold text-primary">{payingInstallment.installmentName}</h3>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setPayingInstallment(null)}
-                  className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 cursor-pointer"
+                  className="p-2 rounded-xl hover:bg-surface-raised text-muted cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -696,29 +696,29 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
 
               {paymentSuccess ? (
                 <div className="py-8 text-center space-y-2">
-                  <div className="w-14 h-14 rounded-full bg-brand-mint-light text-brand-mint-dark flex items-center justify-center mx-auto">
+                  <div className="w-14 h-14 rounded-full bg-accent-green-subtle text-accent-green flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h4 className="text-base font-bold text-slate-800">Fee Payment Successful!</h4>
-                  <p className="text-xs text-slate-500">
+                  <h4 className="text-base font-bold text-primary">Fee Payment Successful!</h4>
+                  <p className="text-xs text-secondary">
                     Official receipt generated and mailed to <strong>{user?.email || 'parent.rahul@gmail.com'}</strong>.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handlePayFee} className="space-y-4 text-xs">
                   {/* Bill Summary */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2">
-                    <div className="flex justify-between text-slate-500">
+                  <div className="p-4 rounded-2xl bg-surface-raised border border-border/70 space-y-2">
+                    <div className="flex justify-between text-secondary">
                       <span>Student:</span>
-                      <strong className="text-slate-800">{user?.name || 'Rahul Sharma'} (Class 10-A)</strong>
+                      <strong className="text-primary">{user?.name || 'Rahul Sharma'} (Class 10-A)</strong>
                     </div>
-                    <div className="flex justify-between text-slate-500">
+                    <div className="flex justify-between text-secondary">
                       <span>Invoice Number:</span>
-                      <strong className="text-slate-800 font-mono">{payingInstallment.invoiceNo}</strong>
+                      <strong className="text-primary font-mono">{payingInstallment.invoiceNo}</strong>
                     </div>
-                    <div className="flex justify-between pt-2 border-t border-slate-200 text-slate-800 text-sm font-bold">
+                    <div className="flex justify-between pt-2 border-t border-border text-primary text-sm font-bold">
                       <span>Total Payable:</span>
-                      <span className="text-lg font-black text-brand-sky-dark">
+                      <span className="text-lg font-black text-accent-blue">
                         ₹{payingInstallment.balanceAmount.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -726,18 +726,18 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
 
                   {/* Payment Method Selector */}
                   <div className="space-y-2">
-                    <label className="font-bold text-slate-700 block">Select Payment Mode</label>
+                    <label className="font-bold text-secondary block">Select Payment Mode</label>
                     <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
                         onClick={() => setPaymentMethod('UPI')}
                         className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
                           paymentMethod === 'UPI'
-                            ? 'border-brand-sky bg-sky-50 text-brand-sky-dark font-bold'
-                            : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                            ? 'border-brand-sky bg-sky-50 text-accent-blue font-bold'
+                            : 'border-border hover:bg-surface-raised text-secondary'
                         }`}
                       >
-                        <Smartphone className="w-4 h-4 mx-auto mb-1 text-brand-sky" />
+                        <Smartphone className="w-4 h-4 mx-auto mb-1 text-accent-blue" />
                         <span className="text-[11px] block">UPI / QR</span>
                       </button>
 
@@ -746,11 +746,11 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                         onClick={() => setPaymentMethod('CARD')}
                         className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
                           paymentMethod === 'CARD'
-                            ? 'border-brand-sky bg-sky-50 text-brand-sky-dark font-bold'
-                            : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                            ? 'border-brand-sky bg-sky-50 text-accent-blue font-bold'
+                            : 'border-border hover:bg-surface-raised text-secondary'
                         }`}
                       >
-                        <CreditCard className="w-4 h-4 mx-auto mb-1 text-brand-sky" />
+                        <CreditCard className="w-4 h-4 mx-auto mb-1 text-accent-blue" />
                         <span className="text-[11px] block">Debit / Credit</span>
                       </button>
 
@@ -759,11 +759,11 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                         onClick={() => setPaymentMethod('NETBANKING')}
                         className={`p-3 rounded-2xl border text-center transition-all cursor-pointer ${
                           paymentMethod === 'NETBANKING'
-                            ? 'border-brand-sky bg-sky-50 text-brand-sky-dark font-bold'
-                            : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                            ? 'border-brand-sky bg-sky-50 text-accent-blue font-bold'
+                            : 'border-border hover:bg-surface-raised text-secondary'
                         }`}
                       >
-                        <Landmark className="w-4 h-4 mx-auto mb-1 text-brand-sky" />
+                        <Landmark className="w-4 h-4 mx-auto mb-1 text-accent-blue" />
                         <span className="text-[11px] block">NetBanking</span>
                       </button>
                     </div>
@@ -772,15 +772,15 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                   {/* Payment Input based on Mode */}
                   {paymentMethod === 'UPI' && (
                     <div className="space-y-1.5">
-                      <label className="font-bold text-slate-700 block">Enter UPI Virtual Payment Address (VPA)</label>
+                      <label className="font-bold text-secondary block">Enter UPI Virtual Payment Address (VPA)</label>
                       <input
                         type="text"
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
                         placeholder="e.g. parent@okhdfcbank or 9876543210@paytm"
-                        className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+                        className="w-full p-2.5 rounded-xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
                       />
-                      <span className="text-[10px] text-slate-400 block">
+                      <span className="text-[10px] text-muted block">
                         Supported: Google Pay, PhonePe, Paytm, BHIM, Amazon Pay
                       </span>
                     </div>
@@ -792,20 +792,20 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                         type="text"
                         placeholder="Card Number (4532 •••• •••• 8912)"
                         defaultValue="4532 9182 7364 8912"
-                        className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                        className="w-full p-2.5 rounded-xl bg-surface-raised border border-border text-xs focus:outline-none"
                       />
                       <div className="grid grid-cols-2 gap-2">
                         <input
                           type="text"
                           placeholder="MM/YY"
                           defaultValue="08/29"
-                          className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                          className="p-2.5 rounded-xl bg-surface-raised border border-border text-xs focus:outline-none"
                         />
                         <input
                           type="password"
                           placeholder="CVV"
                           defaultValue="782"
-                          className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs focus:outline-none"
+                          className="p-2.5 rounded-xl bg-surface-raised border border-border text-xs focus:outline-none"
                         />
                       </div>
                     </div>
@@ -813,8 +813,8 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
 
                   {paymentMethod === 'NETBANKING' && (
                     <div className="space-y-1.5">
-                      <label className="font-bold text-slate-700 block">Select Banking Institution</label>
-                      <select className="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+                      <label className="font-bold text-secondary block">Select Banking Institution</label>
+                      <select className="w-full p-2.5 rounded-xl bg-surface-raised border border-border text-xs font-semibold text-secondary">
                         <option>State Bank of India (SBI)</option>
                         <option>HDFC Bank</option>
                         <option>ICICI Bank</option>
@@ -824,18 +824,18 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                     </div>
                   )}
 
-                  <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-100">
+                  <div className="pt-2 flex items-center justify-end gap-3 border-t border-border">
                     <button
                       type="button"
                       onClick={() => setPayingInstallment(null)}
-                      className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 cursor-pointer"
+                      className="px-5 py-2.5 rounded-full border border-border text-secondary font-bold text-xs hover:bg-surface-raised cursor-pointer"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isProcessingPayment}
-                      className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-bold text-xs shadow-glow-sky hover:bg-brand-sky-dark transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                      className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-bold text-xs shadow-glow-sky hover:bg-brand-sky-dark transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
                     >
                       {isProcessingPayment ? (
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -864,20 +864,20 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-slate-200 space-y-6 text-slate-800"
+              className="bg-surface rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-border space-y-6 text-primary"
             >
               {/* Receipt Header */}
-              <div className="flex items-start justify-between pb-4 border-b-2 border-slate-200">
+              <div className="flex items-start justify-between pb-4 border-b-2 border-border">
                 <div>
                   <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 rounded-xl bg-brand-sky text-white font-extrabold flex items-center justify-center text-sm">
+                    <div className="w-9 h-9 rounded-xl bg-accent-blue text-white font-extrabold flex items-center justify-center text-sm">
                       DPA
                     </div>
                     <div>
-                      <h2 className="text-base font-extrabold tracking-tight text-slate-900">
+                      <h2 className="text-base font-extrabold tracking-tight text-primary">
                         DELHI PUBLIC ACADEMY
                       </h2>
-                      <span className="text-[10px] text-slate-500 block">
+                      <span className="text-[10px] text-secondary block">
                         CBSE Affiliation No: 2130842 • School Code: 08421
                       </span>
                     </div>
@@ -885,40 +885,40 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] font-extrabold text-brand-mint-dark bg-brand-mint-light px-2.5 py-0.5 rounded-full uppercase">
+                  <span className="text-[10px] font-extrabold text-accent-green bg-accent-green-subtle px-2.5 py-0.5 rounded-full uppercase">
                     Official Fee Receipt
                   </span>
-                  <p className="font-mono text-xs font-bold text-slate-700 mt-1">{selectedReceipt.receiptNo}</p>
-                  <span className="text-[10px] text-slate-400">Date: {selectedReceipt.paidOn}</span>
+                  <p className="font-mono text-xs font-bold text-secondary mt-1">{selectedReceipt.receiptNo}</p>
+                  <span className="text-[10px] text-muted">Date: {selectedReceipt.paidOn}</span>
                 </div>
               </div>
 
               {/* Student Metadata Table */}
-              <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <div className="grid grid-cols-2 gap-3 text-xs bg-surface-raised p-4 rounded-2xl border border-border">
                 <div>
-                  <span className="text-[10px] text-slate-400 block font-semibold">Student Name:</span>
-                  <strong className="text-slate-800 text-sm">{user?.name || 'Rahul Sharma'}</strong>
+                  <span className="text-[10px] text-muted block font-semibold">Student Name:</span>
+                  <strong className="text-primary text-sm">{user?.name || 'Rahul Sharma'}</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block font-semibold">Admission / Scholar No:</span>
-                  <strong className="text-slate-800 font-mono">DPA/2024/0912</strong>
+                  <span className="text-[10px] text-muted block font-semibold">Admission / Scholar No:</span>
+                  <strong className="text-primary font-mono">DPA/2024/0912</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block font-semibold">Class &amp; Section:</span>
-                  <strong className="text-slate-800">Class 10 - Section A (Roll: 18)</strong>
+                  <span className="text-[10px] text-muted block font-semibold">Class &amp; Section:</span>
+                  <strong className="text-primary">Class 10 - Section A (Roll: 18)</strong>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 block font-semibold">Payment Method &amp; Ref:</span>
-                  <span className="text-slate-700 text-[11px] font-mono block truncate">
+                  <span className="text-[10px] text-muted block font-semibold">Payment Method &amp; Ref:</span>
+                  <span className="text-secondary text-[11px] font-mono block truncate">
                     {selectedReceipt.paymentMode} ({selectedReceipt.transactionRef})
                   </span>
                 </div>
               </div>
 
               {/* Itemized Receipt Table */}
-              <div className="border border-slate-200 rounded-2xl overflow-hidden">
+              <div className="border border-border rounded-2xl overflow-hidden">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-100 text-[10px] font-bold text-slate-500 uppercase">
+                  <thead className="bg-surface-raised text-[10px] font-bold text-secondary uppercase">
                     <tr>
                       <th className="py-2.5 px-4">Fee Head Particulars</th>
                       <th className="py-2.5 px-4 text-right">Amount (₹)</th>
@@ -927,15 +927,15 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {selectedReceipt.breakdown.map((item, idx) => (
                       <tr key={idx}>
-                        <td className="py-2 px-4 text-slate-700">{item.item}</td>
-                        <td className="py-2 px-4 text-right font-mono text-slate-900">
+                        <td className="py-2 px-4 text-secondary">{item.item}</td>
+                        <td className="py-2 px-4 text-right font-mono text-primary">
                           ₹{item.amount.toLocaleString('en-IN')}
                         </td>
                       </tr>
                     ))}
-                    <tr className="bg-slate-50 font-bold">
-                      <td className="py-3 px-4 text-slate-900">Total Received with Thanks</td>
-                      <td className="py-3 px-4 text-right text-brand-mint-dark font-black text-sm">
+                    <tr className="bg-surface-raised font-bold">
+                      <td className="py-3 px-4 text-primary">Total Received with Thanks</td>
+                      <td className="py-3 px-4 text-right text-accent-green font-black text-sm">
                         ₹{selectedReceipt.paidAmount.toLocaleString('en-IN')}
                       </td>
                     </tr>
@@ -945,23 +945,23 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
 
               {/* Stamp & Verification */}
               <div className="flex items-center justify-between pt-2 text-xs">
-                <div className="flex items-center gap-2 text-slate-500 text-[11px]">
-                  <ShieldCheck className="w-4 h-4 text-brand-mint-dark" />
+                <div className="flex items-center gap-2 text-secondary text-[11px]">
+                  <ShieldCheck className="w-4 h-4 text-accent-green" />
                   <span>Computer-generated verified tax receipt (No physical signature required)</span>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] font-mono text-slate-400 block">Delhi Public Academy</span>
-                  <strong className="text-xs text-slate-700">Accounts Department</strong>
+                  <span className="text-[10px] font-mono text-muted block">Delhi Public Academy</span>
+                  <strong className="text-xs text-secondary">Accounts Department</strong>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="pt-2 flex items-center justify-end gap-3 border-t border-slate-100">
+              <div className="pt-2 flex items-center justify-end gap-3 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setSelectedReceipt(null)}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 cursor-pointer"
+                  className="px-5 py-2.5 rounded-full border border-border text-secondary font-bold text-xs hover:bg-surface-raised cursor-pointer"
                 >
                   Close
                 </button>
@@ -972,7 +972,7 @@ const StudentPersonalFeesView: React.FC<{ user: AuthUser | null }> = ({ user }) 
                     alert(`Printing / Downloading PDF copy of receipt ${selectedReceipt.receiptNo}...`);
                     setSelectedReceipt(null);
                   }}
-                  className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-bold text-xs shadow-glow-sky hover:bg-brand-sky-dark transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-bold text-xs shadow-glow-sky hover:bg-brand-sky-dark transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
                   <Printer className="w-3.5 h-3.5" />
                   <span>Print / Save PDF</span>
@@ -1056,8 +1056,8 @@ const SchoolAdminFinanceView: React.FC<{ user: AuthUser | null }> = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black text-slate-900">Fee &amp; Finance Management</h2>
-          <p className="text-xs text-slate-400 font-medium">
+          <h2 className="text-2xl font-black text-primary">Fee &amp; Finance Management</h2>
+          <p className="text-xs text-muted font-medium">
             Manage tuition structures, bulk invoice creation, and payment receipts across all classes.
           </p>
         </div>
@@ -1075,50 +1075,50 @@ const SchoolAdminFinanceView: React.FC<{ user: AuthUser | null }> = () => {
 
       {/* 3 Summary Revenue Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">Total Billed Fees</span>
-          <p className="text-3xl font-extrabold text-slate-800">₹18,40,000</p>
-          <span className="text-[11px] font-bold text-brand-sky-dark mt-2 inline-block">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">Total Billed Fees</span>
+          <p className="text-3xl font-extrabold text-primary">₹18,40,000</p>
+          <span className="text-[11px] font-bold text-accent-blue mt-2 inline-block">
             Across 148 Active Students
           </span>
         </div>
 
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">Total Collected</span>
-          <p className="text-3xl font-extrabold text-brand-mint-dark">₹14,20,000</p>
-          <span className="text-[11px] font-bold text-brand-mint-dark bg-brand-mint-light px-2 py-0.5 rounded-full mt-2 inline-block">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">Total Collected</span>
+          <p className="text-3xl font-extrabold text-accent-green">₹14,20,000</p>
+          <span className="text-[11px] font-bold text-accent-green bg-accent-green-subtle px-2 py-0.5 rounded-full mt-2 inline-block">
             77.2% Collection Rate
           </span>
         </div>
 
-        <div className="bg-surface p-6 rounded-3xl border border-slate-100 shadow-soft">
-          <span className="text-xs font-semibold text-slate-400 block mb-1">Outstanding Pending</span>
-          <p className="text-3xl font-extrabold text-brand-yellow-dark">₹4,20,000</p>
-          <span className="text-[11px] font-bold text-slate-400 mt-2 inline-block">
+        <div className="bg-surface p-6 rounded-3xl border border-border shadow-card">
+          <span className="text-xs font-semibold text-muted block mb-1">Outstanding Pending</span>
+          <p className="text-3xl font-extrabold text-accent-amber">₹4,20,000</p>
+          <span className="text-[11px] font-bold text-muted mt-2 inline-block">
             Due by end of term
           </span>
         </div>
       </div>
 
       {/* Invoices Table */}
-      <div className="bg-surface rounded-3xl border border-slate-100 shadow-soft overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="font-bold text-slate-800 text-base">Student Fee Invoices</h3>
+      <div className="bg-surface rounded-3xl border border-border shadow-card overflow-hidden">
+        <div className="p-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h3 className="font-bold text-primary text-base">Student Fee Invoices</h3>
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search invoice or student..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:outline-none"
+              className="w-full pl-9 pr-3 py-1.5 bg-surface-raised border border-border rounded-xl text-xs focus:outline-none"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <thead className="bg-surface-raised/70 border-b border-border text-[11px] font-bold text-muted uppercase tracking-wider">
               <tr>
                 <th className="py-4 px-6">Invoice #</th>
                 <th className="py-4 px-6">Student</th>
@@ -1130,28 +1130,28 @@ const SchoolAdminFinanceView: React.FC<{ user: AuthUser | null }> = () => {
                 <th className="py-4 px-6 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 font-medium text-slate-700">
+            <tbody className="divide-y divide-slate-50 font-medium text-secondary">
               {filteredInvoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-4 px-6 font-mono font-bold text-slate-600">{inv.invoiceNo}</td>
-                  <td className="py-4 px-6 font-bold text-slate-900">{inv.studentName}</td>
+                <tr key={inv.id} className="hover:bg-surface-raised/70 transition-colors">
+                  <td className="py-4 px-6 font-mono font-bold text-secondary">{inv.invoiceNo}</td>
+                  <td className="py-4 px-6 font-bold text-primary">{inv.studentName}</td>
                   <td className="py-4 px-6">{inv.class}</td>
-                  <td className="py-4 px-6 font-bold text-slate-900">₹{inv.total.toLocaleString('en-IN')}</td>
-                  <td className="py-4 px-6 text-brand-mint-dark font-bold">₹{inv.paid.toLocaleString('en-IN')}</td>
-                  <td className="py-4 px-6 text-brand-yellow-dark font-bold">₹{inv.balance.toLocaleString('en-IN')}</td>
+                  <td className="py-4 px-6 font-bold text-primary">₹{inv.total.toLocaleString('en-IN')}</td>
+                  <td className="py-4 px-6 text-accent-green font-bold">₹{inv.paid.toLocaleString('en-IN')}</td>
+                  <td className="py-4 px-6 text-accent-amber font-bold">₹{inv.balance.toLocaleString('en-IN')}</td>
                   <td className="py-4 px-6">
                     {inv.status === 'PAID' && (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-mint-light text-brand-mint-dark">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-accent-green-subtle text-accent-green">
                         PAID
                       </span>
                     )}
                     {inv.status === 'PARTIAL' && (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-yellow-light text-brand-yellow-dark">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-accent-amber-subtle text-accent-amber">
                         PARTIAL
                       </span>
                     )}
                     {inv.status === 'UNPAID' && (
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-rose-light text-brand-rose-dark">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-accent-rose-subtle text-accent-rose">
                         UNPAID
                       </span>
                     )}
@@ -1160,7 +1160,7 @@ const SchoolAdminFinanceView: React.FC<{ user: AuthUser | null }> = () => {
                     <button
                       type="button"
                       onClick={() => alert(`Opening manual fee collection counter for ${inv.studentName}...`)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-sky-light hover:text-brand-sky-dark font-bold text-[11px] transition-all cursor-pointer"
+                      className="px-3 py-1.5 rounded-xl bg-surface-raised hover:bg-accent-blue-subtle hover:text-accent-blue font-bold text-[11px] transition-all cursor-pointer"
                     >
                       Collect Fee
                     </button>

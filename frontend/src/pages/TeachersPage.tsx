@@ -254,20 +254,20 @@ export const TeachersPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
             <span>Faculty &amp; Teaching Staff</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-sky-light text-brand-sky-dark">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
               {teachers.length} Active Staff
             </span>
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-secondary">
             Manage teaching staff profiles, subject allocations, and credentials.
           </p>
         </div>
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-sky text-white font-semibold text-sm shadow-soft hover:bg-brand-sky-dark transition-all self-start sm:self-auto"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-sm shadow-card hover:bg-brand-sky-dark transition-all self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add Faculty Member</span>
@@ -275,15 +275,15 @@ export const TeachersPage: React.FC = () => {
       </div>
 
       {/* Filters & Search */}
-      <div className="bg-surface p-4 rounded-3xl border border-slate-100 shadow-card flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-surface p-4 rounded-3xl border border-border shadow-card flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-muted absolute left-4 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search by name, employee ID, subject..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-full text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
+            className="w-full pl-11 pr-4 py-2 bg-surface-raised border border-border rounded-full text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
           />
         </div>
 
@@ -295,8 +295,8 @@ export const TeachersPage: React.FC = () => {
               onClick={() => setSelectedDept(dept)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                 selectedDept === dept
-                  ? 'bg-brand-lilac text-brand-lilac-dark shadow-sm'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                  ? 'bg-accent-violet text-accent-violet shadow-sm'
+                  : 'bg-surface-raised text-secondary hover:bg-surface-raised'
               }`}
             >
               {dept}
@@ -313,7 +313,7 @@ export const TeachersPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className="bg-surface rounded-3xl p-6 border border-slate-100 shadow-card hover:shadow-soft transition-all relative flex flex-col justify-between"
+            className="bg-surface rounded-3xl p-6 border border-border shadow-card hover:shadow-card transition-all relative flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start justify-between mb-4">
@@ -324,17 +324,17 @@ export const TeachersPage: React.FC = () => {
                     className="w-14 h-14 rounded-2xl object-cover border-2 border-brand-sky-light shadow-sm"
                   />
                   <div>
-                    <h3 className="text-base font-bold text-slate-800">{teacher.name}</h3>
-                    <p className="text-xs text-brand-sky-dark font-medium">{teacher.designation}</p>
+                    <h3 className="text-base font-bold text-primary">{teacher.name}</h3>
+                    <p className="text-xs text-accent-blue font-medium">{teacher.designation}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="font-mono text-[10px] text-slate-400 font-bold bg-slate-100 px-2 py-0.5 rounded-md">
+                      <span className="font-mono text-[10px] text-muted font-bold bg-surface-raised px-2 py-0.5 rounded-md">
                         {teacher.employeeId}
                       </span>
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           teacher.status === 'ACTIVE'
-                            ? 'bg-brand-mint-light text-brand-mint-dark'
-                            : 'bg-brand-yellow-light text-brand-yellow-dark'
+                            ? 'bg-accent-green-subtle text-accent-green'
+                            : 'bg-accent-amber-subtle text-accent-amber'
                         }`}
                       >
                         {teacher.status === 'ACTIVE' ? 'Active' : 'On Leave'}
@@ -345,33 +345,33 @@ export const TeachersPage: React.FC = () => {
               </div>
 
               {/* Department & Qualification */}
-              <div className="space-y-2 py-3 border-y border-slate-50 text-xs text-slate-600">
+              <div className="space-y-2 py-3 border-y border-slate-50 text-xs text-secondary">
                 <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-brand-lilac-dark shrink-0" />
+                  <Award className="w-4 h-4 text-accent-violet shrink-0" />
                   <span className="font-medium">
                     {teacher.qualification} ({teacher.experience})
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                  <Mail className="w-4 h-4 text-muted shrink-0" />
                   <span className="truncate">{teacher.email}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-slate-400 shrink-0" />
+                  <Phone className="w-4 h-4 text-muted shrink-0" />
                   <span>{teacher.phone}</span>
                 </div>
               </div>
 
               {/* Assigned Subjects */}
               <div className="mt-3">
-                <p className="text-[11px] font-bold uppercase text-slate-400 tracking-wider mb-2">
+                <p className="text-[11px] font-bold uppercase text-muted tracking-wider mb-2">
                   Subjects Assigned
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {teacher.subjects.map((sub, i) => (
                     <span
                       key={i}
-                      className="px-2.5 py-1 rounded-xl bg-slate-50 border border-slate-100 text-[11px] font-medium text-slate-700"
+                      className="px-2.5 py-1 rounded-xl bg-surface-raised border border-border text-[11px] font-medium text-secondary"
                     >
                       {sub}
                     </span>
@@ -381,10 +381,10 @@ export const TeachersPage: React.FC = () => {
             </div>
 
             <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
-              <span className="text-xs text-slate-400 font-medium">Joined: {teacher.joiningDate || '2020'}</span>
+              <span className="text-xs text-muted font-medium">Joined: {teacher.joiningDate || '2020'}</span>
               <button
                 onClick={() => setSelectedTeacher(teacher)}
-                className="px-4 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
+                className="px-4 py-1.5 rounded-full bg-surface-raised hover:bg-slate-200 text-secondary text-xs font-bold transition-all"
               >
                 View Profile
               </button>
@@ -401,14 +401,14 @@ export const TeachersPage: React.FC = () => {
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto"
+            className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-border max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Add Faculty Member</h2>
-                <p className="text-xs text-slate-500">Provide staff details, department, and portal credentials.</p>
+                <h2 className="text-xl font-bold text-primary">Add Faculty Member</h2>
+                <p className="text-xs text-secondary">Provide staff details, department, and portal credentials.</p>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="p-2 rounded-xl hover:bg-slate-100 text-slate-400">
+              <button onClick={() => setShowAddModal(false)} className="p-2 rounded-xl hover:bg-surface-raised text-muted">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -416,47 +416,47 @@ export const TeachersPage: React.FC = () => {
             <form onSubmit={handleAddTeacher} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Employee ID</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Employee ID</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. TCH-005"
                     value={formData.employeeId}
                     onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30 font-mono font-bold"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30 font-mono font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Full Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Dr. Ramesh Kumar"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Designation</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Designation</label>
                   <input
                     type="text"
                     required
                     placeholder="Senior PGT Physics"
                     value={formData.designation}
                     onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Department</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Department</label>
                   <select
                     value={formData.department}
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   >
                     <option value="Mathematics">Mathematics</option>
                     <option value="Science">Science</option>
@@ -468,76 +468,76 @@ export const TeachersPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Email Address</label>
                   <input
                     type="email"
                     required
                     placeholder="teacher@dpa.edu"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Phone Number</label>
                   <input
                     type="tel"
                     required
                     placeholder="+91 98765 00000"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Qualification</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Qualification</label>
                   <input
                     type="text"
                     required
                     placeholder="M.Sc, B.Ed"
                     value={formData.qualification}
                     onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Assigned Subjects (comma sep)</label>
+                  <label className="block text-xs font-bold text-secondary mb-1">Assigned Subjects (comma sep)</label>
                   <input
                     type="text"
                     placeholder="Physics, Lab 1"
                     value={formData.subjects}
                     onChange={(e) => setFormData({ ...formData, subjects: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Portal Login Password</label>
+                <label className="block text-xs font-bold text-secondary mb-1">Portal Login Password</label>
                 <input
                   type="password"
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-brand-sky/30"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50 transition-all"
+                  className="px-5 py-2.5 rounded-full border border-border text-secondary font-semibold text-xs hover:bg-surface-raised transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2.5 rounded-full bg-brand-sky text-white font-semibold text-xs shadow-soft hover:bg-brand-sky-dark transition-all flex items-center gap-1.5"
+                  className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-1.5"
                 >
                   {submitting ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -566,11 +566,11 @@ export const TeachersPage: React.FC = () => {
             className="w-full max-w-md h-full bg-surface shadow-2xl p-6 sm:p-8 flex flex-col justify-between overflow-y-auto"
           >
             <div>
-              <div className="flex items-center justify-between pb-6 border-b border-slate-100">
-                <h3 className="text-lg font-bold text-slate-800">Faculty Details</h3>
+              <div className="flex items-center justify-between pb-6 border-b border-border">
+                <h3 className="text-lg font-bold text-primary">Faculty Details</h3>
                 <button
                   onClick={() => setSelectedTeacher(null)}
-                  className="p-2 rounded-xl hover:bg-slate-100 text-slate-400"
+                  className="p-2 rounded-xl hover:bg-surface-raised text-muted"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -584,43 +584,43 @@ export const TeachersPage: React.FC = () => {
                   className="w-16 h-16 rounded-2xl object-cover border-2 border-brand-sky-light shadow-sm"
                 />
                 <div>
-                  <h4 className="text-base font-bold text-slate-800">{selectedTeacher.name}</h4>
-                  <p className="text-xs text-brand-sky-dark font-semibold">{selectedTeacher.designation}</p>
-                  <span className="font-mono text-xs font-bold text-slate-400">{selectedTeacher.employeeId}</span>
+                  <h4 className="text-base font-bold text-primary">{selectedTeacher.name}</h4>
+                  <p className="text-xs text-accent-blue font-semibold">{selectedTeacher.designation}</p>
+                  <span className="font-mono text-xs font-bold text-muted">{selectedTeacher.employeeId}</span>
                 </div>
               </div>
 
               {/* Details List */}
               <div className="space-y-3 py-4 text-xs">
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Department</span>
-                  <span className="font-semibold text-slate-800">{selectedTeacher.department}</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Department</span>
+                  <span className="font-semibold text-primary">{selectedTeacher.department}</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Academic Qualifications</span>
-                  <span className="font-semibold text-slate-800">
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Academic Qualifications</span>
+                  <span className="font-semibold text-primary">
                     {selectedTeacher.qualification} ({selectedTeacher.experience})
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Contact Email</span>
-                  <span className="font-semibold text-slate-800">{selectedTeacher.email}</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Contact Email</span>
+                  <span className="font-semibold text-primary">{selectedTeacher.email}</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Phone Number</span>
-                  <span className="font-semibold text-slate-800">{selectedTeacher.phone}</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Phone Number</span>
+                  <span className="font-semibold text-primary">{selectedTeacher.phone}</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
-                  <span className="text-slate-400 font-bold block mb-1">Assigned Subjects</span>
+                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
+                  <span className="text-muted font-bold block mb-1">Assigned Subjects</span>
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {selectedTeacher.subjects.map((s, idx) => (
                       <span
                         key={idx}
-                        className="px-2.5 py-0.5 rounded-lg bg-white border border-slate-200 font-bold text-slate-700 text-[11px]"
+                        className="px-2.5 py-0.5 rounded-lg bg-surface border border-border font-bold text-secondary text-[11px]"
                       >
                         {s}
                       </span>
@@ -630,10 +630,10 @@ export const TeachersPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
+            <div className="pt-4 border-t border-border flex items-center gap-3">
               <button
                 onClick={() => setSelectedTeacher(null)}
-                className="w-full py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition-all"
+                className="w-full py-2.5 rounded-full bg-surface-raised text-secondary text-xs font-bold hover:bg-slate-200 transition-all"
               >
                 Close Drawer
               </button>
