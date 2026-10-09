@@ -9,3 +9,4 @@ export * from './teacher.service';
 export * from './finance.service';
 export * from './attendance.service';
 export * from './dashboard.service';
+export * from './upload.service';

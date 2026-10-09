@@ -29,6 +29,14 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
   COOKIE_DOMAIN: z.string().default('localhost'),
 
+  // Storage Provider Configuration
+  STORAGE_DRIVER: z.enum(['local', 's3']).default('local'),
+  UPLOAD_DIR: z.string().default('uploads'),
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_REGION: z.string().optional(),
+  AWS_S3_BUCKET: z.string().optional(),
+
   // Platform Super Admin Defaults for initial seed
   SUPER_ADMIN_EMAIL: z.string().email().default('superadmin@platform.com'),
   SUPER_ADMIN_PASSWORD: z.string().min(8).default('SuperAdmin@Secure123!'),

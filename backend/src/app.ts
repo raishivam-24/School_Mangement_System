@@ -27,13 +27,19 @@ import { assignmentRoutes } from './modules/assignments/assignments.routes.js';
 import { announcementRoutes } from './modules/announcements/announcements.routes.js';
 import { dashboardRoutes } from './modules/dashboards/dashboard.routes.js';
 import { reportRoutes } from './modules/reports/reports.routes.js';
+import path from 'path';
 import { subscriptionRoutes } from './modules/subscriptions/subscriptions.routes.js';
+import { uploadRoutes } from './modules/uploads/uploads.routes.js';
 
 export const createApp = (): Express => {
   const app = express();
 
   // 1. Core Security & Parsing Middleware
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
+  );
   app.use(
     cors({
       origin: env.CORS_ORIGIN.split(',').map((o) => o.trim()),
@@ -46,6 +52,9 @@ export const createApp = (): Express => {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
   app.use(requestLogger);
+
+  // Serve static uploaded files
+  app.use('/uploads', express.static(path.resolve(process.cwd(), env.UPLOAD_DIR || 'uploads')));
 
   // 2. Health check & Root ping
   app.get('/health', (req: Request, res: Response) => {
@@ -80,6 +89,7 @@ export const createApp = (): Express => {
   app.use(`${apiPrefix}/announcements`, announcementRoutes);
   app.use(`${apiPrefix}/reports`, reportRoutes);
   app.use(`${apiPrefix}/subscriptions`, subscriptionRoutes);
+  app.use(`${apiPrefix}/uploads`, uploadRoutes);
   app.use(`${apiPrefix}`, dashboardRoutes); // mounts /admin/dashboard and /dashboard
 
   // 4. Catch-all for undefined routes
