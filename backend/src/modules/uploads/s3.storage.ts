@@ -20,9 +20,15 @@ export class S3StorageProvider implements StorageProvider {
     this.publicUrl = env.AWS_S3_PUBLIC_URL?.replace(/\/$/, '') || '';
 
     if (env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY) {
+      let endpoint = env.AWS_S3_ENDPOINT?.replace(/\/+$/, '') || undefined;
+      // If endpoint accidentally had the bucket name appended, strip it
+      if (endpoint && this.bucket && endpoint.endsWith(`/${this.bucket}`)) {
+        endpoint = endpoint.slice(0, -(this.bucket.length + 1));
+      }
+
       this.client = new S3Client({
         region: this.region,
-        endpoint: env.AWS_S3_ENDPOINT || undefined,
+        endpoint,
         credentials: {
           accessKeyId: env.AWS_ACCESS_KEY_ID,
           secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
@@ -87,6 +93,16 @@ export class S3StorageProvider implements StorageProvider {
           Key: key,
         })
       );
+
+      // If the URL or key contained the bucket prefix, also delete the prefixed key in case it was uploaded earlier
+      if (fileUrlOrKey.includes(`${this.bucket}/`)) {
+        await this.client.send(
+          new DeleteObjectCommand({
+            Bucket: this.bucket,
+            Key: `${this.bucket}/${key}`,
+          })
+        ).catch(() => null);
+      }
       return true;
     } catch (error) {
       console.error('Failed to delete file from S3 / R2 storage:', error);

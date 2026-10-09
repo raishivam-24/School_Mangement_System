@@ -51,7 +51,16 @@ export const StorageTester: React.FC = () => {
   const [testFiles, setTestFiles] = useState<StoredTestItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
+      const items: StoredTestItem[] = saved ? JSON.parse(saved) : [];
+      return items.map((item) => {
+        if (item.url && item.url.includes('1791575378959') && !item.url.includes('/school-management-files/')) {
+          return {
+            ...item,
+            url: item.url.replace('.r2.dev/general/', '.r2.dev/school-management-files/general/'),
+          };
+        }
+        return item;
+      });
     } catch {
       return [];
     }
