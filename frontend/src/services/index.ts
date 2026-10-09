@@ -10,3 +10,4 @@ export * from './finance.service';
 export * from './attendance.service';
 export * from './dashboard.service';
 export * from './upload.service';
+export * from './announcement.service';

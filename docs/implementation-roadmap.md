@@ -19,8 +19,8 @@
 | **Class Attendance & Daily Roll Call** | ✅ 100% | ✅ 100% | ✅ Live sheet (`/attendance`), mark all present, batch submit | **Production Ready** |
 | **Frontend Enterprise Architecture** | N/A | ✅ 100% | ✅ Layered types, services, TanStack hooks, sliced components | **Production Ready** |
 | **Academics (Classes, Sections, Subjects)**| ✅ 100% | ✅ 100% | ✅ Live class & subject queries, modular catalog & milestones | **Production Ready** |
-| **Weekly Timetables & Schedules** | ✅ 100% | ⚠️ Mock data | ❌ Fetch timetable, add period schedule | **Up Next (Phase 18)** |
-| **Notice Board & Urgent Circulars** | ✅ 100% | ⚠️ Mock data | ❌ Publish notice with audience targeting (`/announcements`) | **Queued (Phase 19)** |
+| **Notice Board & Urgent Circulars** | ✅ 100% | ✅ 100% | ✅ Live queries (`/announcements`), PDF attachments, publish modal | **Production Ready** |
+| **Weekly Timetables & Schedules** | ✅ 100% | ⚠️ Mock data | ❌ Fetch timetable, add period schedule | **Up Next (Phase 19)** |
 | **Homework & Assignments** | ✅ 100% | ⚠️ Checklist only | ❌ Teacher publisher, student submit, grading | **Queued (Phase 20)** |
 | **Examinations & CBSE Report Cards** | ✅ 100% | ⚠️ Static scores | ❌ Exam date sheet, marks entry grid, report card | **Queued (Phase 21)** |
 

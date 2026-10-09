@@ -9,3 +9,4 @@ export * from './student.types';
 export * from './teacher.types';
 export * from './finance.types';
 export * from './attendance.types';
+export * from './announcement.types';
