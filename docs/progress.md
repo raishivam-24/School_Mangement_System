@@ -1,7 +1,7 @@
 # School Management SaaS — Project Progress Tracker
 
-> **Current Status:** Backend Modular Monolith Complete (100%) | Postman Collection Complete (100%) | Next Phase: React Frontend
-> **Last Updated:** 2026-10-05
+> **Current Status:** Backend Modular Monolith Complete (100%) | Production-Grade Dual-Mode Design System Complete (100%) | Core Live Backend Integrations Operational (Students, Teachers, Finance, Attendance, Dashboard)
+> **Last Updated:** 2026-10-09
 
 ---
 
@@ -11,7 +11,7 @@
 | :--- | :--- | :---: | :--- |
 | **Phase 0** | **Architecture & Product Specs** | ✅ Complete | Modular monolith architecture, domain boundaries, multi-tenancy model, and frontend wireframes documented in `docs/`. |
 | **Phase 1** | **Backend Foundation & Tooling** | ✅ Complete | Node.js + Express + TypeScript, Zod environment validation, structured logger, and global error handling. |
-| **Phase 2** | **Database & Multi-Tenant Schema** | ✅ Complete | PostgreSQL + Prisma schema with composite indexes, `@prisma/adapter-pg` pooling, and seed script. |
+| **Phase 2** | **Database & Multi-Tenant Schema** | ✅ Complete | PostgreSQL + Prisma schema with composite indexes, `@prisma/adapter-pg` pooling, and idempotent seed script. |
 | **Phase 3** | **Auth, RBAC & Multi-Tenancy** | ✅ Complete | HttpOnly Cookie JWT authentication + Bearer header fallback, token rotation, tenant isolation middleware, and role guards. |
 | **Phase 4** | **School Tenant & Self-Service Onboarding** | ✅ Complete | Self-service school registration from public landing page (`/register-school`), public pricing plans (`/subscriptions/plans`), and public school search. |
 | **Phase 5** | **People & Academic Structure** | ✅ Complete | Academic Years, Classes, Sections, Subjects, Class-Subject-Teacher assignments, Student profiles & historical Enrollments, Teacher profiles. |
@@ -20,12 +20,14 @@
 | **Phase 8** | **Dashboards & Structured Reports** | ✅ Complete | Purpose-built aggregations: Super Admin Dashboard (`/admin/dashboard`), School Admin Dashboard (`/dashboard`), Attendance Reports, and Fee Reports. |
 | **Phase 9** | **API Documentation & Postman** | ✅ Complete | Postman Collection v2.1 & Environment JSON with automated token extraction scripts. |
 | **Phase 10** | **Frontend Foundation & Pastel UI System** | ✅ Complete | React 18 + TypeScript + Vite + Tailwind CSS + Framer Motion + Recharts (matching SchoolHub pastel aesthetic, Plus Jakarta Sans, and glass cards). |
-| **Phase 11** | **Frontend Routing & All Domain Views** | ✅ Complete | Public Landing (self-service onboarding modal), Multi-tenant Login, School Admin Dashboard (Hero, Donut, Multi-Bar, Calendar & Agenda, Spline Wave), Students, Teachers, Attendance, Finance, Academics, Timetable, Notices, Super Admin views. |
+| **Phase 11** | **Frontend Routing & All Domain Views** | ✅ Complete | Public Landing (self-service onboarding modal), Multi-tenant Login, School Admin Dashboard, Students, Teachers, Attendance, Finance, Academics, Timetable, Notices, Super Admin views. |
 | **Phase 12** | **Indian Schooling Personas & UX Architecture** | ✅ Complete | Researched CBSE/ICSE board nuances, Indian fee quarters in ₹ INR, 75% attendance threshold, and created role-isolated dashboard specifications documented in `docs/indian-school-system-personas-and-ux.md`. |
-| **Phase 13** | **Daily Attendance Engine & Zustand State Store** | ✅ Complete | Installed Zustand (`useUIStore`, `useAcademicStore`), built interactive Daily Roll Call sheet with 1-click 'Mark All Present', status pills, live counters, absence reasons, and batch API saving. Roadmap documented in `docs/implementation-roadmap.md`. |
-| **Phase 14** | **Student Admissions & Profile Drawer Engine** | ✅ Complete | Built multi-step Student Admission modal with Roll No, Blood Group, Parent contacts, and slide-out Student Profile drawer with CBSE >75% attendance meter and fee balance in ₹. |
-| **Phase 15** | **Faculty Management & Add Teacher Suite** | ✅ Complete | Built Add Faculty modal (Employee ID, Designation, Department, Qualifications, Subjects, Credentials) and slide-out Teacher Profile Drawer. |
-| **Phase 16** | **Full Multi-Tab Profile & Security Management** | ✅ Complete | Created standalone `ProfilePage.tsx` with Personal details, live Password Change connecting to `POST /api/v1/auth/change-password`, 2FA toggle, and institutional role metadata. |
+| **Phase 13** | **Dual-Mode Theme System (Production UI Overhaul)** | ✅ Complete | Replaced hardcoded ad-hoc styles with semantic CSS variables (`--color-surface`, `--color-primary`, `--color-border`) and Tailwind tokens (`surface-raised`, `accent-blue`, `text-secondary`). Perfect dual Dark/Light mode contrast. |
+| **Phase 14** | **Core Live Backend Integration (Phase 1)** | ✅ Complete | **Students:** live list (`/students`), dynamic class/year options, real UUID student admissions (`POST /students`). **Teachers:** live faculty list (`/teachers`), faculty creation (`POST /teachers`). |
+| **Phase 15** | **School Finance Live Backend Integration** | ✅ Complete | Live revenue KPIs (`/finance/summary`), student invoices list (`/finance/invoices`), fee collection modal (`POST /finance/payments/collect`), and fee structure builder with invoice generation. |
+| **Phase 16** | **Daily Attendance Live Backend Integration** | ✅ Complete | Dynamic class & section selectors, live roll call sheet retrieval (`GET /attendance`), 1-click 'Mark All Present', and persistent batch submission (`POST /attendance`) to PostgreSQL. |
+| **Phase 17** | **Academic Structure & Timetables (Next)** | 🟡 Queued | Connect `AcademicsPage.tsx` (`POST /academics/classes`, `/academics/sections`, `/academics/subjects`) and `TimetablePage.tsx` (`/timetable`). |
+| **Phase 18** | **Examinations, Assignments & Circulars (Next)** | 🟡 Queued | Connect `ExamsPage.tsx` (marks entry grid & report cards), `AssignmentsPage.tsx` (homework submissions), and `NoticesPage.tsx` (`/announcements`). |
 
 ---
 

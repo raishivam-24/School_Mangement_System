@@ -1,7 +1,7 @@
 # SchoolHub — Phase-by-Phase Feature Implementation Roadmap
 
 > **Target:** Complete, production-grade Multi-Tenant School Management SaaS for Indian K-12 Schools (CBSE / ICSE / State Boards).
-> **Date:** October 2026
+> **Date:** October 2026 (Updated post-backend-connection)
 
 ---
 
@@ -11,16 +11,17 @@
 | :--- | :---: | :---: | :---: | :---: |
 | **Authentication & Multi-Tenancy** | ✅ 100% | ✅ 100% | ✅ Live `/auth/login`, `/register-school`, `/auth/me` | **Production Ready** |
 | **SaaS Landing & Self-Service** | ✅ 100% | ✅ 100% | ✅ Confetti modal, pricing cards, school provisioning | **Production Ready** |
-| **Role-Aware Dashboards (Indian Context)**| ✅ 100% | ✅ 100% | ✅ Student, Teacher, Admin, Parent, Super Admin views | **Production Ready** |
-| **Client UI State Management (Zustand)** | N/A | ✅ 100% | ✅ `useUIStore` & `useAcademicStore` | **Production Ready** |
-| **Class Attendance & Daily Roll Call** | ✅ 100% | ⚠️ Matrix only | ❌ Daily roll call sheet, batch submit, fast modal | **In Progress (Phase 13)** |
-| **Academics (Classes, Sections, Subjects)**| ✅ 100% | ⚠️ Mock data | ❌ Create class/section, assign subject to teacher | **Queued (Phase 14)** |
-| **Students & Admissions** | ✅ 100% | ⚠️ Mock data | ❌ Multi-step admission form, roll no, profile drawer | **Queued (Phase 15)** |
-| **Faculty & Teachers Management** | ✅ 100% | ⚠️ Mock data | ❌ Add teacher, assign lectures, staff directory | **Queued (Phase 16)** |
-| **School Finance & ₹ Fee Collection** | ✅ 100% | ⚠️ Mock data | ❌ Fee structure builder, bulk invoices, receipt PDF | **Queued (Phase 17)** |
-| **Homework & Assignments** | ✅ 100% | ⚠️ Checklist only | ❌ Teacher publisher, student file submit, grading | **Queued (Phase 18)** |
-| **Examinations & CBSE Report Cards** | ✅ 100% | ⚠️ Static scores | ❌ Exam date sheet, marks entry grid, report card | **Queued (Phase 19)** |
-| **Notice Board & Urgent Circulars** | ✅ 100% | ⚠️ Static cards | ❌ Circular publisher with audience targeting | **Queued (Phase 20)** |
+| **Role-Aware Dashboards (Indian Context)**| ✅ 100% | ✅ 100% | ✅ Live KPI queries (`/dashboard`), role views | **Production Ready** |
+| **Dual-Mode Theme & Design Tokens** | N/A | ✅ 100% | ✅ Clean CSS variables, light/dark contrast | **Production Ready** |
+| **Students & Admissions** | ✅ 100% | ✅ 100% | ✅ Live list (`/students`), admission modal (`POST /students`) | **Production Ready** |
+| **Faculty & Teachers Management** | ✅ 100% | ✅ 100% | ✅ Live list (`/teachers`), Add Faculty modal (`POST /teachers`) | **Production Ready** |
+| **School Finance & ₹ Fee Collection** | ✅ 100% | ✅ 100% | ✅ Live KPIs, invoice list, collect modal, fee builder | **Production Ready** |
+| **Class Attendance & Daily Roll Call** | ✅ 100% | ✅ 100% | ✅ Live sheet (`/attendance`), mark all present, batch submit | **Production Ready** |
+| **Academics (Classes, Sections, Subjects)**| ✅ 100% | ⚠️ Mock data | ❌ Create class/section, assign subject to teacher | **Up Next (Phase 17)** |
+| **Weekly Timetables & Schedules** | ✅ 100% | ⚠️ Mock data | ❌ Fetch timetable, add period schedule | **Queued (Phase 18)** |
+| **Notice Board & Urgent Circulars** | ✅ 100% | ⚠️ Mock data | ❌ Publish notice with audience targeting (`/announcements`) | **Queued (Phase 19)** |
+| **Homework & Assignments** | ✅ 100% | ⚠️ Checklist only | ❌ Teacher publisher, student submit, grading | **Queued (Phase 20)** |
+| **Examinations & CBSE Report Cards** | ✅ 100% | ⚠️ Static scores | ❌ Exam date sheet, marks entry grid, report card | **Queued (Phase 21)** |
 
 ---
 
@@ -28,13 +29,11 @@
 
 ```mermaid
 graph TD
-    P13["Phase 13: Daily Attendance & Roll Call Engine"] --> P14["Phase 14: Academic Structure & Class Manager"]
-    P14 --> P15["Phase 15: Student Admissions & Profile Drawer"]
-    P15 --> P16["Phase 16: Faculty Management & Subject Allotment"]
-    P16 --> P17["Phase 17: School Finance, UPI Fees & Receipts"]
-    P17 --> P18["Phase 18: Digital Homework, Submissions & Grading"]
-    P18 --> P19["Phase 19: Exams, Marks Entry & CBSE Report Cards"]
-    P19 --> P20["Phase 20: Circulars, Almanac & Bell Notifications"]
+    DONE["✅ Core Foundation Done (Auth, Students, Teachers, Finance, Attendance, Dashboard)"] --> P17["Phase 17: Academic Structure & Class Manager"]
+    P17 --> P18["Phase 18: Weekly Timetable & Room Schedules"]
+    P18 --> P19["Phase 19: Notices & Urgent Campus Circulars"]
+    P19 --> P20["Phase 20: Digital Homework, Submissions & Grading"]
+    P20 --> P21["Phase 21: Exams, Marks Entry & CBSE Report Cards"]
 ```
 
 ---
