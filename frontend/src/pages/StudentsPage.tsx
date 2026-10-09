@@ -138,12 +138,18 @@ export const StudentsPage: React.FC = () => {
   const [showAdmissionModal, setShowAdmissionModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Classes & Academic Years from backend
+  const [classList, setClassList] = useState<any[]>([]);
+  const [academicYearId, setAcademicYearId] = useState<string>('');
+
   // New Admission Form State
   const [formData, setFormData] = useState({
     admissionNo: '',
     firstName: '',
     lastName: '',
+    classId: '',
     class: 'Class 10',
+    sectionId: '',
     section: 'A',
     rollNumber: '',
     gender: 'MALE' as const,
@@ -159,36 +165,74 @@ export const StudentsPage: React.FC = () => {
   });
 
   // Fetch live students from backend
+  const fetchStudents = async () => {
+    try {
+      const res = await api.get('/students');
+      const rawList = Array.isArray(res.data?.data) ? res.data.data : res.data?.data?.students || [];
+      if (rawList.length > 0) {
+        const apiList = rawList.map((s: any) => ({
+          id: s.id,
+          admissionNo: s.admissionNo,
+          name: s.fullName || `${s.firstName} ${s.lastName}`,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          class: s.class || s.enrollments?.[0]?.class?.name || 'Class 10',
+          section: s.section || s.enrollments?.[0]?.section?.name || 'A',
+          rollNo: s.rollNumber || s.enrollments?.[0]?.rollNumber || '01',
+          gender: s.gender || 'MALE',
+          attendanceRate: 90.0,
+          feeBalance: 0,
+          parentName: s.parentName || s.parent?.user?.name || 'Parent Guardian',
+          parentPhone: s.parentPhone || s.parent?.phone || '+91 98765 00000',
+          status: s.status || 'ACTIVE',
+          bloodGroup: s.bloodGroup || 'B+',
+          dob: s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString() : '2010',
+        }));
+        setStudents(apiList);
+      }
+    } catch {
+      // Fallback to initial seed students
+    }
+  };
+
+  // Fetch classes and current academic year on mount
   useEffect(() => {
-    const fetchStudents = async () => {
+    fetchStudents();
+
+    const fetchAcademics = async () => {
       try {
-        const res = await api.get('/students');
-        if (res.data?.data?.students && res.data.data.students.length > 0) {
-          const apiList = res.data.data.students.map((s: any) => ({
-            id: s.id,
-            admissionNo: s.admissionNo,
-            name: s.fullName || `${s.firstName} ${s.lastName}`,
-            firstName: s.firstName,
-            lastName: s.lastName,
-            class: s.enrollments?.[0]?.class?.name || 'Class 10',
-            section: s.enrollments?.[0]?.section?.name || 'A',
-            rollNo: s.enrollments?.[0]?.rollNumber || '01',
-            gender: s.gender || 'MALE',
-            attendanceRate: 90.0,
-            feeBalance: 0,
-            parentName: s.parent?.user?.name || 'Parent Guardian',
-            parentPhone: s.parent?.phone || '+91 98765 00000',
-            status: s.status || 'ACTIVE',
-            bloodGroup: s.bloodGroup || 'B+',
-            dob: s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString() : '2010',
+        const [classesRes, yearsRes] = await Promise.all([
+          api.get('/academics/classes'),
+          api.get('/academics/years'),
+        ]);
+
+        const classes = classesRes.data?.data || [];
+        const years = yearsRes.data?.data || [];
+
+        setClassList(classes);
+
+        const currentYear = years.find((y: any) => y.isCurrent) || years[0];
+        if (currentYear) {
+          setAcademicYearId(currentYear.id);
+        }
+
+        if (classes.length > 0) {
+          const firstClass = classes[0];
+          const firstSection = firstClass.sections?.[0];
+          setFormData((prev) => ({
+            ...prev,
+            classId: firstClass.id,
+            class: firstClass.name,
+            sectionId: firstSection?.id || '',
+            section: firstSection?.name || 'A',
           }));
-          setStudents(apiList);
         }
       } catch {
-        // Fallback to initial seed students
+        // Fallback gracefully
       }
     };
-    fetchStudents();
+
+    fetchAcademics();
   }, []);
 
   // Handle Submit Student Admission
@@ -197,10 +241,10 @@ export const StudentsPage: React.FC = () => {
     setSubmitting(true);
 
     const generatedAdmissionNo =
-      formData.admissionNo || `DPA-2026-${String(students.length + 1).padStart(3, '0')}`;
+      formData.admissionNo || `ADM-2026-${String(students.length + 1).padStart(3, '0')}`;
 
     try {
-      // Send to backend API
+      // Send to real backend API with resolved academic IDs
       await api.post('/students', {
         admissionNo: generatedAdmissionNo,
         firstName: formData.firstName,
@@ -208,39 +252,24 @@ export const StudentsPage: React.FC = () => {
         dateOfBirth: formData.dateOfBirth,
         gender: formData.gender,
         bloodGroup: formData.bloodGroup,
-        emergencyContact: formData.emergencyContact,
-        address: formData.address,
-        academicYearId: '00000000-0000-0000-0000-000000000000',
-        classId: '00000000-0000-0000-0000-000000000000',
-        sectionId: '00000000-0000-0000-0000-000000000000',
+        emergencyContact: formData.emergencyContact || undefined,
+        address: formData.address || undefined,
+        academicYearId: academicYearId || undefined,
+        classId: formData.classId || undefined,
+        sectionId: formData.sectionId || undefined,
         rollNumber: formData.rollNumber || String(students.length + 1),
         createLoginAccount: formData.createLoginAccount,
         email: formData.email || undefined,
         password: formData.password || undefined,
       });
 
-      const newStudent: StudentItem = {
-        id: String(Date.now()),
-        admissionNo: generatedAdmissionNo,
-        name: `${formData.firstName} ${formData.lastName}`,
-        class: formData.class,
-        section: formData.section,
-        rollNo: formData.rollNumber || String(students.length + 1),
-        gender: formData.gender,
-        attendanceRate: 100.0,
-        feeBalance: 0,
-        parentName: formData.parentName,
-        parentPhone: formData.parentPhone,
-        status: 'ACTIVE',
-        bloodGroup: formData.bloodGroup,
-        dob: formData.dateOfBirth,
-      };
-
-      setStudents([newStudent, ...students]);
+      // Refetch live list from database
+      await fetchStudents();
       setShowAdmissionModal(false);
       confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-    } catch {
-      // Local optimistic fallback
+    } catch (err: any) {
+      console.error('Admission API error:', err);
+      // Local optimistic fallback if offline
       const newStudent: StudentItem = {
         id: String(Date.now()),
         admissionNo: generatedAdmissionNo,
@@ -262,24 +291,18 @@ export const StudentsPage: React.FC = () => {
       confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
     } finally {
       setSubmitting(false);
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         admissionNo: '',
         firstName: '',
         lastName: '',
-        class: 'Class 10',
-        section: 'A',
         rollNumber: '',
-        gender: 'MALE',
-        dateOfBirth: '2010-05-15',
-        bloodGroup: 'B+',
         parentName: '',
         parentPhone: '+91 ',
         emergencyContact: '',
         address: '',
         createLoginAccount: false,
-        email: '',
-        password: 'Student@Secure123!',
-      });
+      }));
     }
   };
 
@@ -480,26 +503,61 @@ export const StudentsPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-secondary mb-1">Class</label>
                   <select
-                    value={formData.class}
-                    onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold"
+                    value={formData.classId}
+                    onChange={(e) => {
+                      const selId = e.target.value;
+                      const selClass = classList.find((c) => c.id === selId);
+                      const firstSec = selClass?.sections?.[0];
+                      setFormData({
+                        ...formData,
+                        classId: selId,
+                        class: selClass?.name || 'Class 10',
+                        sectionId: firstSec?.id || '',
+                        section: firstSec?.name || 'A',
+                      });
+                    }}
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold text-primary"
                   >
-                    <option>Class 10</option>
-                    <option>Class 11 - Science</option>
-                    <option>Class 12 - Science</option>
-                    <option>Class 9</option>
+                    {classList.length > 0 ? (
+                      classList.map((c) => (
+                        <option key={c.id} value={c.id} className="bg-surface text-primary">
+                          {c.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">Class 10</option>
+                    )}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-secondary mb-1">Section</label>
                   <select
-                    value={formData.section}
-                    onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold"
+                    value={formData.sectionId}
+                    onChange={(e) => {
+                      const selId = e.target.value;
+                      const selClass = classList.find((c) => c.id === formData.classId) || classList[0];
+                      const selSec = selClass?.sections?.find((s: any) => s.id === selId);
+                      setFormData({
+                        ...formData,
+                        sectionId: selId,
+                        section: selSec?.name || 'A',
+                      });
+                    }}
+                    className="w-full px-3 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none font-semibold text-primary"
                   >
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
+                    {(() => {
+                      const currClass = classList.find((c) => c.id === formData.classId) || classList[0];
+                      const sections = currClass?.sections || [];
+                      return sections.length > 0 ? (
+                        sections.map((sec: any) => (
+                          <option key={sec.id} value={sec.id} className="bg-surface text-primary">
+                            Section {sec.name}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="">Section A</option>
+                      );
+                    })()}
                   </select>
                 </div>
                 <div>

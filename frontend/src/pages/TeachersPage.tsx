@@ -131,35 +131,37 @@ export const TeachersPage: React.FC = () => {
 
   const departments = ['ALL', 'Mathematics', 'Science', 'Humanities', 'Computer Science'];
 
-  // Load teachers from backend if available
-  useEffect(() => {
-    const fetchTeachers = async () => {
-      try {
-        const res = await api.get('/teachers');
-        if (res.data?.data?.teachers && res.data.data.teachers.length > 0) {
-          const apiList = res.data.data.teachers.map((t: any) => ({
-            id: t.id,
-            employeeId: t.employeeId,
-            name: t.name || t.user?.name,
-            designation: t.designation || 'Faculty Member',
-            department: t.department || 'General',
-            email: t.email || t.user?.email,
-            phone: t.phone || '+91 98765 00000',
-            qualification: t.qualification || 'Post Graduate, B.Ed',
-            experience: '5+ Years',
-            subjects: t.subjects?.map((s: any) => s.name) || ['Assigned Subject'],
-            avatarUrl:
-              t.avatarUrl ||
-              `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`,
-            status: 'ACTIVE' as const,
-            joiningDate: t.joiningDate ? new Date(t.joiningDate).toLocaleDateString() : 'Active',
-          }));
-          setTeachers(apiList);
-        }
-      } catch {
-        // Fallback to initial teachers
+  // Load teachers from backend
+  const fetchTeachers = async () => {
+    try {
+      const res = await api.get('/teachers');
+      const rawList = Array.isArray(res.data?.data) ? res.data.data : res.data?.data?.teachers || [];
+      if (rawList.length > 0) {
+        const apiList = rawList.map((t: any) => ({
+          id: t.id,
+          employeeId: t.employeeId,
+          name: t.name || t.user?.name || 'Faculty Member',
+          designation: t.designation || 'Faculty Member',
+          department: t.department || 'Academics',
+          email: t.email || t.user?.email,
+          phone: t.phone || '+91 98765 00000',
+          qualification: t.qualification || 'Post Graduate, B.Ed',
+          experience: '5+ Years',
+          subjects: t.assignedSubjects?.map((as: any) => `${as.class} ${as.subject}`) || [t.designation || 'General'],
+          avatarUrl:
+            t.avatarUrl ||
+            `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`,
+          status: 'ACTIVE' as const,
+          joiningDate: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'Active',
+        }));
+        setTeachers(apiList);
       }
-    };
+    } catch {
+      // Fallback to initial teachers
+    }
+  };
+
+  useEffect(() => {
     fetchTeachers();
   }, []);
 
@@ -174,31 +176,15 @@ export const TeachersPage: React.FC = () => {
         employeeId: formData.employeeId || `TCH-${String(teachers.length + 1).padStart(3, '0')}`,
         name: formData.name,
         email: formData.email,
-        password: formData.password,
+        password: formData.password || 'Teacher@Secure123!',
         designation: formData.designation,
         qualification: formData.qualification,
-        gender: formData.gender,
-        phone: formData.phone,
-        department: formData.department,
+        gender: formData.gender as any,
+        phone: formData.phone || undefined,
       });
 
-      const newTeacher: Teacher = {
-        id: String(Date.now()),
-        employeeId: formData.employeeId || `TCH-${String(teachers.length + 1).padStart(3, '0')}`,
-        name: formData.name,
-        designation: formData.designation,
-        department: formData.department,
-        email: formData.email,
-        phone: formData.phone,
-        qualification: formData.qualification,
-        experience: formData.experience,
-        subjects: formData.subjects.split(',').map((s) => s.trim()),
-        avatarUrl: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200`,
-        status: 'ACTIVE',
-        joiningDate: 'Today',
-      };
-
-      setTeachers([newTeacher, ...teachers]);
+      // Refetch live list from database
+      await fetchTeachers();
       setShowAddModal(false);
       confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
     } catch {

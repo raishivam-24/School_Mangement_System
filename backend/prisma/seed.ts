@@ -43,20 +43,23 @@ async function main() {
   console.log(`✅ Seeded Demo School: ${school.name} (Code: ${school.code})`);
 
   // 3. Seed School Subscription
-  const endDate = new Date();
-  endDate.setDate(endDate.getDate() + 365);
-  await prisma.schoolSubscription.create({
-    data: {
-      schoolId: school.id,
-      plan: SubscriptionPlan.PRO,
-      status: 'ACTIVE',
-      amount: 99.0,
-      billingCycle: 'ANNUALLY',
-      startDate: new Date(),
-      endDate,
-      nextBillingDate: endDate,
-    },
-  });
+  const existingSub = await prisma.schoolSubscription.findFirst({ where: { schoolId: school.id } });
+  if (!existingSub) {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 365);
+    await prisma.schoolSubscription.create({
+      data: {
+        schoolId: school.id,
+        plan: SubscriptionPlan.PRO,
+        status: 'ACTIVE',
+        amount: 99.0,
+        billingCycle: 'ANNUALLY',
+        startDate: new Date(),
+        endDate,
+        nextBillingDate: endDate,
+      },
+    });
+  }
 
   // 4. Seed School Admin User
   const schoolAdminPasswordHash = await bcrypt.hash('Admin@Secure123!', 12);
@@ -300,8 +303,10 @@ async function main() {
     },
   });
 
-  const invoice = await prisma.feeInvoice.create({
-    data: {
+  const invoice = await prisma.feeInvoice.upsert({
+    where: { invoiceNumber: 'INV-2026-00001' },
+    update: {},
+    create: {
       schoolId: school.id,
       academicYearId: academicYear.id,
       studentId: student.id,
@@ -315,8 +320,10 @@ async function main() {
     },
   });
 
-  await prisma.feePayment.create({
-    data: {
+  await prisma.feePayment.upsert({
+    where: { receiptNumber: 'REC-2026-00001' },
+    update: {},
+    create: {
       schoolId: school.id,
       feeInvoiceId: invoice.id,
       studentId: student.id,
@@ -329,16 +336,21 @@ async function main() {
   });
 
   // 12. Seed Announcement
-  await prisma.announcement.create({
-    data: {
-      schoolId: school.id,
-      authorId: schoolAdmin.id,
-      title: 'Welcome to Academic Year 2026-2027',
-      content: 'We welcome all students and staff back to school for an exciting new term!',
-      priority: 'HIGH',
-      isPublished: true,
-    },
+  const existingAnnouncement = await prisma.announcement.findFirst({
+    where: { schoolId: school.id, title: 'Welcome to Academic Year 2026-2027' },
   });
+  if (!existingAnnouncement) {
+    await prisma.announcement.create({
+      data: {
+        schoolId: school.id,
+        authorId: schoolAdmin.id,
+        title: 'Welcome to Academic Year 2026-2027',
+        content: 'We welcome all students and staff back to school for an exciting new term!',
+        priority: 'HIGH',
+        isPublished: true,
+      },
+    });
+  }
 
   console.log('\n🎉 Database Seeding Completed Successfully!\n');
   console.log('====================================================');

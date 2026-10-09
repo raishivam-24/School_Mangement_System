@@ -23,6 +23,8 @@ export interface AuthUser {
   role: UserRole;
   avatarUrl?: string | null;
   school?: UserSchool | null;
+  studentProfile?: any | null;
+  teacherProfile?: any | null;
 }
 
 interface AuthContextType {
@@ -57,6 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             role: profile.role,
             avatarUrl: profile.avatarUrl,
             school: profile.school,
+            studentProfile: profile.studentProfile,
+            teacherProfile: profile.teacherProfile,
           };
           setUser(authUser);
           localStorage.setItem('schoolhub_user', JSON.stringify(authUser));

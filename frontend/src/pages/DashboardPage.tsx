@@ -9,10 +9,11 @@
  * - 👑 Super Admin (SaaS Platform MRR in ₹, Tenant Schools, DB Health)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../lib/api';
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -601,8 +602,24 @@ const TeacherDashboardView: React.FC<{ user: any }> = ({ user }) => {
 /* 🏫 3. SCHOOL ADMIN / PRINCIPAL DASHBOARD VIEW                             */
 /* ========================================================================= */
 const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
+  const [kpi, setKpi] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const res = await api.get('/dashboard');
+        if (res.data?.data?.kpi) {
+          setKpi(res.data.data.kpi);
+        }
+      } catch (err) {
+        console.warn('Dashboard fetch warning:', err);
+      }
+    };
+    fetchDashboard();
+  }, []);
+
   const feeMonthlyData = [
-    { month: 'Apr (Q1)', collected: 142.8, target: 180 },
+    { month: 'Apr (Q1)', collected: kpi?.fees?.totalCollected ? Math.round(kpi.fees.totalCollected / 100000 * 10) / 10 : 142.8, target: 180 },
     { month: 'Jul (Q2)', collected: 0, target: 160 },
     { month: 'Oct (Q3)', collected: 0, target: 160 },
     { month: 'Jan (Q4)', collected: 0, target: 170 },
@@ -630,10 +647,10 @@ const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
             <span>Delhi Public Academy • CBSE Affiliation #1930482</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
-            {getTimeGreeting()}, Principal Sharma
+            {getTimeGreeting()}, {user?.name || 'Principal'}
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
-            Academic Year 2026–27 (Term 1) • Campus operations running smoothly with 94.2% daily attendance.
+            Academic Year 2026–27 (Term 1) • Campus operations running smoothly with {kpi?.todayAttendance?.rate ? `${kpi.todayAttendance.rate}%` : '94.2%'} daily attendance.
           </p>
         </div>
 
@@ -654,11 +671,13 @@ const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Total Enrollment</span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-blue-subtle text-accent-blue">
-              +120 New
+              Verified
             </span>
           </div>
           <div className="mt-3">
-            <span className="text-3xl font-extrabold text-primary">3,250</span>
+            <span className="text-3xl font-extrabold text-primary">
+              {kpi?.totalStudents !== undefined ? kpi.totalStudents : '3,250'}
+            </span>
             <p className="text-xs text-muted mt-1">Active Students (KG to 12th)</p>
           </div>
         </div>
@@ -667,12 +686,16 @@ const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Campus Attendance</span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-green-subtle text-accent-green">
-              94.2% Today
+              {kpi?.todayAttendance?.rate ? `${kpi.todayAttendance.rate}% Today` : '94.2% Today'}
             </span>
           </div>
           <div className="mt-3">
-            <span className="text-3xl font-extrabold text-primary">3,061 / 3,250</span>
-            <p className="text-xs text-muted mt-1">189 Absent across all sections</p>
+            <span className="text-3xl font-extrabold text-primary">
+              {kpi?.todayAttendance ? `${kpi.todayAttendance.present} / ${kpi.todayAttendance.total}` : '3,061 / 3,250'}
+            </span>
+            <p className="text-xs text-muted mt-1">
+              {kpi?.todayAttendance ? `${kpi.todayAttendance.absent} Absent across sections` : '189 Absent across all sections'}
+            </p>
           </div>
         </div>
 
@@ -680,25 +703,31 @@ const SchoolAdminDashboardView: React.FC<{ user: any }> = ({ user }) => {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Staff On Duty</span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-violet-subtle text-accent-violet">
-              95.7% Present
+              Active Faculty
             </span>
           </div>
           <div className="mt-3">
-            <span className="text-3xl font-extrabold text-primary">134 / 140</span>
-            <p className="text-xs text-muted mt-1">6 Faculty on approved leave</p>
+            <span className="text-3xl font-extrabold text-primary">
+              {kpi?.totalTeachers !== undefined ? `${kpi.totalTeachers} Faculty` : '134 / 140'}
+            </span>
+            <p className="text-xs text-muted mt-1">Teaching Staff on roster</p>
           </div>
         </div>
 
         <div className="bg-surface rounded-3xl p-5 border border-border shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-muted uppercase tracking-wider">Q1 Fee Collection</span>
+            <span className="text-xs font-bold text-muted uppercase tracking-wider">Fee Collection</span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-green-subtle text-accent-green">
-              78% Target
+              {kpi?.fees?.collectionRate ? `${kpi.fees.collectionRate}% Rate` : '78% Target'}
             </span>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-extrabold text-primary">₹1,42,80,000</span>
-            <p className="text-xs text-muted mt-1">₹37,20,000 Due by 30 April</p>
+            <span className="text-2xl font-extrabold text-primary">
+              {kpi?.fees ? `₹${kpi.fees.totalCollected.toLocaleString('en-IN')}` : '₹1,42,80,000'}
+            </span>
+            <p className="text-xs text-muted mt-1">
+              {kpi?.fees ? `₹${kpi.fees.totalPending.toLocaleString('en-IN')} Outstanding` : '₹37,20,000 Due by 30 April'}
+            </p>
           </div>
         </div>
       </div>

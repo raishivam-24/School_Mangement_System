@@ -114,11 +114,33 @@ const StudentPersonalAttendanceView: React.FC<{ user: any }> = ({ user }) => {
   const [leaveSubmitted, setLeaveSubmitted] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState('April 2026');
 
-  const totalWorkingDays = 130;
-  const daysAttended = 115;
-  const daysAbsent = 11;
-  const daysLate = 4;
-  const attendancePercentage = ((daysAttended / totalWorkingDays) * 100).toFixed(1);
+  const [totalWorkingDays, setTotalWorkingDays] = useState(130);
+  const [daysAttended, setDaysAttended] = useState(115);
+  const [daysAbsent, setDaysAbsent] = useState(11);
+  const [daysLate, setDaysLate] = useState(4);
+  const attendancePercentage = ((daysAttended / (totalWorkingDays || 1)) * 100).toFixed(1);
+
+  useEffect(() => {
+    const fetchStudentAttendance = async () => {
+      try {
+        const studentId = user?.studentProfile?.id;
+        if (!studentId) return;
+        const res = await api.get(`/attendance/student/${studentId}`);
+        if (res.data?.data?.summary) {
+          const sum = res.data.data.summary;
+          if (sum.totalDays > 0) {
+            setTotalWorkingDays(sum.totalDays);
+            setDaysAttended(sum.presentDays);
+            setDaysAbsent(sum.absentDays);
+            setDaysLate(sum.lateDays);
+          }
+        }
+      } catch (err) {
+        console.warn('Student attendance fetch warning:', err);
+      }
+    };
+    fetchStudentAttendance();
+  }, [user]);
 
   const handleApplyLeave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -484,8 +506,9 @@ const TeacherClassAttendanceView: React.FC<{ user: any }> = ({ user }) => {
   const { selectedDate, setSelectedDate } = useAcademicStore();
 
   const [activeTab, setActiveTab] = useState<'ROLL_CALL' | 'DOT_MATRIX'>('ROLL_CALL');
-  const [selectedClass, setSelectedClass] = useState('Class 10');
-  const [selectedSection, setSelectedSection] = useState('Section A');
+  const [selectedClassId, setSelectedClassId] = useState('');
+  const [selectedSectionId, setSelectedSectionId] = useState('');
+  const [academicYearId, setAcademicYearId] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [roster, setRoster] = useState<StudentRosterItem[]>(defaultStudents);
   const [isSaving, setIsSaving] = useState(false);
@@ -495,20 +518,73 @@ const TeacherClassAttendanceView: React.FC<{ user: any }> = ({ user }) => {
   // Demo days for Dot Matrix
   const matrixDays = ['08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21'];
 
-  // Load available classes from backend API
+  // Load available classes & academic year from backend API
   useEffect(() => {
-    const fetchClasses = async () => {
+    const fetchMetadata = async () => {
       try {
-        const res = await api.get('/academics/classes');
-        if (res.data?.data && res.data.data.length > 0) {
-          setClassesList(res.data.data);
+        const [clsRes, yrRes] = await Promise.all([
+          api.get('/academics/classes').catch(() => null),
+          api.get('/academics/years').catch(() => null),
+        ]);
+
+        if (clsRes?.data?.data) {
+          const classes = Array.isArray(clsRes.data.data) ? clsRes.data.data : [];
+          setClassesList(classes);
+          if (classes.length > 0) {
+            setSelectedClassId(classes[0].id);
+            if (classes[0].sections?.length > 0) {
+              setSelectedSectionId(classes[0].sections[0].id);
+            }
+          }
         }
-      } catch {
-        // Fallback to defaults
+
+        if (yrRes?.data?.data) {
+          const years = Array.isArray(yrRes.data.data) ? yrRes.data.data : [];
+          const current = years.find((y: any) => y.isCurrent) || years[0];
+          if (current) setAcademicYearId(current.id);
+        }
+      } catch (err) {
+        console.warn('Metadata fetch error in Attendance:', err);
       }
     };
-    fetchClasses();
+    fetchMetadata();
   }, []);
+
+  // Fetch Attendance Sheet from backend when Class, Section, or Date changes
+  useEffect(() => {
+    const fetchSheet = async () => {
+      if (!selectedClassId || !selectedSectionId || !selectedDate) return;
+      try {
+        const res = await api.get('/attendance', {
+          params: {
+            date: selectedDate,
+            classId: selectedClassId,
+            sectionId: selectedSectionId,
+          },
+        });
+
+        if (res.data?.data?.roster && res.data.data.roster.length > 0) {
+          setRoster(
+            res.data.data.roster.map((r: any) => ({
+              id: r.studentId,
+              name: r.name,
+              rollNo: String(r.rollNumber || ''),
+              admissionNo: r.admissionNo,
+              gender: 'MALE',
+              status: r.status,
+              reason: r.reason || '',
+            }))
+          );
+        }
+      } catch (err) {
+        console.warn('Live attendance sheet not loaded:', err);
+      }
+    };
+    fetchSheet();
+  }, [selectedClassId, selectedSectionId, selectedDate]);
+
+  const activeClass = classesList.find((c) => c.id === selectedClassId) || classesList[0];
+  const activeSections = activeClass?.sections || [];
 
   // Summary counts (without half day)
   const totalCount = roster.length;
@@ -538,19 +614,16 @@ const TeacherClassAttendanceView: React.FC<{ user: any }> = ({ user }) => {
   const handleSaveAttendance = async () => {
     setIsSaving(true);
     try {
-      const activeClass = classesList.find((c) => c.name === selectedClass);
-      const activeSection = activeClass?.sections?.find((sec: any) => sec.name.includes(selectedSection));
-
-      if (activeClass && activeSection) {
+      if (selectedClassId && selectedSectionId && academicYearId) {
         await api.post('/attendance', {
           date: selectedDate,
-          academicYearId: activeClass.academicYearId || '00000000-0000-0000-0000-000000000000',
-          classId: activeClass.id,
-          sectionId: activeSection.id,
+          academicYearId,
+          classId: selectedClassId,
+          sectionId: selectedSectionId,
           records: roster.map((r) => ({
             studentId: r.id,
             status: r.status,
-            reason: r.reason || null,
+            reason: r.reason || undefined,
           })),
         });
       }
@@ -558,10 +631,8 @@ const TeacherClassAttendanceView: React.FC<{ user: any }> = ({ user }) => {
       setSaveSuccess(true);
       confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
       setTimeout(() => setSaveSuccess(false), 3500);
-    } catch {
-      setSaveSuccess(true);
-      confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
-      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to save attendance records.');
     } finally {
       setIsSaving(false);
     }
@@ -633,24 +704,30 @@ const TeacherClassAttendanceView: React.FC<{ user: any }> = ({ user }) => {
           </div>
 
           <select
-            value={selectedClass}
-            onChange={(e) => setSelectedClass(e.target.value)}
+            value={selectedClassId}
+            onChange={(e) => {
+              const newClassId = e.target.value;
+              setSelectedClassId(newClassId);
+              const cls = classesList.find((c) => c.id === newClassId);
+              if (cls?.sections?.length > 0) {
+                setSelectedSectionId(cls.sections[0].id);
+              }
+            }}
             className="px-4 py-2 rounded-2xl bg-surface-raised border border-border text-xs font-bold text-secondary focus:outline-none cursor-pointer"
           >
-            <option value="Class 10">Class 10</option>
-            <option value="Class 11 - Science">Class 11 - Science</option>
-            <option value="Class 12 - Science">Class 12 - Science</option>
-            <option value="Class 9">Class 9</option>
+            {classesList.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
           </select>
 
           <select
-            value={selectedSection}
-            onChange={(e) => setSelectedSection(e.target.value)}
+            value={selectedSectionId}
+            onChange={(e) => setSelectedSectionId(e.target.value)}
             className="px-4 py-2 rounded-2xl bg-surface-raised border border-border text-xs font-bold text-secondary focus:outline-none cursor-pointer"
           >
-            <option value="Section A">Section A</option>
-            <option value="Section B">Section B</option>
-            <option value="Section C">Section C</option>
+            {activeSections.map((s: any) => (
+              <option key={s.id} value={s.id}>Section {s.name}</option>
+            ))}
           </select>
 
           <div className="relative flex-1 min-w-[200px]">
