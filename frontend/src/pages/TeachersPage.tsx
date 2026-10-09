@@ -1,49 +1,21 @@
 /**
  * @file TeachersPage.tsx
- * @description Faculty and Staff management directory with live API integration (POST /api/v1/teachers, GET /api/v1/teachers),
- * comprehensive Add Teacher Modal, and Teacher Profile slide-out drawer.
+ * @description Faculty & Teaching Staff Directory Orchestrator.
+ * Powered by TanStack Query, typed services, and modular feature components.
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
-import { api } from '../lib/api';
+import React, { useState, useMemo } from 'react';
+import { Plus } from 'lucide-react';
+import { useTeachers } from '../hooks';
 import {
-  Search,
-  Plus,
-  Mail,
-  Phone,
-  BookOpen,
-  Award,
-  MoreVertical,
-  CheckCircle2,
-  X,
-  UserCheck,
-  Calendar,
-  Lock,
-  Sparkles,
-  Building2,
-  Clock,
-  Save,
-} from 'lucide-react';
+  TeacherFilters,
+  TeacherGrid,
+  AddTeacherModal,
+  TeacherProfileDrawer,
+} from '../components/features/teachers';
+import type { Teacher } from '../types';
 
-export interface Teacher {
-  id: string;
-  employeeId: string;
-  name: string;
-  designation: string;
-  department: string;
-  email: string;
-  phone: string;
-  qualification: string;
-  experience: string;
-  subjects: string[];
-  avatarUrl: string;
-  status: 'ACTIVE' | 'ON_LEAVE';
-  joiningDate?: string;
-}
-
-const initialTeachers: Teacher[] = [
+const defaultSeedTeachers: Teacher[] = [
   {
     id: '1',
     employeeId: 'TCH-001',
@@ -107,136 +79,32 @@ const initialTeachers: Teacher[] = [
 ];
 
 export const TeachersPage: React.FC = () => {
-  const [teachers, setTeachers] = useState<Teacher[]>(initialTeachers);
   const [search, setSearch] = useState('');
   const [selectedDept, setSelectedDept] = useState('ALL');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
-  // New Teacher Form State
-  const [formData, setFormData] = useState({
-    employeeId: '',
-    name: '',
-    designation: 'PGT Mathematics',
-    department: 'Mathematics',
-    email: '',
-    phone: '',
-    qualification: 'M.Sc, B.Ed',
-    password: 'Teacher@Secure123!',
-    experience: '3 Years',
-    gender: 'MALE',
-    subjects: 'Mathematics',
-  });
+  // TanStack Query Hook
+  const { data: serverTeachers = [], isLoading } = useTeachers();
 
-  const departments = ['ALL', 'Mathematics', 'Science', 'Humanities', 'Computer Science'];
+  const teachers = useMemo(() => {
+    return serverTeachers.length > 0 ? serverTeachers : defaultSeedTeachers;
+  }, [serverTeachers]);
 
-  // Load teachers from backend
-  const fetchTeachers = async () => {
-    try {
-      const res = await api.get('/teachers');
-      const rawList = Array.isArray(res.data?.data) ? res.data.data : res.data?.data?.teachers || [];
-      if (rawList.length > 0) {
-        const apiList = rawList.map((t: any) => ({
-          id: t.id,
-          employeeId: t.employeeId,
-          name: t.name || t.user?.name || 'Faculty Member',
-          designation: t.designation || 'Faculty Member',
-          department: t.department || 'Academics',
-          email: t.email || t.user?.email,
-          phone: t.phone || '+91 98765 00000',
-          qualification: t.qualification || 'Post Graduate, B.Ed',
-          experience: '5+ Years',
-          subjects: t.assignedSubjects?.map((as: any) => `${as.class} ${as.subject}`) || [t.designation || 'General'],
-          avatarUrl:
-            t.avatarUrl ||
-            `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`,
-          status: 'ACTIVE' as const,
-          joiningDate: t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'Active',
-        }));
-        setTeachers(apiList);
-      }
-    } catch {
-      // Fallback to initial teachers
-    }
-  };
-
-  useEffect(() => {
-    fetchTeachers();
-  }, []);
-
-  // Handle Add Teacher
-  const handleAddTeacher = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-
-    try {
-      // Post to backend API
-      await api.post('/teachers', {
-        employeeId: formData.employeeId || `TCH-${String(teachers.length + 1).padStart(3, '0')}`,
-        name: formData.name,
-        email: formData.email,
-        password: formData.password || 'Teacher@Secure123!',
-        designation: formData.designation,
-        qualification: formData.qualification,
-        gender: formData.gender as any,
-        phone: formData.phone || undefined,
-      });
-
-      // Refetch live list from database
-      await fetchTeachers();
-      setShowAddModal(false);
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-    } catch {
-      // Local optimistic fallback
-      const newTeacher: Teacher = {
-        id: String(Date.now()),
-        employeeId: formData.employeeId || `TCH-${String(teachers.length + 1).padStart(3, '0')}`,
-        name: formData.name,
-        designation: formData.designation,
-        department: formData.department,
-        email: formData.email,
-        phone: formData.phone,
-        qualification: formData.qualification,
-        experience: formData.experience,
-        subjects: formData.subjects.split(',').map((s) => s.trim()),
-        avatarUrl: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200`,
-        status: 'ACTIVE',
-        joiningDate: 'Today',
-      };
-      setTeachers([newTeacher, ...teachers]);
-      setShowAddModal(false);
-      confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
-    } finally {
-      setSubmitting(false);
-      setFormData({
-        employeeId: '',
-        name: '',
-        designation: 'PGT Mathematics',
-        department: 'Mathematics',
-        email: '',
-        phone: '',
-        qualification: 'M.Sc, B.Ed',
-        password: 'Teacher@Secure123!',
-        experience: '3 Years',
-        gender: 'MALE',
-        subjects: 'Mathematics',
-      });
-    }
-  };
-
-  const filteredTeachers = teachers.filter((t) => {
-    const matchQuery =
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      t.email.toLowerCase().includes(search.toLowerCase()) ||
-      t.employeeId.toLowerCase().includes(search.toLowerCase()) ||
-      t.subjects.some((s) => s.toLowerCase().includes(search.toLowerCase()));
-    const matchDept = selectedDept === 'ALL' || t.department === selectedDept;
-    return matchQuery && matchDept;
-  });
+  const filteredTeachers = useMemo(() => {
+    return teachers.filter((t) => {
+      const matchQuery =
+        t.name.toLowerCase().includes(search.toLowerCase()) ||
+        t.email.toLowerCase().includes(search.toLowerCase()) ||
+        t.employeeId.toLowerCase().includes(search.toLowerCase()) ||
+        t.subjects.some((s) => s.toLowerCase().includes(search.toLowerCase()));
+      const matchDept = selectedDept === 'ALL' || t.department === selectedDept;
+      return matchQuery && matchDept;
+    });
+  }, [teachers, search, selectedDept]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -252,8 +120,9 @@ export const TeachersPage: React.FC = () => {
         </div>
 
         <button
+          type="button"
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-sm shadow-card hover:bg-brand-sky-dark transition-all self-start sm:self-auto"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-sm shadow-card hover:bg-brand-sky-dark transition-all self-start sm:self-auto cursor-pointer active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Add Faculty Member</span>
@@ -261,372 +130,34 @@ export const TeachersPage: React.FC = () => {
       </div>
 
       {/* Filters & Search */}
-      <div className="bg-surface p-4 rounded-3xl border border-border shadow-card flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-muted absolute left-4 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search by name, employee ID, subject..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-11 pr-4 py-2 bg-surface-raised border border-border rounded-full text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
-          />
-        </div>
-
-        {/* Department Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
-          {departments.map((dept) => (
-            <button
-              key={dept}
-              onClick={() => setSelectedDept(dept)}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                selectedDept === dept
-                  ? 'bg-accent-violet text-accent-violet shadow-sm'
-                  : 'bg-surface-raised text-secondary hover:bg-surface-raised'
-              }`}
-            >
-              {dept}
-            </button>
-          ))}
-        </div>
-      </div>
+      <TeacherFilters
+        search={search}
+        onSearchChange={setSearch}
+        selectedDept={selectedDept}
+        onDeptChange={setSelectedDept}
+      />
 
       {/* Teachers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTeachers.map((teacher, idx) => (
-          <motion.div
-            key={teacher.id}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            className="bg-surface rounded-3xl p-6 border border-border shadow-card hover:shadow-card transition-all relative flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={teacher.avatarUrl}
-                    alt={teacher.name}
-                    className="w-14 h-14 rounded-2xl object-cover border-2 border-brand-sky-light shadow-sm"
-                  />
-                  <div>
-                    <h3 className="text-base font-bold text-primary">{teacher.name}</h3>
-                    <p className="text-xs text-accent-blue font-medium">{teacher.designation}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="font-mono text-[10px] text-muted font-bold bg-surface-raised px-2 py-0.5 rounded-md">
-                        {teacher.employeeId}
-                      </span>
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          teacher.status === 'ACTIVE'
-                            ? 'bg-accent-green-subtle text-accent-green'
-                            : 'bg-accent-amber-subtle text-accent-amber'
-                        }`}
-                      >
-                        {teacher.status === 'ACTIVE' ? 'Active' : 'On Leave'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <TeacherGrid
+        teachers={filteredTeachers}
+        onSelectTeacher={setSelectedTeacher}
+        isLoading={isLoading}
+      />
 
-              {/* Department & Qualification */}
-              <div className="space-y-2 py-3 border-y border-slate-50 text-xs text-secondary">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-accent-violet shrink-0" />
-                  <span className="font-medium">
-                    {teacher.qualification} ({teacher.experience})
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-muted shrink-0" />
-                  <span className="truncate">{teacher.email}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-muted shrink-0" />
-                  <span>{teacher.phone}</span>
-                </div>
-              </div>
+      {/* Add Teacher Modal */}
+      <AddTeacherModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        nextEmployeeId={`TCH-${String(teachers.length + 1).padStart(3, '0')}`}
+      />
 
-              {/* Assigned Subjects */}
-              <div className="mt-3">
-                <p className="text-[11px] font-bold uppercase text-muted tracking-wider mb-2">
-                  Subjects Assigned
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {teacher.subjects.map((sub, i) => (
-                    <span
-                      key={i}
-                      className="px-2.5 py-1 rounded-xl bg-surface-raised border border-border text-[11px] font-medium text-secondary"
-                    >
-                      {sub}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
-              <span className="text-xs text-muted font-medium">Joined: {teacher.joiningDate || '2020'}</span>
-              <button
-                onClick={() => setSelectedTeacher(teacher)}
-                className="px-4 py-1.5 rounded-full bg-surface-raised hover:bg-slate-200 text-secondary text-xs font-bold transition-all"
-              >
-                View Profile
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* ========================================================================= */}
-      {/* ADD TEACHER MODAL                                                         */}
-      {/* ========================================================================= */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-border max-h-[90vh] overflow-y-auto"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold text-primary">Add Faculty Member</h2>
-                <p className="text-xs text-secondary">Provide staff details, department, and portal credentials.</p>
-              </div>
-              <button onClick={() => setShowAddModal(false)} className="p-2 rounded-xl hover:bg-surface-raised text-muted">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddTeacher} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Employee ID</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. TCH-005"
-                    value={formData.employeeId}
-                    onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30 font-mono font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Dr. Ramesh Kumar"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Designation</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Senior PGT Physics"
-                    value={formData.designation}
-                    onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Department</label>
-                  <select
-                    value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  >
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Science">Science</option>
-                    <option value="Humanities">Humanities</option>
-                    <option value="Computer Science">Computer Science</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="teacher@dpa.edu"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 98765 00000"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Qualification</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="M.Sc, B.Ed"
-                    value={formData.qualification}
-                    onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-secondary mb-1">Assigned Subjects (comma sep)</label>
-                  <input
-                    type="text"
-                    placeholder="Physics, Lab 1"
-                    value={formData.subjects}
-                    onChange={(e) => setFormData({ ...formData, subjects: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-secondary mb-1">Portal Login Password</label>
-                <input
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-surface-raised border border-border text-xs focus:outline-none focus:ring-2 focus:ring-accent-blue/30"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 rounded-full border border-border text-secondary font-semibold text-xs hover:bg-surface-raised transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-6 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-xs shadow-card hover:bg-brand-sky-dark transition-all flex items-center gap-1.5"
-                >
-                  {submitting ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      <span>Save Faculty</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* TEACHER PROFILE DRAWER                                                    */}
-      {/* ========================================================================= */}
-      {selectedTeacher && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-end">
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            className="w-full max-w-md h-full bg-surface shadow-2xl p-6 sm:p-8 flex flex-col justify-between overflow-y-auto"
-          >
-            <div>
-              <div className="flex items-center justify-between pb-6 border-b border-border">
-                <h3 className="text-lg font-bold text-primary">Faculty Details</h3>
-                <button
-                  onClick={() => setSelectedTeacher(null)}
-                  className="p-2 rounded-xl hover:bg-surface-raised text-muted"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Profile Card */}
-              <div className="pt-6 pb-4 flex items-center gap-4">
-                <img
-                  src={selectedTeacher.avatarUrl}
-                  alt={selectedTeacher.name}
-                  className="w-16 h-16 rounded-2xl object-cover border-2 border-brand-sky-light shadow-sm"
-                />
-                <div>
-                  <h4 className="text-base font-bold text-primary">{selectedTeacher.name}</h4>
-                  <p className="text-xs text-accent-blue font-semibold">{selectedTeacher.designation}</p>
-                  <span className="font-mono text-xs font-bold text-muted">{selectedTeacher.employeeId}</span>
-                </div>
-              </div>
-
-              {/* Details List */}
-              <div className="space-y-3 py-4 text-xs">
-                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
-                  <span className="text-muted font-bold block mb-1">Department</span>
-                  <span className="font-semibold text-primary">{selectedTeacher.department}</span>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
-                  <span className="text-muted font-bold block mb-1">Academic Qualifications</span>
-                  <span className="font-semibold text-primary">
-                    {selectedTeacher.qualification} ({selectedTeacher.experience})
-                  </span>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
-                  <span className="text-muted font-bold block mb-1">Contact Email</span>
-                  <span className="font-semibold text-primary">{selectedTeacher.email}</span>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
-                  <span className="text-muted font-bold block mb-1">Phone Number</span>
-                  <span className="font-semibold text-primary">{selectedTeacher.phone}</span>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-surface-raised border border-border">
-                  <span className="text-muted font-bold block mb-1">Assigned Subjects</span>
-                  <div className="flex flex-wrap gap-1.5 mt-1">
-                    {selectedTeacher.subjects.map((s, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2.5 py-0.5 rounded-lg bg-surface border border-border font-bold text-secondary text-[11px]"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-border flex items-center gap-3">
-              <button
-                onClick={() => setSelectedTeacher(null)}
-                className="w-full py-2.5 rounded-full bg-surface-raised text-secondary text-xs font-bold hover:bg-slate-200 transition-all"
-              >
-                Close Drawer
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+      {/* Teacher Profile Drawer */}
+      <TeacherProfileDrawer
+        teacher={selectedTeacher}
+        onClose={() => setSelectedTeacher(null)}
+      />
     </div>
   );
 };
+
+export default TeachersPage;

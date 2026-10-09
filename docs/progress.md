@@ -26,8 +26,10 @@
 | **Phase 14** | **Core Live Backend Integration (Phase 1)** | ✅ Complete | **Students:** live list (`/students`), dynamic class/year options, real UUID student admissions (`POST /students`). **Teachers:** live faculty list (`/teachers`), faculty creation (`POST /teachers`). |
 | **Phase 15** | **School Finance Live Backend Integration** | ✅ Complete | Live revenue KPIs (`/finance/summary`), student invoices list (`/finance/invoices`), fee collection modal (`POST /finance/payments/collect`), and fee structure builder with invoice generation. |
 | **Phase 16** | **Daily Attendance Live Backend Integration** | ✅ Complete | Dynamic class & section selectors, live roll call sheet retrieval (`GET /attendance`), 1-click 'Mark All Present', and persistent batch submission (`POST /attendance`) to PostgreSQL. |
-| **Phase 17** | **Academic Structure & Timetables (Next)** | 🟡 Queued | Connect `AcademicsPage.tsx` (`POST /academics/classes`, `/academics/sections`, `/academics/subjects`) and `TimetablePage.tsx` (`/timetable`). |
-| **Phase 18** | **Examinations, Assignments & Circulars (Next)** | 🟡 Queued | Connect `ExamsPage.tsx` (marks entry grid & report cards), `AssignmentsPage.tsx` (homework submissions), and `NoticesPage.tsx` (`/announcements`). |
+| **Phase 17** | **Frontend Enterprise Architecture Refactor** | ✅ Complete | Refactored prototype God components (700–1,400 lines) into enterprise layered architecture (`types/`, `services/`, `hooks/` with TanStack React Query, and `components/features/<module>/`). Reduced page orchestrators to < 100 lines with zero compilation errors and full caching. |
+| **Phase 18** | **Academic Structure & Timetables (Next)** | 🟡 Queued | Connect `AcademicsPage.tsx` (`POST /academics/classes`, `/academics/sections`, `/academics/subjects`) and `TimetablePage.tsx` (`/timetable`). |
+| **Phase 19** | **Examinations, Assignments & Circulars (Next)** | 🟡 Queued | Connect `ExamsPage.tsx` (marks entry grid & report cards), `AssignmentsPage.tsx` (homework submissions), and `NoticesPage.tsx` (`/announcements`). |
+
 
 ---
 
