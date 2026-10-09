@@ -66,6 +66,31 @@ export const uploadService = {
   },
 
   /**
+   * Delete a file from Cloudflare R2 / S3 / local disk storage
+   */
+  deleteFile: async (fileUrlOrKey: string): Promise<boolean> => {
+    const res = await api.delete('/uploads', {
+      data: { fileUrl: fileUrlOrKey },
+    });
+    return res.data?.status === 'success';
+  },
+
+  /**
+   * Fetch current cloud/local storage configuration & engine status
+   */
+  getStorageConfig: async (): Promise<{
+    driver: string;
+    bucket: string;
+    endpoint: string;
+    publicUrl: string;
+    region: string;
+    isCloudflareR2: boolean;
+  }> => {
+    const res = await api.get('/uploads/config');
+    return res.data?.data;
+  },
+
+  /**
    * Helper to resolve relative upload paths to full backend URLs
    */
   getFileUrl: (relativeOrFullUrl: string): string => {

@@ -36,6 +36,14 @@ const envSchema = z.object({
   AWS_SECRET_ACCESS_KEY: z.string().optional(),
   AWS_REGION: z.string().optional(),
   AWS_S3_BUCKET: z.string().optional(),
+  AWS_S3_ENDPOINT: z.string().optional(), // For Cloudflare R2 or MinIO
+  AWS_S3_PUBLIC_URL: z.string().optional(), // Public domain / R2 dev URL (e.g. https://pub-xxx.r2.dev or https://assets.school.com)
+
+  // Redis Configuration (Caching & BullMQ Background Queues)
+  REDIS_URL: z.string().optional(),
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string().optional(),
 
   // Platform Super Admin Defaults for initial seed
   SUPER_ADMIN_EMAIL: z.string().email().default('superadmin@platform.com'),

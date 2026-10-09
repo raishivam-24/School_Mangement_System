@@ -119,4 +119,58 @@ export const uploadsController = {
       next(err);
     }
   },
+
+  /**
+   * Delete file from cloud storage or local disk
+   * DELETE /api/v1/uploads
+   */
+  deleteFile: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const target = (req.body?.fileUrl || req.body?.key || req.query?.fileUrl || req.query?.key) as string;
+      if (!target) {
+        return next(AppError.badRequest('Missing fileUrl or key parameter for file deletion.'));
+      }
+
+      const success = await storageService.deleteFile(target);
+      if (!success) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'File could not be found or failed to delete from storage',
+        });
+      }
+
+      res.status(200).json({
+        status: 'success',
+        message: 'File deleted successfully from storage',
+        data: { target },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  /**
+   * Get active storage engine status (Cloudflare R2 / S3 / Local)
+   * GET /api/v1/uploads/config
+   */
+  getConfig: async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { env } = await import('../../config/env.js');
+      const isS3 = env.STORAGE_DRIVER === 's3';
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          driver: env.STORAGE_DRIVER,
+          bucket: isS3 ? env.AWS_S3_BUCKET || 'Not configured' : 'Local Disk',
+          endpoint: isS3 ? env.AWS_S3_ENDPOINT || 'AWS S3 Default' : 'Local Server',
+          publicUrl: isS3 ? env.AWS_S3_PUBLIC_URL || 'Direct S3 URLs' : '/uploads',
+          region: env.AWS_REGION || 'auto',
+          isCloudflareR2: Boolean(env.AWS_S3_ENDPOINT?.includes('r2.cloudflarestorage.com')),
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
 };

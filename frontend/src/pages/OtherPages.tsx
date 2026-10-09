@@ -20,7 +20,9 @@ import {
   Shield,
   Bell,
   CheckCircle2,
+  Cloud,
 } from 'lucide-react';
+import { StorageTester } from '../components/features/storage/StorageTester';
 
 /* ========================================================================= */
 /* 1. LIBRARY PAGE                                                           */
@@ -302,38 +304,72 @@ export const ProfilePage: React.FC = () => {
 /* 5. SETTINGS PAGE                                                          */
 /* ========================================================================= */
 export const SettingsPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'storage' | 'general'>('storage');
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-primary">Platform Settings</h1>
-        <p className="text-sm text-secondary">Configure notifications, security policies, and school preferences.</p>
+        <h1 className="text-2xl font-bold text-primary">Settings & Integrations</h1>
+        <p className="text-sm text-secondary">Manage cloud infrastructure, security credentials, and system preferences.</p>
       </div>
 
-      <div className="bg-surface rounded-3xl p-6 border border-border shadow-card space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-border">
-          <div>
-            <h3 className="text-sm font-bold text-primary">Email Notifications</h3>
-            <p className="text-xs text-muted">Receive daily digest of attendance and fee payments.</p>
-          </div>
-          <input type="checkbox" defaultChecked className="w-5 h-5 accent-brand-sky rounded" />
-        </div>
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-border pb-3">
+        <button
+          onClick={() => setActiveTab('storage')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
+            activeTab === 'storage'
+              ? 'bg-orange-500/15 text-orange-600 border border-orange-500/30'
+              : 'text-secondary hover:text-primary hover:bg-surface-raised'
+          }`}
+        >
+          <Cloud className="w-4 h-4" />
+          <span>Cloudflare R2 Storage</span>
+        </button>
 
-        <div className="flex items-center justify-between pb-4 border-b border-border">
-          <div>
-            <h3 className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</h3>
-            <p className="text-xs text-muted">Require OTP confirmation for administrator logins.</p>
-          </div>
-          <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-primary">Dark Mode (Beta)</h3>
-            <p className="text-xs text-muted">Switch from pastel daylight theme to night contrast.</p>
-          </div>
-          <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
-        </div>
+        <button
+          onClick={() => setActiveTab('general')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
+            activeTab === 'general'
+              ? 'bg-accent-blue-subtle text-accent-blue border border-accent-blue/30'
+              : 'text-secondary hover:text-primary hover:bg-surface-raised'
+          }`}
+        >
+          <Settings className="w-4 h-4" />
+          <span>General & Security</span>
+        </button>
       </div>
+
+      {/* Tab Contents */}
+      {activeTab === 'storage' ? (
+        <StorageTester />
+      ) : (
+        <div className="bg-surface rounded-3xl p-6 border border-border shadow-card space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-border">
+            <div>
+              <h3 className="text-sm font-bold text-primary">Email Notifications</h3>
+              <p className="text-xs text-muted">Receive daily digest of attendance and fee payments.</p>
+            </div>
+            <input type="checkbox" defaultChecked className="w-5 h-5 accent-brand-sky rounded" />
+          </div>
+
+          <div className="flex items-center justify-between pb-4 border-b border-border">
+            <div>
+              <h3 className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</h3>
+              <p className="text-xs text-muted">Require OTP confirmation for administrator logins.</p>
+            </div>
+            <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-primary">Dark Mode (Beta)</h3>
+              <p className="text-xs text-muted">Switch from pastel daylight theme to night contrast.</p>
+            </div>
+            <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

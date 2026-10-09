@@ -17,6 +17,9 @@ export const uploadRoutes = Router();
 // All upload endpoints require authentication
 uploadRoutes.use(authenticate);
 
+// Get storage status & active driver config
+uploadRoutes.get('/config', uploadsController.getConfig);
+
 // Single file upload (general, circulars, homework worksheets)
 uploadRoutes.post('/', uploadSingleFile, uploadsController.uploadSingle);
 
@@ -25,3 +28,6 @@ uploadRoutes.post('/avatar', uploadAvatarFile, uploadsController.uploadAvatar);
 
 // Batch attachments upload (up to 5 files)
 uploadRoutes.post('/multiple', uploadMultipleFiles, uploadsController.uploadMultiple);
+
+// Delete file from storage (R2 / S3 / Local disk)
+uploadRoutes.delete('/', uploadsController.deleteFile);
