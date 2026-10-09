@@ -46,6 +46,7 @@ export const StorageTester: React.FC = () => {
   const [category, setCategory] = useState<string>('general');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [deletingUrl, setDeletingUrl] = useState<string | null>(null);
+  const [confirmDeleteUrl, setConfirmDeleteUrl] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [testFiles, setTestFiles] = useState<StoredTestItem[]>(() => {
@@ -137,19 +138,17 @@ export const StorageTester: React.FC = () => {
   };
 
   const handleDelete = async (url: string, filename: string) => {
-    if (!window.confirm(`Delete "${filename}" from Cloud Storage? This will remove it permanently.`)) {
-      return;
-    }
-
     setDeletingUrl(url);
     try {
       await uploadService.deleteFile(url);
       setTestFiles((prev) => prev.filter((item) => item.url !== url));
+      setConfirmDeleteUrl(null);
       setFeedback({
         type: 'success',
-        message: `Deleted "${filename}" from Cloudflare R2 bucket.`,
+        message: `Deleted "${filename}" permanently from Cloudflare R2 bucket.`,
       });
     } catch (err: any) {
+      console.error('Failed to delete file from storage:', err);
       setFeedback({
         type: 'error',
         message: err?.response?.data?.message || 'Failed to delete file from storage.',
@@ -456,20 +455,43 @@ export const StorageTester: React.FC = () => {
                       <span className="text-[10px]">View</span>
                     </a>
 
-                    {/* Delete Permanently */}
-                    <button
-                      onClick={() => handleDelete(file.url, file.originalName)}
-                      disabled={isDeleting}
-                      title="Delete from Cloudflare R2 Storage"
-                      className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all border border-red-500/20 text-xs flex items-center gap-1 font-bold disabled:opacity-50"
-                    >
-                      {isDeleting ? (
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
+                    {/* Delete Action with Inline Confirmation */}
+                    {confirmDeleteUrl === file.url ? (
+                      <div className="flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 p-1 rounded-xl">
+                        <span className="text-[10px] text-red-600 font-bold px-1 hidden sm:inline">Delete?</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(file.url, file.originalName)}
+                          disabled={isDeleting}
+                          className="px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold shadow-sm transition-all flex items-center gap-1 cursor-pointer"
+                        >
+                          {isDeleting ? (
+                            <RefreshCw className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3 h-3" />
+                          )}
+                          <span>Confirm</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDeleteUrl(null)}
+                          disabled={isDeleting}
+                          className="px-2 py-1.5 rounded-lg bg-surface hover:bg-border text-secondary text-[10px] font-medium border border-border transition-all cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDeleteUrl(file.url)}
+                        title="Delete from Cloudflare R2 Storage"
+                        className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all border border-red-500/20 text-xs flex items-center gap-1 font-bold cursor-pointer"
+                      >
                         <Trash2 className="w-3.5 h-3.5" />
-                      )}
-                      <span className="text-[10px]">Delete</span>
-                    </button>
+                        <span className="text-[10px]">Delete</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               );
