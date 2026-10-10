@@ -265,4 +265,104 @@ export class AcademicsService {
       },
     });
   }
+
+  /**
+   * 1-Click CBSE Starter Pack for newly registered schools
+   * Provisions standard Class 1-10 with Sections A & B and Core Subjects
+   */
+  static async initializeStarterPack(schoolId: string) {
+    const defaultSubjects = [
+      { name: 'Mathematics', code: 'MATH101', type: 'CORE' },
+      { name: 'Science', code: 'SCI101', type: 'CORE' },
+      { name: 'English Language & Literature', code: 'ENG101', type: 'CORE' },
+      { name: 'Social Science', code: 'SST101', type: 'CORE' },
+      { name: 'Hindi', code: 'HIN101', type: 'LANGUAGE' },
+      { name: 'Computer Science', code: 'CS101', type: 'ELECTIVE' },
+    ];
+
+    const standardClasses = [
+      'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
+      'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10',
+    ];
+
+    return prisma.$transaction(async (tx) => {
+      // 1. Create Subjects
+      const createdSubjects = [];
+      for (const sub of defaultSubjects) {
+        const s = await tx.subject.upsert({
+          where: { schoolId_code: { schoolId, code: sub.code } },
+          update: {},
+          create: {
+            schoolId,
+            name: sub.name,
+            code: sub.code,
+            type: sub.type as any,
+          },
+        });
+        createdSubjects.push(s);
+      }
+
+      // 2. Create Classes & Sections
+      const createdClasses = [];
+      for (const className of standardClasses) {
+        const cls = await tx.class.upsert({
+          where: { schoolId_name: { schoolId, name: className } },
+          update: {},
+          create: {
+            schoolId,
+            name: className,
+            numericOrder: standardClasses.indexOf(className) + 1,
+          },
+        });
+
+        // Add Section A and B
+        await tx.section.upsert({
+          where: { classId_name: { classId: cls.id, name: 'A' } },
+          update: {},
+          create: {
+            schoolId,
+            classId: cls.id,
+            name: 'A',
+            capacity: 40,
+          },
+        });
+        await tx.section.upsert({
+          where: { classId_name: { classId: cls.id, name: 'B' } },
+          update: {},
+          create: {
+            schoolId,
+            classId: cls.id,
+            name: 'B',
+            capacity: 40,
+          },
+        });
+
+        // Link core subjects to class
+        for (const sub of createdSubjects) {
+          await tx.classSubject.upsert({
+            where: {
+              classId_subjectId: {
+                classId: cls.id,
+                subjectId: sub.id,
+              },
+            },
+            update: {},
+            create: {
+              schoolId,
+              classId: cls.id,
+              subjectId: sub.id,
+            },
+          });
+        }
+
+        createdClasses.push(cls);
+      }
+
+      return {
+        classesCreated: createdClasses.length,
+        subjectsCreated: createdSubjects.length,
+        sectionsCreated: createdClasses.length * 2,
+      };
+    });
+  }
 }

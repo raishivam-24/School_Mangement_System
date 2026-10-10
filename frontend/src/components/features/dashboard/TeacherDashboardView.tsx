@@ -41,13 +41,15 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({ user
         <div className="relative z-10 space-y-3 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface/20 backdrop-blur-md text-xs font-semibold text-sky-100">
             <Sparkles className="w-3.5 h-3.5 text-accent-amber" />
-            <span>Senior PGT Mathematics • Class Teacher: Class 10-A</span>
+            <span>
+              {user?.teacherProfile?.department ? `${user.teacherProfile.department} Faculty` : 'Academic Faculty'} • {user?.school?.name || 'Campus Faculty'}
+            </span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
             {getTimeGreeting()}, {user?.name || 'Teacher'}! 👨‍🏫
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
-            You have 4 teaching periods scheduled today. Period 1 roll call for Class 10-A has been marked (39/42 present).
+            Daily instructional agenda, attendance tracking, and student evaluations ready for your classes.
           </p>
         </div>
 

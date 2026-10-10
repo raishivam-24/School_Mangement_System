@@ -48,4 +48,10 @@ export const academicService = {
     const res = await api.post('/academics/classes/assign-subject', data);
     return res.data.data;
   },
+
+  /** Initialize 1-Click Standard CBSE Starter Pack (Classes 1-10 + Core Subjects) */
+  initializeStarterPack: async (): Promise<any> => {
+    const res = await api.post('/academics/starter-pack');
+    return res.data.data;
+  },
 };

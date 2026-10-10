@@ -5,8 +5,10 @@
  */
 
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useClasses, useSubjects } from '../hooks';
+import { academicService } from '../services/academic.service';
 import {
   ClassList,
   CourseCatalog,
@@ -15,12 +17,36 @@ import {
 
 export const AcademicsPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<'CLASSES' | 'SUBJECTS' | 'CURRICULUM'>('CLASSES');
+  const [initializing, setInitializing] = useState(false);
+  const [bannerMessage, setBannerMessage] = useState<string | null>(null);
 
+  const queryClient = useQueryClient();
   const { data: classes = [], isLoading: classesLoading } = useClasses();
   const { data: subjects = [], isLoading: subjectsLoading } = useSubjects();
 
+  const handleInitStarterPack = async () => {
+    setInitializing(true);
+    try {
+      await academicService.initializeStarterPack();
+      await queryClient.invalidateQueries({ queryKey: ['classes'] });
+      await queryClient.invalidateQueries({ queryKey: ['subjects'] });
+      setBannerMessage('Standard CBSE Classes (1 to 10) and Core Subjects initialized!');
+      setTimeout(() => setBannerMessage(null), 5000);
+    } catch {
+      setBannerMessage('Failed to initialize starter pack. Please try again.');
+    } finally {
+      setInitializing(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {bannerMessage && (
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+          {bannerMessage}
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -30,9 +56,20 @@ export const AcademicsPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          {!classesLoading && classes.length === 0 && (
+            <button
+              type="button"
+              onClick={handleInitStarterPack}
+              disabled={initializing}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-xs shadow-card hover:bg-brand-sky-dark transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+            >
+              <Sparkles className="w-4 h-4 text-accent-amber" />
+              <span>{initializing ? 'Provisioning...' : '1-Click CBSE Starter Kit'}</span>
+            </button>
+          )}
           <button
             type="button"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent-blue text-white font-semibold text-sm shadow-card hover:bg-brand-sky-dark transition-all cursor-pointer active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-raised border border-border text-primary font-semibold text-xs shadow-card hover:bg-surface transition-all cursor-pointer active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Create Class</span>

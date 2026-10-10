@@ -53,10 +53,15 @@ router.post(
   FinanceController.generateInvoices
 );
 
-// Payment Collection
+// Payment Collection & Online Fee Settlement
 router.post(
   '/payments/collect',
-  requireRoles(UserRole.SCHOOL_ADMIN, UserRole.SUPER_ADMIN),
+  requireRoles(
+    UserRole.SCHOOL_ADMIN,
+    UserRole.SUPER_ADMIN,
+    UserRole.STUDENT,
+    UserRole.PARENT
+  ),
   validate(collectPaymentSchema),
   FinanceController.collectPayment
 );

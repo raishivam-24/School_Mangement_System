@@ -100,4 +100,13 @@ export class AcademicsController {
       next(error);
     }
   }
+
+  static async initializeStarterPack(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await AcademicsService.initializeStarterPack(req.schoolId!);
+      return ApiResponse.success(res, result, 'Standard CBSE starter pack provisioned successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }

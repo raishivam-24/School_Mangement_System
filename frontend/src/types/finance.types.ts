@@ -57,7 +57,7 @@ export interface StudentFeeInstallment {
 export interface CollectPaymentInput {
   feeInvoiceId: string;
   amount: number;
-  paymentMethod: 'CASH' | 'CHEQUE' | 'BANK_TRANSFER' | 'ONLINE_UPI' | 'CARD' | 'DEMAND_DRAFT';
+  paymentMethod: 'CASH' | 'CHEQUE' | 'BANK_TRANSFER' | 'ONLINE_UPI' | 'UPI' | 'CARD' | 'DEMAND_DRAFT' | 'ONLINE';
   transactionRef?: string;
   remarks?: string;
 }

@@ -12,11 +12,11 @@ interface FeeSummaryCardsProps {
 }
 
 export const FeeSummaryCards: React.FC<FeeSummaryCardsProps> = ({ summary, loading }) => {
-  const totalBilled = summary?.totalBilled ?? 1840000;
-  const totalCollected = summary?.totalCollected ?? 1420000;
-  const totalPending = summary?.totalPending ?? 420000;
-  const collectionRate = summary?.collectionRate ?? 77.2;
-  const totalInvoices = summary?.totalInvoices ?? 4;
+  const totalBilled = summary?.totalBilled ?? 0;
+  const totalCollected = summary?.totalCollected ?? 0;
+  const totalPending = summary?.totalPending ?? 0;
+  const collectionRate = summary?.collectionRate ?? (totalBilled > 0 ? Math.round((totalCollected / totalBilled) * 100) : 0);
+  const totalInvoices = summary?.totalInvoices ?? 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

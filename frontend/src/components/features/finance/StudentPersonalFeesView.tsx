@@ -28,94 +28,34 @@ interface StudentPersonalFeesViewProps {
   user: any;
 }
 
-const initialMockInstallments: StudentFeeInstallment[] = [
-  {
-    id: 'inst_1',
-    installmentName: 'Quarter 1 Academic & Activity Fee',
-    quarter: 'Term 1 (Apr – Jun 2026)',
-    invoiceNo: 'INV-2026-0001-Q1',
-    totalAmount: 20000,
-    paidAmount: 20000,
-    balanceAmount: 0,
-    dueDate: '10 Apr 2026',
-    status: 'PAID',
-    receiptNo: 'REC-2026-0412',
-    paidOn: '10 Apr 2026',
-    paymentMode: 'UPI (GPay / HDFC Bank)',
-    transactionRef: 'UPI/410294829104',
-    breakdown: [
-      { item: 'Tuition Fee (Q1)', amount: 12000 },
-      { item: 'Science & Computer Lab Maintenance', amount: 4000 },
-      { item: 'Smart Class & Digital LMS Portal', amount: 2000 },
-      { item: 'Library & Sports Facility', amount: 2000 },
-    ],
-  },
-  {
-    id: 'inst_2',
-    installmentName: 'Quarter 2 Academic & Lab Fee',
-    quarter: 'Term 1 (Jul – Sep 2026)',
-    invoiceNo: 'INV-2026-0001-Q2',
-    totalAmount: 20000,
-    paidAmount: 20000,
-    balanceAmount: 0,
-    dueDate: '10 Jul 2026',
-    status: 'PAID',
-    receiptNo: 'REC-2026-0891',
-    paidOn: '08 Jul 2026',
-    paymentMode: 'NetBanking (SBI NetBanking)',
-    transactionRef: 'NEFT/SBIN84920481',
-    breakdown: [
-      { item: 'Tuition Fee (Q2)', amount: 12000 },
-      { item: 'Science & Computer Lab Maintenance', amount: 4000 },
-      { item: 'Smart Class & Digital LMS Portal', amount: 2000 },
-      { item: 'Library & Sports Facility', amount: 2000 },
-    ],
-  },
-  {
-    id: 'inst_3',
-    installmentName: 'Quarter 3 Academic & Board Registration Fee',
-    quarter: 'Term 2 (Oct – Dec 2026)',
-    invoiceNo: 'INV-2026-0001-Q3',
-    totalAmount: 5000,
-    paidAmount: 0,
-    balanceAmount: 5000,
-    dueDate: '15 Oct 2026',
-    status: 'PENDING',
-    breakdown: [
-      { item: 'CBSE Class 10 Board Exam Registration', amount: 3000 },
-      { item: 'Pre-Board Mock Exam Printing & Logistics', amount: 2000 },
-    ],
-  },
-];
-
 export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = ({ user }) => {
   const [activeTab, setActiveTab] = useState<'INSTALLMENTS' | 'STRUCTURE' | 'BANK_INFO'>('INSTALLMENTS');
-  const [installments, setInstallments] = useState<StudentFeeInstallment[]>(initialMockInstallments);
+  const [installments, setInstallments] = useState<StudentFeeInstallment[]>([]);
 
   // Modals state
   const [selectedReceipt, setSelectedReceipt] = useState<StudentFeeInstallment | null>(null);
   const [payingInstallment, setPayingInstallment] = useState<StudentFeeInstallment | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'CARD' | 'NETBANKING'>('UPI');
-  const [upiId, setUpiId] = useState('rahul.parent@okhdfcbank');
+  const [upiId, setUpiId] = useState('user.upi@bank');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const studentId = user?.studentProfile?.id;
-  const { data: liveInvoices = [] } = useInvoices({ studentId });
+  const { data: liveInvoices = [], isLoading: isInvoicesLoading } = useInvoices({ studentId });
   const { mutate: collectPayment, isPending: isProcessingPayment } = useCollectPayment();
 
-  // Sync live invoices if present
+  // Sync live invoices
   React.useEffect(() => {
-    if (liveInvoices.length > 0) {
+    if (liveInvoices && liveInvoices.length > 0) {
       setInstallments(
         liveInvoices.map((inv) => ({
           id: inv.id,
           installmentName: inv.feeType || 'Quarterly Academic Fee',
-          quarter: `Term Session (${inv.class || 'Class 10'})`,
+          quarter: `Session ${inv.class ? `Class ${inv.class}` : 'Current Term'}`,
           invoiceNo: inv.invoiceNumber || inv.invoiceNo || 'INV-2026',
           totalAmount: inv.totalAmount ?? inv.total ?? 0,
           paidAmount: inv.paidAmount ?? inv.paid ?? 0,
           balanceAmount: inv.balanceAmount ?? inv.balance ?? 0,
-          dueDate: inv.dueDate,
+          dueDate: inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('en-IN') : 'TBA',
           status: inv.status === 'PAID' ? 'PAID' : inv.status === 'PARTIAL' ? 'PARTIAL' : 'PENDING',
           receiptNo: `REC-${(inv.invoiceNumber || '2026').replace('INV-', '')}`,
           paidOn: new Date().toLocaleDateString('en-IN', {
@@ -123,12 +63,14 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
             month: 'short',
             year: 'numeric',
           }),
-          paymentMode: 'Online UPI Portal',
+          paymentMode: 'Online Payment Portal',
           breakdown: [
-            { item: inv.feeType || 'Tuition & Academic Consumables', amount: inv.totalAmount ?? inv.total ?? 0 },
+            { item: inv.feeType || 'Tuition & Academic Dues', amount: inv.totalAmount ?? inv.total ?? 0 },
           ],
         }))
       );
+    } else {
+      setInstallments([]);
     }
   }, [liveInvoices]);
 
@@ -146,7 +88,7 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
       collectPayment({
         feeInvoiceId: payingInstallment.id,
         amount: payingInstallment.balanceAmount,
-        paymentMethod: paymentMethod === 'UPI' ? 'ONLINE_UPI' : paymentMethod === 'CARD' ? 'CARD' : 'BANK_TRANSFER',
+        paymentMethod: paymentMethod === 'UPI' ? 'UPI' : paymentMethod === 'CARD' ? 'CARD' : 'BANK_TRANSFER',
         transactionRef: `UPI/${Date.now()}`,
         remarks: `Authorized online payment by ${user?.name || 'Student'} via ${paymentMethod}`,
       });
@@ -185,7 +127,7 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
 
   const handleDownloadLedger = () => {
     confetti({ particleCount: 40, spread: 60 });
-    alert(`Downloading Official Annual Fee Clearance Certificate for ${user?.name || 'Rahul Sharma'}...`);
+    alert(`Downloading Official Annual Fee Clearance Certificate for ${user?.name || 'Student'}...`);
   };
 
   return (
@@ -196,12 +138,12 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-2xl font-bold text-primary">My School Fee &amp; Receipts</h1>
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
-              Academic Session 2026 – 2027
+              Academic Session {new Date().getFullYear()} – {new Date().getFullYear() + 1}
             </span>
           </div>
           <p className="text-xs text-secondary mt-1">
             Official fee payment ledger, quarterly installments, and verified tax receipts for{' '}
-            <strong className="text-secondary">{user?.name || 'Rahul Sharma'}</strong> (Class 10-A).
+            <strong className="text-secondary">{user?.name || 'Student'}</strong>.
           </p>
         </div>
 
@@ -294,7 +236,16 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
       {/* Tab A: Installments List */}
       {activeTab === 'INSTALLMENTS' && (
         <div className="space-y-4">
-          {installments.map((inst) => {
+          {installments.length === 0 ? (
+            <div className="p-12 text-center bg-surface rounded-3xl border border-border space-y-2">
+              <CheckCircle2 className="w-10 h-10 text-accent-green mx-auto" />
+              <h4 className="text-sm font-bold text-primary">No Outstanding Fee Invoices</h4>
+              <p className="text-xs text-muted max-w-md mx-auto">
+                All academic dues are current or pending generation by your school finance office.
+              </p>
+            </div>
+          ) : (
+            installments.map((inst) => {
             const isPaid = inst.status === 'PAID';
             return (
               <div
@@ -350,7 +301,7 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
                 </div>
               </div>
             );
-          })}
+          }))}
         </div>
       )}
 

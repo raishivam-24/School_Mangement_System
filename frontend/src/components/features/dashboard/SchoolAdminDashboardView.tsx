@@ -38,21 +38,23 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
       month: 'Apr (Q1)',
       collected: kpi?.fees?.totalCollected
         ? Math.round((kpi.fees.totalCollected / 100000) * 10) / 10
-        : 142.8,
-      target: 180,
+        : 0,
+      target: kpi?.fees?.totalBilled
+        ? Math.round((kpi.fees.totalBilled / 100000) * 10) / 10
+        : 10,
     },
-    { month: 'Jul (Q2)', collected: 0, target: 160 },
-    { month: 'Oct (Q3)', collected: 0, target: 160 },
-    { month: 'Jan (Q4)', collected: 0, target: 170 },
+    { month: 'Jul (Q2)', collected: 0, target: 10 },
+    { month: 'Oct (Q3)', collected: 0, target: 10 },
+    { month: 'Jan (Q4)', collected: 0, target: 10 },
   ];
 
   const classAttendance = [
-    { class: 'Class 10', percent: 94 },
-    { class: 'Class 11', percent: 92 },
-    { class: 'Class 12', percent: 96 },
-    { class: 'Class 9', percent: 91 },
-    { class: 'Class 8', percent: 95 },
+    { class: 'Class 10', percent: kpi?.todayAttendance?.rate || 0 },
+    { class: 'Class 9', percent: kpi?.todayAttendance?.rate || 0 },
+    { class: 'Class 8', percent: kpi?.todayAttendance?.rate || 0 },
   ];
+
+  const isBrandNewSchool = !kpi?.totalStudents && !kpi?.totalTeachers;
 
   return (
     <div className="space-y-6">
@@ -65,14 +67,16 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
         <div className="relative z-10 space-y-3 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface/20 backdrop-blur-md text-xs font-semibold text-sky-100">
             <Building2 className="w-3.5 h-3.5" />
-            <span>Delhi Public Academy • CBSE Affiliation #1930482</span>
+            <span>{user?.school?.name || 'My School'} • Code: {user?.school?.code || 'CAMPUS'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
-            {getTimeGreeting()}, {user?.name || 'Principal'}
+            {getTimeGreeting()}, {user?.name || 'Administrator'}
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
-            Academic Year 2026–27 (Term 1) • Campus operations running smoothly with{' '}
-            {kpi?.todayAttendance?.rate ? `${kpi.todayAttendance.rate}%` : '94.2%'} daily attendance.
+            Academic Year {new Date().getFullYear()}–{(new Date().getFullYear() + 1).toString().slice(-2)} •{' '}
+            {kpi?.todayAttendance?.rate !== undefined
+              ? `Campus attendance at ${kpi.todayAttendance.rate}% today.`
+              : 'Campus management portal ready.'}
           </p>
         </div>
 
@@ -82,10 +86,51 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
             className="px-5 py-3 rounded-2xl bg-surface text-accent-blue font-bold text-xs shadow-md hover:bg-sky-50 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
           >
             <FileText className="w-4 h-4" />
-            <span>Daily Admin Report</span>
+            <span>Campus Overview</span>
           </button>
         </div>
       </motion.div>
+
+      {/* New School Quick-Start Onboarding Guide (Displays only when 0 students & 0 teachers) */}
+      {isBrandNewSchool && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="p-6 rounded-3xl bg-surface border border-accent-blue/30 shadow-card space-y-4"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-extrabold text-primary flex items-center gap-2">
+                🚀 Welcome to your new SchoolHub campus!
+              </h3>
+              <p className="text-xs text-muted mt-0.5">
+                Complete these 3 foundational steps to activate your school's digital operations.
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
+              Setup Mode
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted">Step 1</span>
+              <h4 className="text-sm font-bold text-primary mt-1">Configure Classes</h4>
+              <p className="text-xs text-muted mt-0.5">Add grades, sections, and subjects in Academics.</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted">Step 2</span>
+              <h4 className="text-sm font-bold text-primary mt-1">Add Faculty</h4>
+              <p className="text-xs text-muted mt-0.5">Create teacher profiles and assign subjects.</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-surface-raised border border-border">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted">Step 3</span>
+              <h4 className="text-sm font-bold text-primary mt-1">Enroll Students</h4>
+              <p className="text-xs text-muted mt-0.5">Admit students and generate roll numbers.</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* 4 School Institutional Stat Cards (in ₹ INR) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -98,9 +143,9 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
           </div>
           <div className="mt-3">
             <span className="text-3xl font-extrabold text-primary">
-              {kpi?.totalStudents !== undefined ? kpi.totalStudents : '3,250'}
+              {kpi?.totalStudents !== undefined ? kpi.totalStudents.toLocaleString('en-IN') : '0'}
             </span>
-            <p className="text-xs text-muted mt-1">Active Students (KG to 12th)</p>
+            <p className="text-xs text-muted mt-1">Active Students enrolled</p>
           </div>
         </div>
 
@@ -108,19 +153,19 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Campus Attendance</span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-green-subtle text-accent-green">
-              {kpi?.todayAttendance?.rate ? `${kpi.todayAttendance.rate}% Today` : '94.2% Today'}
+              {kpi?.todayAttendance?.rate !== undefined ? `${kpi.todayAttendance.rate}% Today` : '0% Today'}
             </span>
           </div>
           <div className="mt-3">
             <span className="text-3xl font-extrabold text-primary">
               {kpi?.todayAttendance
                 ? `${kpi.todayAttendance.present} / ${kpi.todayAttendance.total}`
-                : '3,061 / 3,250'}
+                : (kpi?.totalStudents ? `0 / ${kpi.totalStudents}` : '0 / 0')}
             </span>
             <p className="text-xs text-muted mt-1">
               {kpi?.todayAttendance
                 ? `${kpi.todayAttendance.absent} Absent across sections`
-                : '189 Absent across all sections'}
+                : 'No attendance marked today'}
             </p>
           </div>
         </div>
@@ -134,7 +179,7 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
           </div>
           <div className="mt-3">
             <span className="text-3xl font-extrabold text-primary">
-              {kpi?.totalTeachers !== undefined ? `${kpi.totalTeachers} Faculty` : '134 / 140'}
+              {kpi?.totalTeachers !== undefined ? `${kpi.totalTeachers} Faculty` : '0 Faculty'}
             </span>
             <p className="text-xs text-muted mt-1">Teaching Staff on roster</p>
           </div>
@@ -144,19 +189,19 @@ export const SchoolAdminDashboardView: React.FC<SchoolAdminDashboardViewProps> =
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Fee Collection</span>
             <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-green-subtle text-accent-green">
-              {kpi?.fees?.collectionRate ? `${kpi.fees.collectionRate}% Rate` : '78% Target'}
+              {kpi?.fees?.collectionRate !== undefined ? `${kpi.fees.collectionRate}% Rate` : '0% Rate'}
             </span>
           </div>
           <div className="mt-3">
             <span className="text-2xl font-extrabold text-primary">
               {kpi?.fees
                 ? `₹${kpi.fees.totalCollected.toLocaleString('en-IN')}`
-                : '₹1,42,80,000'}
+                : '₹0'}
             </span>
             <p className="text-xs text-muted mt-1">
               {kpi?.fees
                 ? `₹${kpi.fees.totalPending.toLocaleString('en-IN')} Outstanding`
-                : '₹37,20,000 Due by 30 April'}
+                : '₹0 Pending Due'}
             </p>
           </div>
         </div>

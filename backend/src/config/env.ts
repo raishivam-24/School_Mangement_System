@@ -39,6 +39,10 @@ const envSchema = z.object({
   AWS_S3_ENDPOINT: z.string().optional(), // For Cloudflare R2 or MinIO
   AWS_S3_PUBLIC_URL: z.string().optional(), // Public domain / R2 dev URL (e.g. https://pub-xxx.r2.dev or https://assets.school.com)
 
+  // Payment Gateway Configuration (Razorpay / Stripe)
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+
   // Redis Configuration (Caching & BullMQ Background Queues)
   REDIS_URL: z.string().optional(),
   REDIS_HOST: z.string().default('localhost'),

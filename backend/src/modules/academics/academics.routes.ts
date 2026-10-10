@@ -66,4 +66,11 @@ router.post(
   AcademicsController.assignClassSubject
 );
 
+// 1-Click CBSE Starter Kit for newly created schools
+router.post(
+  '/starter-pack',
+  requireRoles(UserRole.SCHOOL_ADMIN, UserRole.SUPER_ADMIN),
+  AcademicsController.initializeStarterPack
+);
+
 export const academicRoutes = router;

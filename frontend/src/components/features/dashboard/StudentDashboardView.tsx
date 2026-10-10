@@ -106,20 +106,26 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({ user
         <div className="relative z-10 space-y-3 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface/20 backdrop-blur-md text-xs font-semibold text-sky-100">
             <Sparkles className="w-3.5 h-3.5 text-accent-amber" />
-            <span>Class 10-A • Roll No: 24 • Tagore House (Red)</span>
+            <span>
+              {user?.studentProfile?.enrollments?.[0]?.class?.name
+                ? `${user.studentProfile.enrollments[0].class.name}-${user.studentProfile.enrollments[0].section?.name || 'A'}`
+                : 'Enrolled Class'}{' '}
+              • {user?.studentProfile?.rollNo ? `Roll No: ${user.studentProfile.rollNo}` : 'CBSE Scholar'}{' '}
+              • {user?.school?.name || 'SchoolHub'}
+            </span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug">
             {getTimeGreeting()}, {user?.name || 'Student'}! 📚
           </h2>
           <p className="text-xs sm:text-sm text-sky-100 font-medium">
-            You have 6 classes scheduled today. Next lecture is <strong className="text-white">Physics Lab with Dr. Priya Patel</strong> at 09:15 AM.
+            Welcome to your student learning space. Check your daily timetable, submit assignments, and track term exams.
           </p>
           <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
             <span className="bg-surface/15 px-3 py-1 rounded-full border border-white/20">
-              CBSE Candidate: #20261024
+              Admission No: {user?.studentProfile?.admissionNo || 'STU-2026'}
             </span>
             <span className="bg-surface/15 px-3 py-1 rounded-full border border-white/20">
-              Class Teacher: Amit Sharma Sir
+              Status: Active Student
             </span>
           </div>
         </div>
