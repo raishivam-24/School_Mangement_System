@@ -68,15 +68,26 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   </td>
                   <td className="py-4 px-6 font-bold text-primary">
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs ${
-                          s.gender === 'FEMALE'
-                            ? 'bg-accent-violet-subtle text-accent-violet'
-                            : 'bg-accent-blue-subtle text-accent-blue'
-                        }`}
-                      >
-                        {(s.name || s.firstName || 'S').charAt(0)}
-                      </div>
+                      {s.avatarUrl ? (
+                        <img
+                          src={s.avatarUrl}
+                          alt={s.name || s.firstName}
+                          className="w-9 h-9 rounded-full object-cover border border-border shrink-0"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                            s.gender === 'FEMALE'
+                              ? 'bg-accent-violet-subtle text-accent-violet'
+                              : 'bg-accent-blue-subtle text-accent-blue'
+                          }`}
+                        >
+                          {(s.name || s.firstName || 'S').charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <p className="font-bold text-primary">{s.name || `${s.firstName || ''} ${s.lastName || ''}`}</p>
                         <span className="text-[10px] text-muted">{s.parentName || 'Parent Guardian'}</span>

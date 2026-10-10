@@ -40,6 +40,7 @@ export class TeachersService {
           name: input.name,
           role: UserRole.TEACHER,
           phone: input.phone,
+          avatarUrl: input.avatarUrl || null,
         },
       });
 

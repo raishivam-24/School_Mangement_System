@@ -51,6 +51,7 @@ export class StudentsService {
             email: input.email.toLowerCase(),
             passwordHash: pwdHash,
             role: UserRole.STUDENT,
+            avatarUrl: input.avatarUrl || null,
           },
         });
         createdUserId = loginUser.id;
@@ -165,6 +166,9 @@ export class StudentsService {
           parent: {
             select: { id: true, phone: true, user: { select: { name: true, email: true } } },
           },
+          user: {
+            select: { id: true, avatarUrl: true, email: true },
+          },
         },
       }),
     ]);
@@ -177,6 +181,7 @@ export class StudentsService {
         firstName: s.firstName,
         lastName: s.lastName,
         fullName: `${s.firstName} ${s.lastName}`,
+        avatarUrl: s.user?.avatarUrl || null,
         gender: s.gender,
         dateOfBirth: s.dateOfBirth,
         status: s.status,

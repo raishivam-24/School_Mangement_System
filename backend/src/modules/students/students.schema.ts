@@ -27,6 +27,7 @@ export const createStudentSchema = z.object({
     createLoginAccount: z.boolean().default(false),
     email: z.string().email().optional(),
     password: z.string().min(6).optional(),
+    avatarUrl: z.string().optional(),
   }),
 });
 

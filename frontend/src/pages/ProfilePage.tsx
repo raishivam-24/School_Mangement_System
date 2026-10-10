@@ -30,6 +30,7 @@ import {
   Clock,
   Calendar,
 } from 'lucide-react';
+import { AvatarUploader } from '../components/common/AvatarUploader';
 
 export const ProfilePage: React.FC = () => {
   const { user, setUser } = useAuth();
@@ -115,6 +116,19 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleAvatarChange = (newUrl: string | null) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const updated = { ...prev, avatarUrl: newUrl };
+      try {
+        localStorage.setItem('schoolhub_user', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* ========================================================================= */}
@@ -125,27 +139,30 @@ export const ProfilePage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative overflow-hidden"
       >
-        <div className="flex items-center gap-5">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-tr from-brand-sky via-sky-300 to-brand-lilac p-1 shadow-md shrink-0">
-            <img
-              src={
-                user?.avatarUrl ||
-                `https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200`
-              }
-              alt="Avatar"
-              className="w-full h-full rounded-[22px] object-cover"
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+          {/* Cloudflare R2 Powered Avatar Uploader */}
+          <div className="shrink-0">
+            <AvatarUploader
+              currentAvatarUrl={user?.avatarUrl}
+              onAvatarChange={handleAvatarChange}
+              size="lg"
+              fallbackName={user?.name}
+              allowDelete={true}
             />
           </div>
 
           <div className="space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-extrabold text-primary">{user?.name}</h1>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent-blue-subtle text-accent-blue uppercase tracking-wider">
                 {user?.role.replace('_', ' ')}
               </span>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500/10 text-orange-600 border border-orange-500/20">
+                ☁️ R2 Profile Storage
+              </span>
             </div>
             <p className="text-xs text-muted font-medium">{user?.email}</p>
-            <div className="flex items-center gap-3 pt-1 text-xs text-secondary font-semibold">
+            <div className="flex items-center justify-center sm:justify-start gap-3 pt-1 text-xs text-secondary font-semibold">
               <span className="flex items-center gap-1">
                 <Building2 className="w-3.5 h-3.5 text-accent-blue" />
                 {user?.school?.name || 'Platform Super Admin'}

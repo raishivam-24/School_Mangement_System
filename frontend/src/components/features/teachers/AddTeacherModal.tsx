@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { X, Save } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useCreateTeacher } from '../../../hooks';
+import { AvatarUploader } from '../../common/AvatarUploader';
 
 interface AddTeacherModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
   const [formData, setFormData] = useState({
     employeeId: nextEmployeeId,
     name: '',
+    avatarUrl: '',
     designation: 'PGT Mathematics',
     department: 'Mathematics',
     email: '',
@@ -54,6 +56,7 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
         subjects: formData.subjects,
         gender: formData.gender,
         phone: formData.phone || undefined,
+        avatarUrl: formData.avatarUrl || undefined,
       },
       {
         onSuccess: () => {
@@ -62,6 +65,7 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
           setFormData({
             employeeId: '',
             name: '',
+            avatarUrl: '',
             designation: 'PGT Mathematics',
             department: 'Mathematics',
             email: '',
@@ -102,6 +106,23 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Teacher Profile Photo via Cloudflare R2 */}
+          <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-raised border border-border">
+            <AvatarUploader
+              currentAvatarUrl={formData.avatarUrl}
+              onAvatarChange={(url) => setFormData((prev) => ({ ...prev, avatarUrl: url || '' }))}
+              size="md"
+              fallbackName={formData.name || 'Teacher'}
+              allowDelete={true}
+            />
+            <div>
+              <h4 className="text-xs font-bold text-primary">Faculty Photo (Optional)</h4>
+              <p className="text-[11px] text-muted mt-0.5">
+                Upload teacher photo stored securely in Cloudflare R2 object storage.
+              </p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-secondary mb-1">Employee ID</label>

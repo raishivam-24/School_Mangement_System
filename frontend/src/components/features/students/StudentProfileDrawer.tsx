@@ -46,9 +46,17 @@ export const StudentProfileDrawer: React.FC<StudentProfileDrawerProps> = ({
 
             {/* Identity Header */}
             <div className="pt-6 pb-4 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-sky to-brand-lilac flex items-center justify-center text-white font-black text-2xl shadow-sm">
-                {(student.name || student.firstName || 'S').charAt(0)}
-              </div>
+              {student.avatarUrl ? (
+                <img
+                  src={student.avatarUrl}
+                  alt={student.name}
+                  className="w-16 h-16 rounded-2xl object-cover shadow-sm border border-border shrink-0"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-sky to-brand-lilac flex items-center justify-center text-white font-black text-2xl shadow-sm shrink-0">
+                  {(student.name || student.firstName || 'S').charAt(0)}
+                </div>
+              )}
               <div>
                 <h4 className="text-base font-bold text-primary">{student.name}</h4>
                 <p className="text-xs text-accent-blue font-semibold">

@@ -17,6 +17,7 @@ export const createTeacherSchema = z.object({
     gender: z.nativeEnum(Gender).default(Gender.OTHER),
     phone: z.string().optional(),
     address: z.string().optional(),
+    avatarUrl: z.string().optional(),
     joiningDate: z.string().datetime().or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
   }),
 });

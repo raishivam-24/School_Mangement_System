@@ -10,7 +10,7 @@
  * 4. Faculty Contact: Teacher details & scheduled doubt clearing consultation.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -45,8 +45,13 @@ import {
   Filter,
   Search,
   SlidersHorizontal,
+  ExternalLink,
+  Trash2,
+  Cloud,
+  RefreshCw,
 } from 'lucide-react';
 import { initialStudentSubjects, type StudentSubject, type Assignment, type Chapter } from '../data/studentSubjectsData';
+import { uploadService } from '../services/upload.service';
 
 export const SubjectClassroomPage: React.FC = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
@@ -176,11 +181,46 @@ export const SubjectClassroomPage: React.FC = () => {
   const [submittingAssignment, setSubmittingAssignment] = useState<Assignment | null>(null);
   const [studentComments, setStudentComments] = useState('');
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
+  const [uploadedFileSize, setUploadedFileSize] = useState<number | null>(null);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const [uploadFileError, setUploadFileError] = useState<string | null>(null);
+  const homeworkFileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Note preview notification modal
   const [previewNoteTitle, setPreviewNoteTitle] = useState<string | null>(null);
+
+  // Real Cloudflare R2 Homework File Upload Handler
+  const handleHomeworkFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingFile(true);
+    setUploadFileError(null);
+    try {
+      const res = await uploadService.uploadFile(file, 'homework');
+      setUploadedFileUrl(res.url);
+      setUploadedFileName(res.originalName);
+      setUploadedFileSize(res.size);
+    } catch (err: any) {
+      console.error('Homework upload failed:', err);
+      setUploadFileError(err?.response?.data?.message || 'Failed to stream file to Cloudflare R2 storage.');
+    } finally {
+      setIsUploadingFile(false);
+    }
+  };
+
+  const handleRemoveUploadedFile = async () => {
+    if (uploadedFileUrl) {
+      await uploadService.deleteFile(uploadedFileUrl).catch(() => null);
+    }
+    setUploadedFileUrl(null);
+    setUploadedFileName(null);
+    setUploadedFileSize(null);
+    if (homeworkFileInputRef.current) homeworkFileInputRef.current.value = '';
+  };
 
   // Handle Homework Submission
   const handleSubmitHomework = (e: React.FormEvent) => {
@@ -197,6 +237,7 @@ export const SubjectClassroomPage: React.FC = () => {
               dueCountdown: 'Submitted',
               submittedAt: 'Just now',
               submissionFileName: uploadedFileName || 'Assignment_Solution.pdf',
+              submissionUrl: uploadedFileUrl || undefined,
             }
           : a
       );
@@ -216,9 +257,11 @@ export const SubjectClassroomPage: React.FC = () => {
         setSubmitSuccess(false);
         setSubmittingAssignment(null);
         setUploadedFileName(null);
+        setUploadedFileUrl(null);
+        setUploadedFileSize(null);
         setStudentComments('');
       }, 1800);
-    }, 900);
+    }, 600);
   };
 
   return (
@@ -655,9 +698,22 @@ export const SubjectClassroomPage: React.FC = () => {
                                     </span>
                                   </div>
                                   <h4 className="text-sm font-bold text-primary mt-0.5">{asg.title}</h4>
-                                  <span className="text-[11px] text-muted">
-                                    Submitted file: {asg.submissionFileName} • {asg.submittedAt}
-                                  </span>
+                                  <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                                    <span className="text-[11px] text-muted">
+                                      Submitted file: <strong className="text-secondary">{asg.submissionFileName}</strong> • {asg.submittedAt}
+                                    </span>
+                                    {asg.submissionUrl && (
+                                      <a
+                                        href={uploadService.getFileUrl(asg.submissionUrl)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-500/10 text-orange-600 border border-orange-500/20 text-[10px] font-bold hover:bg-orange-500/20 transition-all ml-1"
+                                      >
+                                        <ExternalLink className="w-3 h-3" />
+                                        <span>View Copy in R2</span>
+                                      </a>
+                                    )}
+                                  </div>
                                 </div>
 
                                 <div className="flex items-center gap-3">
@@ -1209,28 +1265,87 @@ export const SubjectClassroomPage: React.FC = () => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmitHomework} className="space-y-4 text-xs">
-                  {/* File Upload Box */}
+                  {/* File Upload Box with Cloudflare R2 Streaming */}
                   <div>
-                    <label className="font-bold text-secondary block mb-1.5">
-                      Upload Notebook Scans / Assignment PDF
+                    <label className="font-bold text-secondary block mb-1.5 flex items-center justify-between">
+                      <span>Upload Notebook Scans / Assignment PDF</span>
+                      <span className="text-[10px] text-orange-600 font-bold bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">
+                        ☁️ Cloudflare R2
+                      </span>
                     </label>
-                    <div
-                      onClick={() => setUploadedFileName('Rahul_Sharma_Solutions_Ex4.2.pdf')}
-                      className="border-2 border-dashed border-border hover:border-accent-blue p-6 rounded-2xl text-center cursor-pointer transition-all bg-surface-raised hover:bg-sky-50/20"
-                    >
-                      <Upload className="w-8 h-8 text-accent-blue mx-auto mb-2" />
-                      {uploadedFileName ? (
-                        <div className="flex items-center justify-center gap-2 text-accent-blue font-bold">
-                          <Check className="w-4 h-4 text-accent-green" />
-                          <span>{uploadedFileName} (Ready to submit)</span>
+
+                    {/* Hidden input */}
+                    <input
+                      ref={homeworkFileInputRef}
+                      type="file"
+                      accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                      onChange={handleHomeworkFileChange}
+                      className="hidden"
+                    />
+
+                    {isUploadingFile ? (
+                      <div className="border-2 border-dashed border-orange-400 bg-orange-50/10 p-6 rounded-2xl text-center space-y-2">
+                        <RefreshCw className="w-7 h-7 text-orange-500 animate-spin mx-auto" />
+                        <p className="font-bold text-primary text-xs">Streaming file to Cloudflare R2 bucket...</p>
+                        <span className="text-[10px] text-muted">Encrypting &amp; generating fast CDN URL</span>
+                      </div>
+                    ) : uploadedFileUrl ? (
+                      <div className="p-4 rounded-2xl bg-surface-raised border border-border flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-600 flex items-center justify-center shrink-0">
+                            <FileCheck className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-primary truncate text-xs">{uploadedFileName}</p>
+                            <div className="flex items-center gap-2 text-[10px] text-muted">
+                              {uploadedFileSize && <span>{(uploadedFileSize / 1024).toFixed(1)} KB</span>}
+                              <span>•</span>
+                              <span className="text-accent-green font-bold flex items-center gap-1">
+                                <Check className="w-3 h-3" /> Ready to submit
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      ) : (
-                        <>
-                          <p className="font-bold text-secondary">Click to upload scanned document (PDF, PNG, JPG)</p>
-                          <span className="text-[10px] text-muted">Maximum allowed file size: 10 MB</span>
-                        </>
-                      )}
-                    </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <a
+                            href={uploadService.getFileUrl(uploadedFileUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 rounded-xl bg-surface hover:bg-border text-accent-blue border border-border transition-all"
+                            title="Preview file"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                          <button
+                            type="button"
+                            onClick={handleRemoveUploadedFile}
+                            className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 transition-all cursor-pointer"
+                            title="Remove file"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => homeworkFileInputRef.current?.click()}
+                        className="border-2 border-dashed border-border hover:border-accent-blue p-6 rounded-2xl text-center cursor-pointer transition-all bg-surface-raised hover:bg-sky-50/20 group"
+                      >
+                        <Upload className="w-8 h-8 text-accent-blue mx-auto mb-2 group-hover:-translate-y-1 transition-transform" />
+                        <p className="font-bold text-primary">Click to select homework file (PDF, PNG, JPG, DOC)</p>
+                        <span className="text-[10px] text-muted block mt-1">
+                          Files are uploaded directly to Cloudflare R2 • Max 10 MB
+                        </span>
+                      </div>
+                    )}
+
+                    {uploadFileError && (
+                      <p className="text-[11px] text-red-500 font-medium mt-1.5 flex items-center gap-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        <span>{uploadFileError}</span>
+                      </p>
+                    )}
                   </div>
 
                   {/* Student Remarks / Note to Teacher */}

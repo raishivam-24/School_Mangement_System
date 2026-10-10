@@ -36,6 +36,8 @@ export interface Assignment {
   obtainedMarks?: number;
   submittedAt?: string;
   submissionFileName?: string;
+  submissionUrl?: string;
+  attachmentUrl?: string;
   teacherFeedback?: string;
   description: string;
 }

@@ -31,4 +31,5 @@ export interface CreateTeacherInput {
   subjects?: string;
   gender?: 'MALE' | 'FEMALE' | 'OTHER';
   phone?: string;
+  avatarUrl?: string;
 }

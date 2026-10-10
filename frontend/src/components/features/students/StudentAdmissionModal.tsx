@@ -9,6 +9,7 @@ import { X, Save } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useClasses, useAcademicYears, useAdmitStudent } from '../../../hooks';
 import type { ClassItem } from '../../../types';
+import { AvatarUploader } from '../../common/AvatarUploader';
 
 interface StudentAdmissionModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export const StudentAdmissionModal: React.FC<StudentAdmissionModalProps> = ({
     admissionNo: '',
     firstName: '',
     lastName: '',
+    avatarUrl: '',
     classId: '',
     class: 'Class 10',
     sectionId: '',
@@ -91,6 +93,7 @@ export const StudentAdmissionModal: React.FC<StudentAdmissionModalProps> = ({
         createLoginAccount: formData.createLoginAccount,
         email: formData.email || undefined,
         password: formData.password || undefined,
+        avatarUrl: formData.avatarUrl || undefined,
       },
       {
         onSuccess: () => {
@@ -101,6 +104,7 @@ export const StudentAdmissionModal: React.FC<StudentAdmissionModalProps> = ({
             admissionNo: '',
             firstName: '',
             lastName: '',
+            avatarUrl: '',
             rollNumber: '',
             parentName: '',
             parentPhone: '+91 ',
@@ -141,6 +145,22 @@ export const StudentAdmissionModal: React.FC<StudentAdmissionModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Student Profile Picture Upload via Cloudflare R2 */}
+          <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-raised border border-border">
+            <AvatarUploader
+              currentAvatarUrl={formData.avatarUrl}
+              onAvatarChange={(url) => setFormData((prev) => ({ ...prev, avatarUrl: url || '' }))}
+              size="md"
+              fallbackName={`${formData.firstName} ${formData.lastName}`}
+              allowDelete={true}
+            />
+            <div>
+              <h4 className="text-xs font-bold text-primary">Student Photo (Optional)</h4>
+              <p className="text-[11px] text-muted mt-0.5">
+                Upload student passport photo streamed directly to Cloudflare R2 storage.
+              </p>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-secondary mb-1">First Name</label>

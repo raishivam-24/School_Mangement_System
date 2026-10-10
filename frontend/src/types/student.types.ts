@@ -52,4 +52,5 @@ export interface AdmitStudentInput {
   busRoute?: string;
   aadhaarNo?: string;
   createLoginAccount?: boolean;
+  avatarUrl?: string;
 }
