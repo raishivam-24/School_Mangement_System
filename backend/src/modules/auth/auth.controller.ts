@@ -58,6 +58,30 @@ export class AuthController {
   }
 
   /**
+   * Get public payment configuration (Razorpay key)
+   */
+  static async getPaymentConfig(req: Request, res: Response, next: NextFunction) {
+    try {
+      const config = AuthService.getPaymentConfig();
+      return ApiResponse.success(res, config, 'Payment configuration retrieved');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Create Razorpay order for school registration subscription
+   */
+  static async createSubscriptionOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const order = await AuthService.createSubscriptionOrder(req.body);
+      return ApiResponse.success(res, order, 'Razorpay order created successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Refresh JWT tokens via cookie or request body
    */
   static async refreshToken(req: Request, res: Response, next: NextFunction) {

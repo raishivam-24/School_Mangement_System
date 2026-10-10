@@ -34,6 +34,11 @@ export const registerSchoolSchema = z.object({
     // Plan chosen on landing page
     plan: z.enum(['FREE', 'BASIC', 'PRO', 'ENTERPRISE']).default('BASIC'),
     billingCycle: z.enum(['MONTHLY', 'ANNUALLY']).default('MONTHLY'),
+    // Optional Razorpay Payment Proof
+    razorpayOrderId: z.string().optional(),
+    razorpayPaymentId: z.string().optional(),
+    razorpaySignature: z.string().optional(),
+    isTrial: z.boolean().optional(),
     // Initial Admin Account
     adminName: z.string().min(2, 'Admin full name is required'),
     adminEmail: z.string().email('Admin email is required'),
@@ -41,6 +46,14 @@ export const registerSchoolSchema = z.object({
   }),
 });
 
+export const createSubscriptionOrderSchema = z.object({
+  body: z.object({
+    plan: z.enum(['BASIC', 'PRO', 'ENTERPRISE']),
+    billingCycle: z.enum(['MONTHLY', 'ANNUALLY']),
+  }),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>['body'];
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>['body'];
 export type RegisterSchoolInput = z.infer<typeof registerSchoolSchema>['body'];
+export type CreateSubscriptionOrderInput = z.infer<typeof createSubscriptionOrderSchema>['body'];

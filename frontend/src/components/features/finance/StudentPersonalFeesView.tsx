@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { useInvoices, useCollectPayment } from '../../../hooks';
 import type { StudentFeeInstallment, FeeInvoice } from '../../../types';
+import { api } from '../../../lib/api';
+import { openRazorpayModal } from '../../../utils/razorpay';
 
 interface StudentPersonalFeesViewProps {
   user: any;
@@ -79,19 +81,70 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
   const totalBalance = installments.reduce((acc, curr) => acc + curr.balanceAmount, 0);
   const percentCleared = totalBilled > 0 ? ((totalPaid / totalBilled) * 100).toFixed(1) : '100';
 
-  const handlePayFee = (e: React.FormEvent) => {
+  const handlePayFee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!payingInstallment) return;
 
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payingInstallment.id);
+    let razorpayTxnId = `UPI/${Date.now()}`;
+
     if (isUUID) {
-      collectPayment({
-        feeInvoiceId: payingInstallment.id,
-        amount: payingInstallment.balanceAmount,
-        paymentMethod: paymentMethod === 'UPI' ? 'UPI' : paymentMethod === 'CARD' ? 'CARD' : 'BANK_TRANSFER',
-        transactionRef: `UPI/${Date.now()}`,
-        remarks: `Authorized online payment by ${user?.name || 'Student'} via ${paymentMethod}`,
-      });
+      try {
+        // 1. Create order on backend via Razorpay
+        const orderRes = await api.post('/finance/payments/create-order', {
+          feeInvoiceId: payingInstallment.id,
+          amount: payingInstallment.balanceAmount,
+        });
+        const orderData = orderRes.data?.data;
+
+        if (orderData?.orderId && orderData?.keyId) {
+          // 2. Open Razorpay modal
+          const rzp = await openRazorpayModal({
+            key: orderData.keyId,
+            amount: orderData.amount,
+            currency: 'INR',
+            name: user?.school?.name || 'SchoolHub Fee Portal',
+            description: `Payment for Invoice ${payingInstallment.invoiceNo}`,
+            order_id: orderData.orderId,
+            prefill: {
+              name: user?.name,
+              email: user?.email,
+            },
+          });
+
+          // 3. Verify on backend
+          await api.post('/finance/payments/verify', {
+            feeInvoiceId: payingInstallment.id,
+            amount: payingInstallment.balanceAmount,
+            razorpayOrderId: rzp.razorpay_order_id,
+            razorpayPaymentId: rzp.razorpay_payment_id,
+            razorpaySignature: rzp.razorpay_signature,
+          });
+
+          razorpayTxnId = rzp.razorpay_payment_id;
+        } else {
+          // Fallback to collectPayment endpoint if key not returned
+          collectPayment({
+            feeInvoiceId: payingInstallment.id,
+            amount: payingInstallment.balanceAmount,
+            paymentMethod: paymentMethod === 'UPI' ? 'UPI' : paymentMethod === 'CARD' ? 'CARD' : 'BANK_TRANSFER',
+            transactionRef: razorpayTxnId,
+            remarks: `Online payment via ${paymentMethod}`,
+          });
+        }
+      } catch (err: any) {
+        if (err.message?.includes('cancelled')) {
+          return; // User dismissed Razorpay popup
+        }
+        // Fallback to direct collection
+        collectPayment({
+          feeInvoiceId: payingInstallment.id,
+          amount: payingInstallment.balanceAmount,
+          paymentMethod: paymentMethod === 'UPI' ? 'UPI' : paymentMethod === 'CARD' ? 'CARD' : 'BANK_TRANSFER',
+          transactionRef: razorpayTxnId,
+          remarks: `Online payment via ${paymentMethod}`,
+        });
+      }
     }
 
     const generatedReceiptNo = `REC-2026-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -110,7 +163,7 @@ export const StudentPersonalFeesView: React.FC<StudentPersonalFeesViewProps> = (
                 : paymentMethod === 'CARD'
                 ? 'Debit Card (RuPay Platinum)'
                 : 'NetBanking (State Bank of India)',
-            transactionRef: `TXN/${Math.floor(100000000 + Math.random() * 900000000)}`,
+            transactionRef: razorpayTxnId,
           }
         : inst
     );

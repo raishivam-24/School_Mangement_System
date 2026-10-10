@@ -13,6 +13,8 @@ import {
   createFeeStructureSchema,
   generateInvoicesSchema,
   collectPaymentSchema,
+  createFeeOrderSchema,
+  verifyFeePaymentSchema,
 } from './finance.schema.js';
 import { UserRole } from '@prisma/client';
 
@@ -53,7 +55,33 @@ router.post(
   FinanceController.generateInvoices
 );
 
-// Payment Collection & Online Fee Settlement
+// Razorpay Order Creation for Invoices
+router.post(
+  '/payments/create-order',
+  requireRoles(
+    UserRole.SCHOOL_ADMIN,
+    UserRole.SUPER_ADMIN,
+    UserRole.STUDENT,
+    UserRole.PARENT
+  ),
+  validate(createFeeOrderSchema),
+  FinanceController.createFeeOrder
+);
+
+// Razorpay Signature Verification & Fee Settlement
+router.post(
+  '/payments/verify',
+  requireRoles(
+    UserRole.SCHOOL_ADMIN,
+    UserRole.SUPER_ADMIN,
+    UserRole.STUDENT,
+    UserRole.PARENT
+  ),
+  validate(verifyFeePaymentSchema),
+  FinanceController.verifyAndCollectOnlinePayment
+);
+
+// Direct / Offline Payment Collection
 router.post(
   '/payments/collect',
   requireRoles(

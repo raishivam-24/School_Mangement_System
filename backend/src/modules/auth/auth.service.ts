@@ -11,7 +11,14 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from '../../utils/jwt.js';
-import { LoginInput, ChangePasswordInput } from './auth.schema.js';
+import {
+  LoginInput,
+  ChangePasswordInput,
+  RegisterSchoolInput,
+  CreateSubscriptionOrderInput,
+} from './auth.schema.js';
+import { razorpayInstance, verifyRazorpaySignature } from '../../config/razorpay.js';
+import { env } from '../../config/env.js';
 import crypto from 'crypto';
 
 export class AuthService {
@@ -260,11 +267,68 @@ export class AuthService {
 
   /**
    * Self-Service School Registration from Public Landing Page
+  /**
+   * Helper to retrieve subscription pricing
+   */
+  static getPlanPrice(plan: string, billingCycle: string): number {
+    if (plan === 'ENTERPRISE') return billingCycle === 'ANNUALLY' ? 249990 : 24999;
+    if (plan === 'PRO') return billingCycle === 'ANNUALLY' ? 79990 : 7999;
+    if (plan === 'BASIC') return billingCycle === 'ANNUALLY' ? 24990 : 2499;
+    return 0;
+  }
+
+  /**
+   * Public Razorpay configuration for client checkout
+   */
+  static getPaymentConfig() {
+    return {
+      razorpayKeyId: env.RAZORPAY_KEY_ID || null,
+      isConfigured: Boolean(env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET),
+    };
+  }
+
+  /**
+   * Create Razorpay order for school registration subscription
+   */
+  static async createSubscriptionOrder(input: CreateSubscriptionOrderInput) {
+    if (!razorpayInstance || !env.RAZORPAY_KEY_ID) {
+      throw AppError.badRequest('Razorpay gateway is not configured on the server');
+    }
+
+    const priceInRupees = AuthService.getPlanPrice(input.plan, input.billingCycle);
+    if (priceInRupees <= 0) {
+      throw AppError.badRequest('Invalid plan or price for order creation');
+    }
+
+    const amountInPaise = Math.round(priceInRupees * 100);
+
+    const order = await razorpayInstance.orders.create({
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: `sub_${Date.now().toString().slice(-8)}`,
+      notes: {
+        plan: input.plan,
+        billingCycle: input.billingCycle,
+      },
+    });
+
+    return {
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: env.RAZORPAY_KEY_ID,
+      plan: input.plan,
+      billingCycle: input.billingCycle,
+    };
+  }
+
+  /**
+   * Self-Service School Registration from Public Landing Page
    * Atomically creates the School Tenant, School Admin user, default Academic Year,
    * sets up Subscription, and issues authentication tokens.
    */
   static async registerSchool(
-    input: import('./auth.schema.js').RegisterSchoolInput,
+    input: RegisterSchoolInput,
     ipAddress?: string,
     userAgent?: string
   ) {
@@ -280,6 +344,18 @@ export class AuthService {
     });
     if (existingUser) {
       throw AppError.conflict(`Admin email "${input.adminEmail}" is already registered`);
+    }
+
+    // Verify Razorpay payment signature if payment was submitted
+    if (input.razorpayOrderId && input.razorpayPaymentId && input.razorpaySignature) {
+      const isValid = verifyRazorpaySignature(
+        input.razorpayOrderId,
+        input.razorpayPaymentId,
+        input.razorpaySignature
+      );
+      if (!isValid) {
+        throw AppError.badRequest('Invalid Razorpay payment signature');
+      }
     }
 
     const adminPasswordHash = await hashPassword(input.adminPassword);
@@ -332,20 +408,15 @@ export class AuthService {
         endDate.setDate(endDate.getDate() + 30);
       }
 
-      const planAmount =
-        input.plan === 'ENTERPRISE'
-          ? (input.billingCycle === 'ANNUALLY' ? 2999 : 299)
-          : input.plan === 'PRO'
-          ? (input.billingCycle === 'ANNUALLY' ? 999 : 99)
-          : input.plan === 'BASIC'
-          ? (input.billingCycle === 'ANNUALLY' ? 299 : 29)
-          : 0;
+      const planAmount = AuthService.getPlanPrice(input.plan, input.billingCycle);
+      const isPaid = Boolean(input.razorpayPaymentId);
+      const subscriptionStatus = isPaid ? 'ACTIVE' : (input.isTrial ? 'TRIALING' : 'ACTIVE');
 
       await tx.schoolSubscription.create({
         data: {
           schoolId: school.id,
           plan: input.plan,
-          status: 'ACTIVE',
+          status: subscriptionStatus,
           amount: planAmount,
           billingCycle: input.billingCycle,
           startDate: new Date(),
@@ -354,7 +425,22 @@ export class AuthService {
         },
       });
 
-      // 5. Audit Log
+      // 5. If paid via Razorpay, generate paid platform invoice record
+      if (isPaid) {
+        await tx.platformInvoice.create({
+          data: {
+            schoolId: school.id,
+            invoiceNumber: `INV-${Date.now().toString().slice(-6)}`,
+            amount: planAmount,
+            status: 'PAID',
+            dueDate: new Date(),
+            paidAt: new Date(),
+            paymentMethod: 'RAZORPAY',
+          },
+        });
+      }
+
+      // 6. Audit Log
       await tx.auditLog.create({
         data: {
           schoolId: school.id,
@@ -366,6 +452,8 @@ export class AuthService {
             plan: input.plan,
             schoolCode: school.code,
             schoolName: school.name,
+            razorpayPaymentId: input.razorpayPaymentId || null,
+            razorpayOrderId: input.razorpayOrderId || null,
           },
           ipAddress,
           userAgent,

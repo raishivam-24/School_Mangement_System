@@ -45,6 +45,25 @@ export const collectPaymentSchema = z.object({
   }),
 });
 
+export const createFeeOrderSchema = z.object({
+  body: z.object({
+    feeInvoiceId: z.string().uuid('Invalid feeInvoiceId'),
+    amount: z.number().positive('Payment amount must be greater than zero'),
+  }),
+});
+
+export const verifyFeePaymentSchema = z.object({
+  body: z.object({
+    feeInvoiceId: z.string().uuid('Invalid feeInvoiceId'),
+    amount: z.number().positive('Payment amount must be greater than zero'),
+    razorpayOrderId: z.string().min(1, 'Razorpay order ID required'),
+    razorpayPaymentId: z.string().min(1, 'Razorpay payment ID required'),
+    razorpaySignature: z.string().min(1, 'Razorpay signature required'),
+  }),
+});
+
 export type CreateFeeStructureInput = z.infer<typeof createFeeStructureSchema>['body'];
 export type GenerateInvoicesInput = z.infer<typeof generateInvoicesSchema>['body'];
 export type CollectPaymentInput = z.infer<typeof collectPaymentSchema>['body'];
+export type CreateFeeOrderInput = z.infer<typeof createFeeOrderSchema>['body'];
+export type VerifyFeePaymentInput = z.infer<typeof verifyFeePaymentSchema>['body'];

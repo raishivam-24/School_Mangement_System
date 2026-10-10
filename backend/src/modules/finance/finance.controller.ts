@@ -81,6 +81,28 @@ export class FinanceController {
     }
   }
 
+  static async createFeeOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const order = await FinanceService.createFeeOrder(req.schoolId!, req.body);
+      return ApiResponse.success(res, order, 'Razorpay fee order created successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async verifyAndCollectOnlinePayment(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await FinanceService.verifyAndCollectOnlinePayment(
+        req.schoolId!,
+        req.body,
+        req.user!.userId
+      );
+      return ApiResponse.success(res, result, 'Online payment verified and recorded successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getFeeSummary(req: Request, res: Response, next: NextFunction) {
     try {
       const summary = await FinanceService.getFeeSummary(

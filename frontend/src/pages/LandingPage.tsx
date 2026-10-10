@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../lib/api';
+import { openRazorpayModal } from '../utils/razorpay';
 import confetti from 'canvas-confetti';
 import {
   Sparkles,
@@ -101,22 +103,75 @@ export const LandingPage: React.FC = () => {
     setError(null);
 
     try {
+      let paymentPayload: {
+        razorpayOrderId?: string;
+        razorpayPaymentId?: string;
+        razorpaySignature?: string;
+        isTrial?: boolean;
+      } = {};
+
+      if (paymentOption === 'PAY_NOW') {
+        // 1. Create Order on Razorpay via backend
+        const orderRes = await api.post('/auth/subscription-order', {
+          plan: selectedPlan,
+          billingCycle: isAnnual ? 'ANNUALLY' : 'MONTHLY',
+        });
+        const orderData = orderRes.data?.data;
+        if (!orderData?.orderId || !orderData?.keyId) {
+          throw new Error('Failed to initialize Razorpay payment order.');
+        }
+
+        // 2. Open Official Razorpay Checkout Modal
+        const rzpResponse = await openRazorpayModal({
+          key: orderData.keyId,
+          amount: orderData.amount,
+          currency: orderData.currency || 'INR',
+          name: formData.schoolName || 'SchoolHub ERP',
+          description: `${planInfo[selectedPlan].name} Subscription (${isAnnual ? 'Annually' : 'Monthly'})`,
+          order_id: orderData.orderId,
+          prefill: {
+            name: formData.adminName,
+            email: formData.adminEmail,
+            contact: formData.schoolPhone,
+          },
+          theme: {
+            color: '#0284c7',
+          },
+        });
+
+        paymentPayload = {
+          razorpayOrderId: rzpResponse.razorpay_order_id,
+          razorpayPaymentId: rzpResponse.razorpay_payment_id,
+          razorpaySignature: rzpResponse.razorpay_signature,
+        };
+      } else {
+        paymentPayload = {
+          isTrial: true,
+        };
+      }
+
+      // 3. Register School with verified payment
       await registerSchool({
         ...formData,
         plan: selectedPlan,
         billingCycle: isAnnual ? 'ANNUALLY' : 'MONTHLY',
+        ...paymentPayload,
       });
 
       confetti({
-        particleCount: 100,
-        spread: 70,
+        particleCount: 120,
+        spread: 80,
         origin: { y: 0.6 },
       });
 
       setShowModal(false);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Registration failed. Please check inputs.');
+      setError(
+        err.response?.data?.error?.message ||
+        err.message ||
+        'Registration failed. Please check inputs.'
+      );
     } finally {
       setLoading(false);
     }
@@ -690,104 +745,42 @@ export const LandingPage: React.FC = () => {
 
                   {/* Payment Details (Only when Pay Now is selected) */}
                   {paymentOption === 'PAY_NOW' && (
-                    <div className="p-4 rounded-2xl bg-surface border border-border space-y-4">
-                      {/* Method Selector */}
-                      <div className="flex items-center gap-2 border-b border-border pb-3">
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('UPI')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
-                            paymentMethod === 'UPI' ? 'bg-accent-blue text-white shadow-sm' : 'text-secondary hover:text-primary'
-                          }`}
-                        >
-                          <Smartphone className="w-3.5 h-3.5" /> UPI / QR
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('CARD')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
-                            paymentMethod === 'CARD' ? 'bg-accent-blue text-white shadow-sm' : 'text-secondary hover:text-primary'
-                          }`}
-                        >
-                          <CreditCard className="w-3.5 h-3.5" /> Debit/Credit Card
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPaymentMethod('NETBANKING')}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
-                            paymentMethod === 'NETBANKING' ? 'bg-accent-blue text-white shadow-sm' : 'text-secondary hover:text-primary'
-                          }`}
-                        >
-                          <Landmark className="w-3.5 h-3.5" /> Net Banking
-                        </button>
+                    <div className="p-4 rounded-2xl bg-surface border border-accent-blue/30 space-y-3.5 shadow-sm">
+                      <div className="flex items-center justify-between border-b border-border pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-xs font-bold text-primary">Razorpay Payment Gateway</span>
+                        </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent-blue-subtle text-accent-blue uppercase tracking-wider">
+                          Live Integration
+                        </span>
                       </div>
 
-                      {/* UPI Input */}
-                      {paymentMethod === 'UPI' && (
-                        <div className="space-y-2">
-                          <label className="text-xs font-semibold text-secondary block">Enter UPI ID / VPA</label>
-                          <div className="relative">
-                            <Smartphone className="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                            <input
-                              type="text"
-                              value={upiId}
-                              onChange={(e) => setUpiId(e.target.value)}
-                              placeholder="school.accounts@okhdfcbank"
-                              className="w-full pl-10 pr-3 py-2 bg-surface-raised border border-border rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-sky"
-                            />
-                          </div>
-                          <p className="text-[10px] text-muted">Supports Google Pay, PhonePe, Paytm, and BHIM UPI.</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="p-2.5 rounded-xl bg-surface-raised border border-border text-center">
+                          <Smartphone className="w-4 h-4 text-accent-blue mx-auto mb-1" />
+                          <span className="text-[11px] font-bold text-primary block">Instant UPI</span>
+                          <span className="text-[9px] text-muted block">GPay, PhonePe, Paytm</span>
                         </div>
-                      )}
-
-                      {/* Card Input */}
-                      {paymentMethod === 'CARD' && (
-                        <div className="space-y-3">
-                          <div>
-                            <label className="text-xs font-semibold text-secondary block mb-1">Card Number</label>
-                            <input
-                              type="text"
-                              defaultValue="4532 •••• •••• 8912"
-                              className="w-full px-3 py-2 bg-surface-raised border border-border rounded-xl text-xs font-mono"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <div>
-                              <label className="text-[10px] font-semibold text-secondary block mb-1">Expiry</label>
-                              <input
-                                type="text"
-                                defaultValue="08/29"
-                                className="w-full px-3 py-2 bg-surface-raised border border-border rounded-xl text-xs font-mono"
-                              />
-                            </div>
-                            <div>
-                              <label className="text-[10px] font-semibold text-secondary block mb-1">CVV</label>
-                              <input
-                                type="password"
-                                defaultValue="•••"
-                                className="w-full px-3 py-2 bg-surface-raised border border-border rounded-xl text-xs font-mono"
-                              />
-                            </div>
-                          </div>
+                        <div className="p-2.5 rounded-xl bg-surface-raised border border-border text-center">
+                          <CreditCard className="w-4 h-4 text-accent-indigo mx-auto mb-1" />
+                          <span className="text-[11px] font-bold text-primary block">Cards</span>
+                          <span className="text-[9px] text-muted block">Visa, Mastercard, RuPay</span>
                         </div>
-                      )}
-
-                      {/* Net Banking */}
-                      {paymentMethod === 'NETBANKING' && (
-                        <div className="space-y-2">
-                          <label className="text-xs font-semibold text-secondary block">Select Bank</label>
-                          <select className="w-full px-3 py-2 bg-surface-raised border border-border rounded-xl text-xs font-medium text-primary">
-                            <option>HDFC Bank Corporate</option>
-                            <option>State Bank of India (SBI)</option>
-                            <option>ICICI Bank</option>
-                            <option>Axis Bank</option>
-                          </select>
+                        <div className="p-2.5 rounded-xl bg-surface-raised border border-border text-center">
+                          <Landmark className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
+                          <span className="text-[11px] font-bold text-primary block">Net Banking</span>
+                          <span className="text-[9px] text-muted block">50+ Indian Banks</span>
                         </div>
-                      )}
+                      </div>
 
-                      <div className="flex items-center gap-2 pt-1 text-[11px] text-muted">
-                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                        <span>Secured with 256-Bit SSL Bank-Grade Encryption</span>
+                      <p className="text-[11px] text-secondary leading-relaxed bg-surface-raised p-2.5 rounded-xl border border-border">
+                        Clicking the button below will pop up the official Razorpay Checkout modal with your live test credentials to securely complete payment.
+                      </p>
+
+                      <div className="flex items-center gap-2 text-[10px] text-muted">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Secured with Razorpay 256-Bit SSL Bank-Grade Encryption</span>
                       </div>
                     </div>
                   )}
@@ -809,12 +802,12 @@ export const LandingPage: React.FC = () => {
                       className="flex-1 py-3.5 rounded-2xl bg-brand-sky-dark text-white font-bold text-sm shadow-glow-sky hover:bg-sky-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer active:scale-95"
                     >
                       {loading ? (
-                        'Authorizing & Creating Campus...'
+                        'Opening Razorpay Checkout...'
                       ) : paymentOption === 'PAY_NOW' ? (
                         <>
                           <Check className="w-4 h-4" />
                           <span>
-                            Pay ₹{(isAnnual ? planInfo[selectedPlan].annual : planInfo[selectedPlan].monthly).toLocaleString('en-IN')} &amp; Launch Campus
+                            Pay ₹{(isAnnual ? planInfo[selectedPlan].annual : planInfo[selectedPlan].monthly).toLocaleString('en-IN')} via Razorpay
                           </span>
                         </>
                       ) : (

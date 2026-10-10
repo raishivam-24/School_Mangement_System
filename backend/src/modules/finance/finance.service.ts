@@ -10,9 +10,13 @@ import {
   CreateFeeStructureInput,
   GenerateInvoicesInput,
   CollectPaymentInput,
+  CreateFeeOrderInput,
+  VerifyFeePaymentInput,
 } from './finance.schema.js';
 import { PaginationParams } from '../../utils/pagination.js';
-import { InvoiceStatus, Prisma } from '@prisma/client';
+import { InvoiceStatus, PaymentMethod, Prisma } from '@prisma/client';
+import { razorpayInstance, verifyRazorpaySignature } from '../../config/razorpay.js';
+import { env } from '../../config/env.js';
 
 export class FinanceService {
   /**
@@ -355,5 +359,79 @@ export class FinanceService {
         pendingInvoices: pendingCount,
       },
     };
+  }
+
+  /**
+   * Create Razorpay order for an invoice
+   */
+  static async createFeeOrder(schoolId: string, input: CreateFeeOrderInput) {
+    if (!razorpayInstance || !env.RAZORPAY_KEY_ID) {
+      throw AppError.badRequest('Razorpay gateway is not configured on the server');
+    }
+
+    const invoice = await prisma.feeInvoice.findFirst({
+      where: { id: input.feeInvoiceId, schoolId },
+    });
+    if (!invoice) {
+      throw AppError.notFound('Fee invoice not found');
+    }
+
+    const currentBalance = Number(invoice.balanceAmount);
+    if (input.amount > currentBalance) {
+      throw AppError.badRequest(
+        `Payment amount (₹${input.amount}) exceeds outstanding balance (₹${currentBalance})`
+      );
+    }
+
+    const amountInPaise = Math.round(input.amount * 100);
+    const order = await razorpayInstance.orders.create({
+      amount: amountInPaise,
+      currency: 'INR',
+      receipt: `inv_${invoice.id.slice(0, 8)}`,
+      notes: {
+        schoolId,
+        invoiceId: invoice.id,
+        invoiceNumber: invoice.invoiceNumber,
+      },
+    });
+
+    return {
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: env.RAZORPAY_KEY_ID,
+      feeInvoiceId: invoice.id,
+      invoiceNumber: invoice.invoiceNumber,
+    };
+  }
+
+  /**
+   * Verify Razorpay payment and collect fee payment
+   */
+  static async verifyAndCollectOnlinePayment(
+    schoolId: string,
+    input: VerifyFeePaymentInput,
+    actorUserId: string
+  ) {
+    const isValid = verifyRazorpaySignature(
+      input.razorpayOrderId,
+      input.razorpayPaymentId,
+      input.razorpaySignature
+    );
+    if (!isValid) {
+      throw AppError.badRequest('Invalid Razorpay payment signature');
+    }
+
+    return FinanceService.collectPayment(
+      schoolId,
+      {
+        feeInvoiceId: input.feeInvoiceId,
+        amount: input.amount,
+        paymentMethod: PaymentMethod.ONLINE,
+        transactionRef: input.razorpayPaymentId,
+        remarks: `Paid online via Razorpay (Order: ${input.razorpayOrderId})`,
+      },
+      actorUserId
+    );
   }
 }
