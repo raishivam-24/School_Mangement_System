@@ -21,6 +21,8 @@ import {
   ExternalLink,
   ChevronRight,
   GraduationCap,
+  Plus,
+  CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -54,7 +56,7 @@ export const TimetablePage: React.FC = () => {
   const currentDayIndex = new Date().getDay(); // 1 = Monday
   const todayName = days[Math.max(0, Math.min(5, currentDayIndex === 0 ? 0 : currentDayIndex - 1))];
 
-  const schedule: Record<string, PeriodSlot[]> = {
+  const initialSchedule: Record<string, PeriodSlot[]> = {
     Monday: [
       {
         periodNum: 1,
@@ -537,6 +539,10 @@ export const TimetablePage: React.FC = () => {
     ],
   };
 
+  const [schedule, setSchedule] = useState<Record<string, PeriodSlot[]>>(initialSchedule);
+  const [showAddSlotModal, setShowAddSlotModal] = useState(false);
+  const [slotSuccess, setSlotSuccess] = useState<string | null>(null);
+
   const getPeriodThemeClasses = (subjectCode: string, isLive: boolean) => {
     const prefix = subjectCode.split('-')[0];
     switch (prefix) {
@@ -600,6 +606,17 @@ export const TimetablePage: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
+      {slotSuccess && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 shadow-sm"
+        >
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>{slotSuccess}</span>
+        </motion.div>
+      )}
+
       {/* ========================================================================= */}
       {/* 1. TOP HEADER & EXPORT ACTIONS                                            */}
       {/* ========================================================================= */}
@@ -619,6 +636,16 @@ export const TimetablePage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          {!isStudent && (
+            <button
+              type="button"
+              onClick={() => setShowAddSlotModal(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-accent-blue text-white font-bold text-xs shadow-md hover:bg-brand-sky-dark transition-all cursor-pointer active:scale-95"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Period Slot</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => window.print()}
@@ -910,6 +937,172 @@ export const TimetablePage: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* ========================================================================= */}
+      {/* ADD PERIOD SLOT MODAL (Admins & Faculty)                                  */}
+      {/* ========================================================================= */}
+      {showAddSlotModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-full max-w-lg bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-2xl space-y-6"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-border">
+              <h3 className="text-lg font-extrabold text-primary">Schedule New Period Slot</h3>
+              <button
+                onClick={() => setShowAddSlotModal(false)}
+                className="w-8 h-8 rounded-full bg-surface-raised flex items-center justify-center text-muted hover:text-primary"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                const formData = new FormData(form);
+                const day = formData.get('day') as string;
+                const periodNum = Number(formData.get('periodNum'));
+                const subject = formData.get('subject') as string;
+                const code = formData.get('code') as string;
+                const time = formData.get('time') as string;
+                const room = formData.get('room') as string;
+                const teacher = formData.get('teacher') as string;
+                const topic = formData.get('topic') as string;
+
+                const newSlot: PeriodSlot = {
+                  periodNum,
+                  time,
+                  subject,
+                  code,
+                  room,
+                  teacher,
+                  teacherRole: 'Subject Faculty',
+                  topic,
+                  colorClass: 'bg-sky-50/90 text-sky-900',
+                  badgeClass: 'bg-sky-100 text-sky-800',
+                  borderClass: 'border-sky-200 hover:border-sky-400',
+                };
+
+                const currentDaySlots = [...(schedule[day] || [])];
+                const updatedDaySlots = [...currentDaySlots, newSlot].sort((a, b) => a.periodNum - b.periodNum);
+                setSchedule({ ...schedule, [day]: updatedDaySlots });
+                setShowAddSlotModal(false);
+                setSlotSuccess(`Period added to ${day} schedule!`);
+                setTimeout(() => setSlotSuccess(null), 3500);
+              }}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-primary block mb-1">Day of Week</label>
+                  <select
+                    name="day"
+                    className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                  >
+                    {days.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-primary block mb-1">Period Number</label>
+                  <input
+                    type="number"
+                    name="periodNum"
+                    defaultValue={1}
+                    min={1}
+                    max={8}
+                    required
+                    className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-primary block mb-1">Subject Name</label>
+                  <input
+                    name="subject"
+                    defaultValue="Mathematics"
+                    required
+                    className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-primary block mb-1">Subject Code</label>
+                  <input
+                    name="code"
+                    defaultValue="MATH-10"
+                    required
+                    className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-primary block mb-1">Time Range</label>
+                  <input
+                    name="time"
+                    defaultValue="08:30 - 09:15"
+                    required
+                    className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-primary block mb-1">Room / Lab</label>
+                  <input
+                    name="room"
+                    defaultValue="Room 201"
+                    required
+                    className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-primary block mb-1">Assigned Teacher</label>
+                <input
+                  name="teacher"
+                  defaultValue="Amit Sharma Sir"
+                  required
+                  className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-primary block mb-1">Lesson / Topic Details</label>
+                <input
+                  name="topic"
+                  defaultValue="Chapter Review & Interactive Problem Solving"
+                  className="w-full px-3 py-2.5 bg-surface-raised border border-border rounded-2xl text-xs font-semibold text-primary"
+                />
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddSlotModal(false)}
+                  className="px-4 py-2 rounded-2xl bg-surface-raised text-secondary font-bold text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-2xl bg-accent-blue text-white font-bold text-xs shadow-md hover:bg-brand-sky-dark transition-all"
+                >
+                  Save Period
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

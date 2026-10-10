@@ -26,6 +26,7 @@ import { SuperAdminPage } from './pages/SuperAdminPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { StudentSubjectsPage } from './pages/StudentSubjectsPage';
 import { SubjectClassroomPage } from './pages/SubjectClassroomPage';
+import { ExamsPage } from './pages/ExamsPage';
 import {
   LibraryPage,
   MessagesPage,
@@ -91,6 +92,7 @@ export function App() {
                   <Route path="/attendance" element={<AttendancePage />} />
                   <Route path="/finance" element={<FinancePage />} />
                   <Route path="/timetable" element={<TimetablePage />} />
+                  <Route path="/exams" element={<ExamsPage />} />
                   <Route path="/announcements" element={<AnnouncementsPage />} />
                   <Route path="/calendar" element={<CalendarPage />} />
                   <Route path="/library" element={<LibraryPage />} />

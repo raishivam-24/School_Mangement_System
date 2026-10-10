@@ -11,3 +11,6 @@ export * from './attendance.service';
 export * from './dashboard.service';
 export * from './upload.service';
 export * from './announcement.service';
+export * from './exam.service';
+export * from './timetable.service';
+export * from './report.service';

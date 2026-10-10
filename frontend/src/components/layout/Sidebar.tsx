@@ -25,6 +25,7 @@ import {
   FileText,
   Clock,
   Sparkles,
+  Award,
 } from 'lucide-react';
 
 interface NavItem {
@@ -62,6 +63,7 @@ export const Sidebar: React.FC = () => {
         { name: 'Students', to: '/students', icon: Users },
         { name: 'Attendance', to: '/attendance', icon: CalendarCheck },
         { name: 'Timetable', to: '/timetable', icon: Clock },
+        { name: 'Exams', to: '/exams', icon: Award },
         { name: 'Finance', to: '/finance', icon: DollarSign },
         { name: 'Notice', to: '/announcements', icon: Bell },
         { name: 'Calendar', to: '/calendar', icon: Calendar },
@@ -73,6 +75,7 @@ export const Sidebar: React.FC = () => {
         { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
         { name: 'My Subjects', to: '/my-subjects', icon: BookOpen },
         { name: 'Timetable', to: '/timetable', icon: Clock },
+        { name: 'Exams', to: '/exams', icon: Award },
         { name: 'Attendance', to: '/attendance', icon: CalendarCheck },
         { name: 'Finance', to: '/finance', icon: DollarSign },
         { name: 'Notice', to: '/announcements', icon: Bell },
@@ -89,6 +92,7 @@ export const Sidebar: React.FC = () => {
       { name: 'Attendance', to: '/attendance', icon: CalendarCheck },
       { name: 'Finance', to: '/finance', icon: DollarSign },
       { name: 'Timetable', to: '/timetable', icon: Clock },
+      { name: 'Exams', to: '/exams', icon: Award },
       { name: 'Notice', to: '/announcements', icon: Bell },
       { name: 'Calendar', to: '/calendar', icon: Calendar },
       { name: 'Library', to: '/library', icon: BookOpen },

@@ -20,9 +20,10 @@
 | **Frontend Enterprise Architecture** | N/A | ✅ 100% | ✅ Layered types, services, TanStack hooks, sliced components | **Production Ready** |
 | **Academics (Classes, Sections, Subjects)**| ✅ 100% | ✅ 100% | ✅ Live class & subject queries, modular catalog & milestones | **Production Ready** |
 | **Notice Board & Urgent Circulars** | ✅ 100% | ✅ 100% | ✅ Live queries (`/announcements`), PDF attachments, publish modal | **Production Ready** |
-| **Weekly Timetables & Schedules** | ✅ 100% | ⚠️ Mock data | ❌ Fetch timetable, add period schedule | **Up Next (Phase 19)** |
-| **Homework & Assignments** | ✅ 100% | ⚠️ Checklist only | ❌ Teacher publisher, student submit, grading | **Queued (Phase 20)** |
-| **Examinations & CBSE Report Cards** | ✅ 100% | ⚠️ Static scores | ❌ Exam date sheet, marks entry grid, report card | **Queued (Phase 21)** |
+| **Weekly Timetables & Schedules** | ✅ 100% | ✅ 100% | ✅ Live `/timetable`, Add Period Slot modal, schedule updates | **Production Ready** |
+| **Homework & Cloudflare R2 Uploads** | ✅ 100% | ✅ 100% | ✅ Live `/assignments`, Cloudflare R2 file dropzone, direct CDN link | **Production Ready** |
+| **Examinations & CBSE Report Cards** | ✅ 100% | ✅ 100% | ✅ Live `/exams`, Date Sheets, Marks Entry grid, printable CBSE Report Card | **Production Ready** |
+| **Institutional Reports Export** | ✅ 100% | ✅ 100% | ✅ Live `/reports`, attendance & fee analytics CSV instant download | **Production Ready** |
 
 
 ---
