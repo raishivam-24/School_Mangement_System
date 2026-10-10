@@ -157,9 +157,6 @@ export const ProfilePage: React.FC = () => {
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent-blue-subtle text-accent-blue uppercase tracking-wider">
                 {user?.role.replace('_', ' ')}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500/10 text-orange-600 border border-orange-500/20">
-                ☁️ R2 Profile Storage
-              </span>
             </div>
             <p className="text-xs text-muted font-medium">{user?.email}</p>
             <div className="flex items-center justify-center sm:justify-start gap-3 pt-1 text-xs text-secondary font-semibold">

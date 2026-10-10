@@ -20,10 +20,7 @@ import {
   Shield,
   Bell,
   CheckCircle2,
-  Cloud,
 } from 'lucide-react';
-import { StorageTester } from '../components/features/storage/StorageTester';
-import { AvatarUploader } from '../components/common/AvatarUploader';
 
 /* ========================================================================= */
 /* 1. LIBRARY PAGE                                                           */
@@ -260,24 +257,6 @@ export const ReportsPage: React.FC = () => {
 /* ========================================================================= */
 export const ProfilePage: React.FC = () => {
   const { user, setUser } = useAuth();
-  const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
-
-  const handleAvatarChange = (newUrl: string | null) => {
-    setUser((prev) => {
-      if (!prev) return null;
-      const updated = { ...prev, avatarUrl: newUrl };
-      try {
-        localStorage.setItem('schoolhub_user', JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
-      return updated;
-    });
-
-    setProfileSuccess(newUrl ? 'Profile photo uploaded to Cloudflare R2 and updated!' : 'Profile photo removed.');
-    setTimeout(() => setProfileSuccess(null), 3500);
-  };
-
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
@@ -285,38 +264,21 @@ export const ProfilePage: React.FC = () => {
         <p className="text-sm text-secondary">Manage your account credentials, avatar picture, and school details.</p>
       </div>
 
-      {profileSuccess && (
-        <div className="p-3.5 rounded-2xl bg-accent-green-subtle/50 text-accent-green border border-accent-green/30 text-xs font-semibold flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
-          <span>{profileSuccess}</span>
-        </div>
-      )}
-
       <div className="bg-surface rounded-3xl p-8 border border-border shadow-card">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-border">
-          {/* Real Cloudflare R2 Avatar Uploader */}
-          <AvatarUploader
-            currentAvatarUrl={user?.avatarUrl}
-            onAvatarChange={handleAvatarChange}
-            size="lg"
-            fallbackName={user?.name}
-            allowDelete={true}
-          />
-
-          <div className="text-center sm:text-left flex-1">
+        <div className="flex items-center gap-6 pb-6 border-b border-border">
+          <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-sky to-brand-lilac p-1 shadow-md shrink-0">
+            <img
+              src={user?.avatarUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150'}
+              alt="Avatar"
+              className="w-full h-full rounded-2xl object-cover"
+            />
+          </div>
+          <div>
             <h2 className="text-xl font-bold text-primary">{user?.name}</h2>
             <p className="text-xs text-muted">{user?.email}</p>
-            <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
-                {user?.role.replace('_', ' ')}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-500/10 text-orange-600 border border-orange-500/20">
-                ☁️ R2 Profile Storage
-              </span>
-            </div>
-            <p className="text-[11px] text-muted mt-2">
-              Hover over or click your avatar to upload a high-resolution profile picture stored securely in Cloudflare R2.
-            </p>
+            <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-accent-blue-subtle text-accent-blue">
+              {user?.role.replace('_', ' ')}
+            </span>
           </div>
         </div>
 
@@ -339,72 +301,38 @@ export const ProfilePage: React.FC = () => {
 /* 5. SETTINGS PAGE                                                          */
 /* ========================================================================= */
 export const SettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'storage' | 'general'>('storage');
-
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-primary">Settings & Integrations</h1>
-        <p className="text-sm text-secondary">Manage cloud infrastructure, security credentials, and system preferences.</p>
+        <h1 className="text-2xl font-bold text-primary">Platform Settings</h1>
+        <p className="text-sm text-secondary">Configure notifications, security policies, and school preferences.</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-border pb-3">
-        <button
-          onClick={() => setActiveTab('storage')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
-            activeTab === 'storage'
-              ? 'bg-orange-500/15 text-orange-600 border border-orange-500/30'
-              : 'text-secondary hover:text-primary hover:bg-surface-raised'
-          }`}
-        >
-          <Cloud className="w-4 h-4" />
-          <span>Cloudflare R2 Storage</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('general')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
-            activeTab === 'general'
-              ? 'bg-accent-blue-subtle text-accent-blue border border-accent-blue/30'
-              : 'text-secondary hover:text-primary hover:bg-surface-raised'
-          }`}
-        >
-          <Settings className="w-4 h-4" />
-          <span>General & Security</span>
-        </button>
-      </div>
-
-      {/* Tab Contents */}
-      {activeTab === 'storage' ? (
-        <StorageTester />
-      ) : (
-        <div className="bg-surface rounded-3xl p-6 border border-border shadow-card space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-border">
-            <div>
-              <h3 className="text-sm font-bold text-primary">Email Notifications</h3>
-              <p className="text-xs text-muted">Receive daily digest of attendance and fee payments.</p>
-            </div>
-            <input type="checkbox" defaultChecked className="w-5 h-5 accent-brand-sky rounded" />
+      <div className="bg-surface rounded-3xl p-6 border border-border shadow-card space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <div>
+            <h3 className="text-sm font-bold text-primary">Email Notifications</h3>
+            <p className="text-xs text-muted">Receive daily digest of attendance and fee payments.</p>
           </div>
-
-          <div className="flex items-center justify-between pb-4 border-b border-border">
-            <div>
-              <h3 className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</h3>
-              <p className="text-xs text-muted">Require OTP confirmation for administrator logins.</p>
-            </div>
-            <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-primary">Dark Mode (Beta)</h3>
-              <p className="text-xs text-muted">Switch from pastel daylight theme to night contrast.</p>
-            </div>
-            <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
-          </div>
+          <input type="checkbox" defaultChecked className="w-5 h-5 accent-brand-sky rounded" />
         </div>
-      )}
+
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <div>
+            <h3 className="text-sm font-bold text-primary">Two-Factor Authentication (2FA)</h3>
+            <p className="text-xs text-muted">Require OTP confirmation for administrator logins.</p>
+          </div>
+          <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-primary">Dark Mode (Beta)</h3>
+            <p className="text-xs text-muted">Switch from pastel daylight theme to night contrast.</p>
+          </div>
+          <input type="checkbox" className="w-5 h-5 accent-brand-sky rounded" />
+        </div>
+      </div>
     </div>
   );
 };
