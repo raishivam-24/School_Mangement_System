@@ -14,3 +14,5 @@ export * from './announcement.service';
 export * from './exam.service';
 export * from './timetable.service';
 export * from './report.service';
+export * from './school.service';
+export * from './subscription.service';
