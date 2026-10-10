@@ -2,18 +2,19 @@
  * @file LandingPage.tsx
  * @description Next-Gen SchoolHub Landing Page inspired by modern Framer / Cloves aesthetic.
  * Features:
- * - Cloves-style royal cobalt blue hero with floating pill navbar
- * - 3D browser dashboard showcase with zoom-in reveal and floating stat pills
+ * - Dynamic blue-to-whitish sky gradient background with atmospheric lighting
+ * - Scroll-driven 3D tilt & zoom-in emerging dashboard mockup (via Framer Motion useScroll + useSpring)
+ * - Staggered text reveals and floating parallax badge pills
  * - Interactive stakeholder role explorer (Principal, Teachers, Students, Parents)
- * - Creative Bento-grid feature suite
+ * - Creative Bento-grid feature suite with scroll reveals
  * - Real metrics and verified school testimonials
  * - Transparent pricing with monthly/annual toggle
  * - Full 2-Step Registration & official Razorpay checkout integration
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
 import { openRazorpayModal } from '../utils/razorpay';
@@ -24,18 +25,9 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
-  School,
+  Building2,
   GraduationCap,
   CalendarCheck,
-  DollarSign,
-  ShieldCheck,
-  X,
-  Lock,
-  Mail,
-  User,
-  Phone,
-  MapPin,
-  Building2,
   CreditCard,
   Smartphone,
   Landmark,
@@ -46,11 +38,39 @@ import {
   Layers,
   Award,
   Zap,
+  Lock,
+  X,
+  User,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   const { registerSchool } = useAuth();
   const navigate = useNavigate();
+
+  // Reference for scroll-driven 3D dashboard reveal
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+
+  // Smooth springs for high-end Framer-like physics
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 24,
+    restDelta: 0.001,
+  });
+
+  // 3D Perspective Transformations on Scroll
+  const dashboardRotateX = useTransform(smoothProgress, [0, 0.45], [16, 0]);
+  const dashboardScale = useTransform(smoothProgress, [0, 0.45], [0.86, 1.05]);
+  const dashboardY = useTransform(smoothProgress, [0, 0.45], [40, -30]);
+  const dashboardOpacity = useTransform(smoothProgress, [0, 0.15], [0.9, 1]);
+
+  // Floating Cards Parallax
+  const cardFloat1 = useTransform(smoothProgress, [0, 0.5], [15, -45]);
+  const cardFloat2 = useTransform(smoothProgress, [0, 0.5], [-15, 35]);
 
   // Navigation & UI States
   const [isAnnual, setIsAnnual] = useState(false);
@@ -161,7 +181,6 @@ export const LandingPage: React.FC = () => {
       } = {};
 
       if (paymentOption === 'PAY_NOW') {
-        // 1. Create Order on Razorpay via backend
         const orderRes = await api.post('/auth/subscription-order', {
           plan: selectedPlan,
           billingCycle: isAnnual ? 'ANNUALLY' : 'MONTHLY',
@@ -171,7 +190,6 @@ export const LandingPage: React.FC = () => {
           throw new Error('Failed to initialize Razorpay payment order.');
         }
 
-        // 2. Open Official Razorpay Checkout Modal
         const rzpResponse = await openRazorpayModal({
           key: orderData.keyId,
           amount: orderData.amount,
@@ -200,7 +218,6 @@ export const LandingPage: React.FC = () => {
         };
       }
 
-      // 3. Register School with verified payment
       await registerSchool({
         ...formData,
         plan: selectedPlan,
@@ -251,20 +268,29 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden">
+    <div className="min-h-screen bg-[#FDFEFE] text-slate-900 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden">
       {/* ========================================================================= */}
-      {/* 1. CLOVES-INSPIRED HERO SECTION (Royal Cobalt Blue Background) */}
+      {/* 1. BLUE-TO-WHITISH SKY GRADIENT HERO SECTION WITH SCROLL-DRIVEN 3D ZOOM */}
       {/* ========================================================================= */}
-      <section className="relative bg-gradient-to-b from-[#2b66ff] via-[#215cf3] to-[#1a4fd8] pt-6 pb-24 sm:pb-36 px-4 sm:px-6 lg:px-8 overflow-hidden text-white">
-        {/* Subtle background light mesh / dot pattern */}
-        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]" />
-        
-        {/* Ambient radial glow highlights */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-400/20 blur-[120px] rounded-full pointer-events-none" />
+      <section
+        ref={heroRef}
+        className="relative pt-6 pb-28 sm:pb-44 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-[#215cf3] via-[#3b82f6] via-45% via-[#93c5fd] via-75% via-[#e0f2fe] via-90% to-[#FDFEFE]"
+      >
+        {/* Sky Ambient Light Glows */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-white/20 blur-[130px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/4 left-1/3 w-[600px] h-[350px] bg-sky-200/30 blur-[100px] rounded-full pointer-events-none" />
+
+        {/* Subtle dot matrix overlay */}
+        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#ffffff_1.2px,transparent_1.2px)] [background-size:24px_24px]" />
 
         {/* --- FLOATING PILL NAVBAR --- */}
-        <nav className="relative z-30 max-w-5xl mx-auto mb-16 sm:mb-20">
-          <div className="bg-white/95 backdrop-blur-md rounded-full px-4 sm:px-6 py-2.5 sm:py-3 shadow-2xl flex items-center justify-between border border-white/40">
+        <nav className="relative z-40 max-w-5xl mx-auto mb-14 sm:mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-white/95 backdrop-blur-md rounded-full px-4 sm:px-6 py-2.5 sm:py-3 shadow-2xl flex items-center justify-between border border-white/60"
+          >
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-md">
@@ -301,28 +327,28 @@ export const LandingPage: React.FC = () => {
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
-          </div>
+          </motion.div>
         </nav>
 
-        {/* --- HERO CENTER CONTENT --- */}
+        {/* --- HERO CENTER HEADINGS & CTAS --- */}
         <div className="relative z-20 max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
-          {/* Badge Pill */}
+          {/* Badge Pill with smooth pop-in */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-xs font-semibold shadow-inner"
+            initial={{ opacity: 0, scale: 0.9, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/40 text-white text-xs font-semibold shadow-inner"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>AI-powered operations for modern schools</span>
           </motion.div>
 
-          {/* Huge Hero Headline */}
+          {/* Staggered Smooth Hero Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] text-white"
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] text-white drop-shadow-xs"
           >
             Automate workflows <br className="hidden sm:inline" />
             with <span className="underline decoration-white/40 decoration-wavy decoration-2">SchoolHub</span>
@@ -330,72 +356,76 @@ export const LandingPage: React.FC = () => {
 
           {/* Subtitle */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-base sm:text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-normal leading-relaxed"
+            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="text-base sm:text-lg md:text-xl text-white/95 max-w-2xl mx-auto font-normal leading-relaxed"
           >
             Connect attendance, academic timetables, CBSE examinations, and instant Razorpay fee collections into one beautifully unified operating system.
           </motion.p>
 
-          {/* Hero CTAs */}
+          {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2"
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2"
           >
             <button
               type="button"
               onClick={() => handleOpenRegister('PRO')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-slate-950 hover:bg-black text-white text-sm font-bold shadow-2xl transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-slate-950 hover:bg-black text-white text-sm font-bold shadow-2xl transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
             >
               <span>Get started</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
             <a
               href="#dashboard-preview"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/25 text-white text-sm font-semibold transition-all text-center"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/40 text-white text-sm font-semibold transition-all text-center shadow-xs"
             >
               Explore Live Preview
             </a>
           </motion.div>
 
-          {/* Trusted social proof */}
+          {/* Social Proof */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="pt-4 flex items-center justify-center gap-3 text-xs text-white/80"
+            transition={{ duration: 0.8, delay: 0.45 }}
+            className="pt-3 flex items-center justify-center gap-3 text-xs text-white/90"
           >
             <div className="flex -space-x-2">
-              <div className="w-7 h-7 rounded-full bg-amber-400 border-2 border-blue-600 flex items-center justify-center text-[10px] font-bold text-slate-900">DPS</div>
-              <div className="w-7 h-7 rounded-full bg-emerald-400 border-2 border-blue-600 flex items-center justify-center text-[10px] font-bold text-slate-900">KV</div>
-              <div className="w-7 h-7 rounded-full bg-rose-400 border-2 border-blue-600 flex items-center justify-center text-[10px] font-bold text-slate-900">STX</div>
+              <div className="w-7 h-7 rounded-full bg-amber-400 border-2 border-blue-600 flex items-center justify-center text-[10px] font-bold text-slate-900 shadow-xs">DPS</div>
+              <div className="w-7 h-7 rounded-full bg-emerald-400 border-2 border-blue-600 flex items-center justify-center text-[10px] font-bold text-slate-900 shadow-xs">KV</div>
+              <div className="w-7 h-7 rounded-full bg-rose-400 border-2 border-blue-600 flex items-center justify-center text-[10px] font-bold text-slate-900 shadow-xs">STX</div>
             </div>
             <span>Trusted by <strong>250+ Premier CBSE &amp; ICSE Campuses</strong></span>
           </motion.div>
         </div>
 
-        {/* --- HERO DASHBOARD ZOOM-IN BROWSER SHOWCASE --- */}
-        <div id="dashboard-preview" className="relative z-20 max-w-6xl mx-auto mt-14 sm:mt-20">
+        {/* --- SCROLL-DRIVEN 3D ZOOMING DASHBOARD MOCKUP --- */}
+        <div id="dashboard-preview" className="relative z-30 max-w-6xl mx-auto mt-14 sm:mt-24 [perspective:1400px]">
           <motion.div
-            initial={{ opacity: 0, y: 70, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            className="relative rounded-2xl sm:rounded-3xl border border-white/30 bg-white shadow-2xl p-2 sm:p-3 overflow-hidden backdrop-blur-2xl"
+            style={{
+              rotateX: dashboardRotateX,
+              scale: dashboardScale,
+              y: dashboardY,
+              opacity: dashboardOpacity,
+              transformStyle: 'preserve-3d',
+            }}
+            className="relative rounded-2xl sm:rounded-3xl border border-white/60 bg-white/95 shadow-[0_30px_100px_-20px_rgba(30,58,138,0.35)] p-2 sm:p-3 overflow-hidden backdrop-blur-2xl transition-shadow duration-500 hover:shadow-[0_40px_120px_-15px_rgba(30,58,138,0.45)]"
           >
-            {/* Mac Traffic Dots & Browser Header */}
+            {/* Mac Traffic Controls & Browser Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50/90 rounded-t-xl sm:rounded-t-2xl">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-rose-400" />
-                <span className="w-3 h-3 rounded-full bg-amber-400" />
-                <span className="w-3 h-3 rounded-full bg-emerald-400" />
-                <span className="text-[11px] font-medium text-slate-400 ml-2 hidden sm:inline">SchoolHub Cloud OS</span>
+                <span className="w-3 h-3 rounded-full bg-rose-400 shadow-xs" />
+                <span className="w-3 h-3 rounded-full bg-amber-400 shadow-xs" />
+                <span className="w-3 h-3 rounded-full bg-emerald-400 shadow-xs" />
+                <span className="text-[11px] font-semibold text-slate-400 ml-2 hidden sm:inline">SchoolHub Cloud OS</span>
               </div>
 
-              {/* URL Bar */}
-              <div className="px-5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-mono text-slate-500 flex items-center gap-2 shadow-xs">
+              {/* URL Pill */}
+              <div className="px-5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-mono text-slate-600 flex items-center gap-2 shadow-xs">
                 <Lock className="w-3 h-3 text-emerald-600" />
                 <span>schoolhub.edu/campus/cbse-portal</span>
               </div>
@@ -406,7 +436,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Actual High-Res Dashboard Screenshot */}
+            {/* High-Res Dashboard Screenshot */}
             <div className="relative rounded-b-xl sm:rounded-b-2xl overflow-hidden bg-slate-100 group">
               <img
                 src={dashboardImg}
@@ -414,16 +444,16 @@ export const LandingPage: React.FC = () => {
                 className="w-full h-auto object-cover object-top rounded-b-xl sm:rounded-b-2xl shadow-inner transition-transform duration-700 group-hover:scale-[1.01]"
               />
 
-              {/* Bottom Gradient Fade */}
+              {/* Subtle Bottom Light Fade */}
               <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/10 to-transparent pointer-events-none" />
             </div>
 
-            {/* --- CREATIVE FLOATING CARDS (Animated surrounding pills) --- */}
+            {/* --- CREATIVE FLOATING CARDS (Parallax Motion) --- */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="hidden lg:flex absolute -left-6 top-1/4 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-2xl items-center gap-3 text-left max-w-xs z-30"
+              style={{ y: cardFloat1 }}
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
+              className="hidden lg:flex absolute -left-6 top-1/4 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-2xl items-center gap-3 text-left max-w-xs z-30"
             >
               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                 <Zap className="w-5 h-5" />
@@ -435,24 +465,23 @@ export const LandingPage: React.FC = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
-              className="hidden lg:flex absolute -right-6 top-1/3 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-2xl items-center gap-3 text-left max-w-xs z-30"
+              style={{ y: cardFloat2 }}
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 4.8, ease: 'easeInOut' }}
+              className="hidden lg:flex absolute -right-6 top-1/3 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-2xl items-center gap-3 text-left max-w-xs z-30"
             >
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                 <CreditCard className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-xs font-bold text-slate-900 block">Razorpay Settlements</span>
-                <span className="text-[11px] text-slate-500 block">Instant UPI, QR &amp; Cards with real-time invoices.</span>
+                <span className="text-[11px] text-slate-500 block">Instant UPI, QR &amp; Cards with real-time receipts.</span>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1 }}
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
               className="hidden md:flex absolute right-12 -bottom-6 p-3.5 rounded-2xl bg-slate-950 text-white shadow-2xl items-center gap-3 z-30 border border-slate-800"
             >
               <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
@@ -460,7 +489,7 @@ export const LandingPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs font-bold block">CBSE Attendance Radar</span>
-                <span className="text-[10px] text-slate-400 block">Instant alerts on threshold drops</span>
+                <span className="text-[10px] text-slate-400 block">Automated alerts on threshold drops</span>
               </div>
             </motion.div>
           </motion.div>
@@ -470,24 +499,48 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================================= */}
       {/* 2. LIVE METRICS & IMPACT TICKER */}
       {/* ========================================================================= */}
-      <section className="py-12 border-b border-slate-100 bg-slate-50/60">
+      <section className="py-12 border-b border-slate-100 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/60 shadow-xs">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/60 shadow-xs"
+          >
             <span className="text-3xl sm:text-4xl font-black text-slate-950 block">250+</span>
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1 block">Active Campuses</span>
-          </div>
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/60 shadow-xs">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/60 shadow-xs"
+          >
             <span className="text-3xl sm:text-4xl font-black text-blue-600 block">1,80,000+</span>
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1 block">Students &amp; Parents</span>
-          </div>
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/60 shadow-xs">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/60 shadow-xs"
+          >
             <span className="text-3xl sm:text-4xl font-black text-emerald-600 block">99.4%</span>
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1 block">Fee Recovery Rate</span>
-          </div>
-          <div className="p-4 rounded-2xl bg-white border border-slate-200/60 shadow-xs">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/60 shadow-xs"
+          >
             <span className="text-3xl sm:text-4xl font-black text-slate-950 block">15 hrs</span>
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1 block">Saved / Teacher Weekly</span>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -495,7 +548,13 @@ export const LandingPage: React.FC = () => {
       {/* 3. INTERACTIVE STAKEHOLDER ROLE EXPLORER */}
       {/* ========================================================================= */}
       <section id="stakeholders" className="py-20 sm:py-28 max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-14 space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-3xl mx-auto mb-14 space-y-4"
+        >
           <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
             Engineered for Every Role
           </span>
@@ -531,16 +590,16 @@ export const LandingPage: React.FC = () => {
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Stakeholder Details Card */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeRole}
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="p-8 sm:p-12 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-card grid md:grid-cols-2 gap-8 items-center"
           >
             <div className="space-y-6">
@@ -677,7 +736,13 @@ export const LandingPage: React.FC = () => {
       {/* ========================================================================= */}
       <section id="features" className="py-20 sm:py-28 bg-slate-50/70 border-t border-slate-200/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center max-w-3xl mx-auto space-y-4"
+          >
             <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
               Modern Campus Architecture
             </span>
@@ -687,12 +752,18 @@ export const LandingPage: React.FC = () => {
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
               Designed from first principles to eradicate paper files, fragmented spreadsheets, and lost fee installments.
             </p>
-          </div>
+          </motion.div>
 
           {/* Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Bento 1: Large Academic Structure */}
-            <div className="md:col-span-2 p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all group">
+            <motion.div
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="md:col-span-2 p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all group"
+            >
               <div className="space-y-4 max-w-md">
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                   <Layers className="w-6 h-6" />
@@ -719,10 +790,16 @@ export const LandingPage: React.FC = () => {
                   <span className="text-[11px] text-slate-500">CBSE Curriculum Seed</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Bento 2: Razorpay Payments */}
-            <div className="p-8 rounded-3xl bg-slate-950 text-white shadow-xl flex flex-col justify-between hover:scale-[1.01] transition-all">
+            <motion.div
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="p-8 rounded-3xl bg-slate-950 text-white shadow-xl flex flex-col justify-between hover:scale-[1.01] transition-all"
+            >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-white/10 text-emerald-400 flex items-center justify-center">
                   <CreditCard className="w-6 h-6" />
@@ -749,10 +826,16 @@ export const LandingPage: React.FC = () => {
                   <span className="font-bold text-white">Automated</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Bento 3: Attendance Radar */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all">
+            <motion.div
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all"
+            >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
                   <CalendarCheck className="w-6 h-6" />
@@ -767,10 +850,16 @@ export const LandingPage: React.FC = () => {
               <div className="mt-6 flex items-center gap-2 text-xs font-bold text-amber-600">
                 <span>Safe Attendance Benchmark &gt; 75%</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Bento 4: Examinations & Marksheets */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all">
+            <motion.div
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all"
+            >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center">
                   <Award className="w-6 h-6" />
@@ -785,10 +874,16 @@ export const LandingPage: React.FC = () => {
               <div className="mt-6 flex items-center gap-2 text-xs font-bold text-violet-600">
                 <span>QR-Verified Digital Transcripts</span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Bento 5: Multi-Tenant Data Isolation */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all">
+            <motion.div
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="p-8 rounded-3xl bg-white border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-lg transition-all"
+            >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
                   <ShieldCheck className="w-6 h-6" />
@@ -803,7 +898,7 @@ export const LandingPage: React.FC = () => {
               <div className="mt-6 flex items-center gap-2 text-xs font-bold text-rose-600">
                 <span>Enterprise Cloudflare &amp; AWS Backed</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -812,7 +907,13 @@ export const LandingPage: React.FC = () => {
       {/* 5. VERIFIED SCHOOL TESTIMONIALS */}
       {/* ========================================================================= */}
       <section id="testimonials" className="py-20 sm:py-28 max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+        >
           <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
             Real School Impact
           </span>
@@ -822,7 +923,7 @@ export const LandingPage: React.FC = () => {
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             See how administrators and principals across India transitioned away from messy legacy software to SchoolHub.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
@@ -851,8 +952,12 @@ export const LandingPage: React.FC = () => {
               rating: 5,
             },
           ].map((t, idx) => (
-            <div
+            <motion.div
               key={idx}
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
               className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-card flex flex-col justify-between hover:shadow-md transition-all space-y-6"
             >
               <div className="space-y-4">
@@ -875,7 +980,7 @@ export const LandingPage: React.FC = () => {
                   {t.badge}
                 </span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -888,7 +993,13 @@ export const LandingPage: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-blue-600/15 blur-[140px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.7 }}
+            className="text-center max-w-3xl mx-auto space-y-4"
+          >
             <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-white/10 text-blue-400 border border-white/15">
               Predictable Campus Investment
             </span>
@@ -924,18 +1035,22 @@ export const LandingPage: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Pricing Cards */}
           <div className="grid md:grid-cols-3 gap-8 items-stretch">
-            {(['BASIC', 'PRO', 'ENTERPRISE'] as const).map((key) => {
+            {(['BASIC', 'PRO', 'ENTERPRISE'] as const).map((key, idx) => {
               const plan = planInfo[key];
               const price = isAnnual ? plan.annual : plan.monthly;
               const isPopular = 'popular' in plan && plan.popular;
 
               return (
-                <div
+                <motion.div
                   key={key}
+                  initial={{ opacity: 0, y: 35 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
                   className={`p-8 sm:p-10 rounded-3xl flex flex-col justify-between transition-all relative ${
                     isPopular
                       ? 'bg-blue-600 text-white shadow-2xl scale-105 border-2 border-blue-400/60 z-20'
@@ -993,7 +1108,7 @@ export const LandingPage: React.FC = () => {
                       <span>Choose {plan.name}</span>
                     </button>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -1004,7 +1119,13 @@ export const LandingPage: React.FC = () => {
       {/* 7. FREQUENTLY ASKED QUESTIONS (Accordion) */}
       {/* ========================================================================= */}
       <section id="faq" className="py-20 sm:py-28 max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="text-center space-y-4 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7 }}
+          className="text-center space-y-4 mb-16"
+        >
           <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-slate-100 text-slate-700">
             Got Questions?
           </span>
@@ -1014,14 +1135,18 @@ export const LandingPage: React.FC = () => {
           <p className="text-slate-600 text-sm">
             Everything you need to know about setting up SchoolHub on your campus.
           </p>
-        </div>
+        </motion.div>
 
         <div className="space-y-4">
           {faqs.map((faq, idx) => {
             const isOpen = expandedFaq === idx;
             return (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.08 }}
                 className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all shadow-xs"
               >
                 <button
@@ -1046,7 +1171,7 @@ export const LandingPage: React.FC = () => {
                     {faq.a}
                   </motion.div>
                 )}
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -1056,7 +1181,13 @@ export const LandingPage: React.FC = () => {
       {/* 8. HIGH-CONVERSION CTA BANNER */}
       {/* ========================================================================= */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 text-white p-8 sm:p-16 text-center space-y-6 shadow-2xl relative overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 30 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 text-white p-8 sm:p-16 text-center space-y-6 shadow-2xl relative overflow-hidden"
+        >
           <div className="relative z-10 max-w-2xl mx-auto space-y-6">
             <span className="text-xs font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-white/15 border border-white/20">
               Transform Your Campus Today
@@ -1083,7 +1214,7 @@ export const LandingPage: React.FC = () => {
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ========================================================================= */}
