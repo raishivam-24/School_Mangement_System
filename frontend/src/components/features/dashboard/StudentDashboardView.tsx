@@ -169,16 +169,19 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({ user
           </div>
         </div>
 
-        <div className="bg-surface rounded-3xl p-5 border border-border shadow-card flex flex-col justify-between">
+        <div
+          onClick={() => navigate('/exams')}
+          className="bg-surface rounded-3xl p-5 border border-border shadow-card flex flex-col justify-between cursor-pointer hover:border-accent-violet transition-all group hover:shadow-md"
+        >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">Upcoming Exam</span>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-violet-subtle text-accent-violet">
-              In 8 Days
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent-violet-subtle text-accent-violet flex items-center gap-1 group-hover:scale-105 transition-transform">
+              In 8 Days <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
             </span>
           </div>
           <div className="mt-3">
-            <span className="text-xl font-bold text-primary leading-tight">Maths Mock Test</span>
-            <p className="text-xs text-secondary mt-1">Syllabus: Ch 1 to 5 (Term 1)</p>
+            <span className="text-xl font-bold text-primary leading-tight group-hover:text-accent-violet transition-colors">Maths Mock Test</span>
+            <p className="text-xs text-secondary mt-1">Syllabus: Ch 1 to 5 (Term 1) &bull; View Schedule &rarr;</p>
           </div>
         </div>
 

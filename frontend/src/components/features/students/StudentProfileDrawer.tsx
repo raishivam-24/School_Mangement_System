@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Award } from 'lucide-react';
 import type { Student } from '../../../types';
 
 interface StudentProfileDrawerProps {
@@ -17,6 +18,7 @@ export const StudentProfileDrawer: React.FC<StudentProfileDrawerProps> = ({
   student,
   onClose,
 }) => {
+  const navigate = useNavigate();
   if (!student) return null;
 
   const attendance = student.attendanceRate ?? student.attendancePercentage ?? 90;
@@ -120,11 +122,22 @@ export const StudentProfileDrawer: React.FC<StudentProfileDrawerProps> = ({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-border">
+          <div className="pt-4 border-t border-border space-y-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                navigate('/exams');
+              }}
+              className="w-full py-2.5 rounded-full bg-accent-blue text-white text-xs font-bold hover:bg-accent-blue/90 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            >
+              <Award className="w-4 h-4" />
+              View Examinations &amp; Report Card
+            </button>
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-2.5 rounded-full bg-surface-raised text-secondary text-xs font-bold hover:bg-surface-raised/80 transition-all cursor-pointer"
+              className="w-full py-2 rounded-full bg-surface-raised text-secondary text-xs font-bold hover:bg-surface-raised/80 transition-all cursor-pointer"
             >
               Close Drawer
             </button>

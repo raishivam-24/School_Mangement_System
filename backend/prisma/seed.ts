@@ -352,6 +352,174 @@ async function main() {
     });
   }
 
+  // 13. Seed Core Academic Subjects (English, Social Science)
+  const englishSubject = await prisma.subject.upsert({
+    where: { schoolId_code: { schoolId: school.id, code: 'ENG101' } },
+    update: {},
+    create: {
+      schoolId: school.id,
+      name: 'English Language & Literature',
+      code: 'ENG101',
+      type: 'CORE',
+    },
+  });
+
+  const sstSubject = await prisma.subject.upsert({
+    where: { schoolId_code: { schoolId: school.id, code: 'SST101' } },
+    update: {},
+    create: {
+      schoolId: school.id,
+      name: 'Social Science',
+      code: 'SST101',
+      type: 'CORE',
+    },
+  });
+
+  // 14. Seed Examinations & Date Sheets
+  const midTermExam = await prisma.exam.upsert({
+    where: { id: 'exam-midterm-2026' },
+    update: {},
+    create: {
+      id: 'exam-midterm-2026',
+      schoolId: school.id,
+      academicYearId: academicYear.id,
+      name: 'Mid-Term Examination 2026',
+      term: 'Term 1',
+      startDate: new Date('2026-10-15'),
+      endDate: new Date('2026-10-25'),
+      status: ExamStatus.ONGOING,
+    },
+  });
+
+  const pa1Exam = await prisma.exam.upsert({
+    where: { id: 'exam-pa1-2026' },
+    update: {},
+    create: {
+      id: 'exam-pa1-2026',
+      schoolId: school.id,
+      academicYearId: academicYear.id,
+      name: 'Periodic Assessment 1 (PA-1)',
+      term: 'Quarter 1',
+      startDate: new Date('2026-08-10'),
+      endDate: new Date('2026-08-18'),
+      status: ExamStatus.COMPLETED,
+    },
+  });
+
+  // Exam Subjects Schedule for Class 10
+  const subMath = await prisma.examSubject.upsert({
+    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: mathSubject.id } },
+    update: {},
+    create: {
+      examId: midTermExam.id,
+      classId: class10.id,
+      subjectId: mathSubject.id,
+      examDate: new Date('2026-10-15T09:00:00Z'),
+      startTime: '09:00 AM',
+      endTime: '12:00 PM',
+      maxMarks: 100.0,
+      passMarks: 33.0,
+      roomNumber: 'Hall 101',
+    },
+  });
+
+  const subSci = await prisma.examSubject.upsert({
+    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: scienceSubject.id } },
+    update: {},
+    create: {
+      examId: midTermExam.id,
+      classId: class10.id,
+      subjectId: scienceSubject.id,
+      examDate: new Date('2026-10-17T09:00:00Z'),
+      startTime: '09:00 AM',
+      endTime: '12:00 PM',
+      maxMarks: 100.0,
+      passMarks: 33.0,
+      roomNumber: 'Science Lab 2',
+    },
+  });
+
+  const subEng = await prisma.examSubject.upsert({
+    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: englishSubject.id } },
+    update: {},
+    create: {
+      examId: midTermExam.id,
+      classId: class10.id,
+      subjectId: englishSubject.id,
+      examDate: new Date('2026-10-20T09:00:00Z'),
+      startTime: '09:00 AM',
+      endTime: '12:00 PM',
+      maxMarks: 100.0,
+      passMarks: 33.0,
+      roomNumber: 'Hall 102',
+    },
+  });
+
+  const subSst = await prisma.examSubject.upsert({
+    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: sstSubject.id } },
+    update: {},
+    create: {
+      examId: midTermExam.id,
+      classId: class10.id,
+      subjectId: sstSubject.id,
+      examDate: new Date('2026-10-22T09:00:00Z'),
+      startTime: '09:00 AM',
+      endTime: '12:00 PM',
+      maxMarks: 100.0,
+      passMarks: 33.0,
+      roomNumber: 'Room 103',
+    },
+  });
+
+  // Seed Exam Results for Rahul Sharma (student)
+  await prisma.examResult.upsert({
+    where: { examSubjectId_studentId: { examSubjectId: subMath.id, studentId: student.id } },
+    update: {},
+    create: {
+      examSubjectId: subMath.id,
+      studentId: student.id,
+      marksObtained: 88.0,
+      grade: 'A2',
+      remarks: 'Strong conceptual clarity in Geometry and Algebra.',
+    },
+  });
+
+  await prisma.examResult.upsert({
+    where: { examSubjectId_studentId: { examSubjectId: subSci.id, studentId: student.id } },
+    update: {},
+    create: {
+      examSubjectId: subSci.id,
+      studentId: student.id,
+      marksObtained: 93.0,
+      grade: 'A1',
+      remarks: 'Outstanding experimental application and physics problem solving.',
+    },
+  });
+
+  await prisma.examResult.upsert({
+    where: { examSubjectId_studentId: { examSubjectId: subEng.id, studentId: student.id } },
+    update: {},
+    create: {
+      examSubjectId: subEng.id,
+      studentId: student.id,
+      marksObtained: 85.0,
+      grade: 'A2',
+      remarks: 'Expressive prose and excellent comprehension skills.',
+    },
+  });
+
+  await prisma.examResult.upsert({
+    where: { examSubjectId_studentId: { examSubjectId: subSst.id, studentId: student.id } },
+    update: {},
+    create: {
+      examSubjectId: subSst.id,
+      studentId: student.id,
+      marksObtained: 79.0,
+      grade: 'B1',
+      remarks: 'Good grasp of Indian History & Contemporary World.',
+    },
+  });
+
   console.log('\n🎉 Database Seeding Completed Successfully!\n');
   console.log('====================================================');
   console.log('🔑 TEST LOGIN CREDENTIALS:');

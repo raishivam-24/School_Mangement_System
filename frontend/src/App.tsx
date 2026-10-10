@@ -66,6 +66,28 @@ const ProtectedRoute: React.FC = () => {
   return <Outlet />;
 };
 
+/**
+ * RootFallback: Smart catch-all router that directs logged-in users to their
+ * dashboard instead of dumping them onto the public marketing landing page.
+ */
+const RootFallback: React.FC = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-canvas">
+        <div className="w-10 h-10 border-4 border-brand-sky border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (user) {
+    return <Navigate to={user.role === 'SUPER_ADMIN' ? '/admin/dashboard' : '/dashboard'} replace />;
+  }
+
+  return <Navigate to="/" replace />;
+};
+
 export function App() {
   return (
     <ThemeProvider>
@@ -93,6 +115,9 @@ export function App() {
                   <Route path="/finance" element={<FinancePage />} />
                   <Route path="/timetable" element={<TimetablePage />} />
                   <Route path="/exams" element={<ExamsPage />} />
+                  <Route path="/exam" element={<Navigate to="/exams" replace />} />
+                  <Route path="/examinations" element={<Navigate to="/exams" replace />} />
+                  <Route path="/student/exams" element={<Navigate to="/exams" replace />} />
                   <Route path="/announcements" element={<AnnouncementsPage />} />
                   <Route path="/calendar" element={<CalendarPage />} />
                   <Route path="/library" element={<LibraryPage />} />
@@ -109,7 +134,7 @@ export function App() {
               </Route>
 
               {/* Fallback */}
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<RootFallback />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

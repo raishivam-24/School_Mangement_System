@@ -34,6 +34,7 @@ export const ExamsPage: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'SCHOOL_ADMIN' || user?.role === 'SUPER_ADMIN';
   const isTeacher = user?.role === 'TEACHER' || isAdmin;
+  const isStudent = user?.role === 'STUDENT';
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<'exams' | 'marks' | 'reportCards'>('exams');
@@ -72,6 +73,18 @@ export const ExamsPage: React.FC = () => {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
+  // Safe date formatting helper to prevent any RangeError invalid time value crashes
+  const safeDate = (dateStr?: string | Date | null, options?: Intl.DateTimeFormatOptions) => {
+    if (!dateStr) return 'TBA';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return 'TBA';
+      return d.toLocaleDateString('en-IN', options);
+    } catch {
+      return 'TBA';
+    }
+  };
+
   // 1. Initial Load of Exams and Academic Context
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -82,7 +95,8 @@ export const ExamsPage: React.FC = () => {
           academicService.getClasses().catch(() => []),
           academicService.getSubjects().catch(() => []),
           academicService.getAcademicYears().catch(() => []),
-          studentService.getStudents().catch(() => []),
+          // Only fetch full school student roster for teacher/admin to prevent 403 Forbidden
+          isTeacher ? studentService.getStudents().catch(() => []) : Promise.resolve([]),
         ]);
 
         setExams(examsData);
@@ -101,15 +115,25 @@ export const ExamsPage: React.FC = () => {
           setMarksSubjectId(subjectsData[0].id);
         }
 
-        const formattedStudents = studentsData.map((s: Student) => ({
-          id: s.id,
-          name: s.name,
-          admissionNo: s.admissionNo,
-          className: s.class || 'Class 10',
-        }));
-        setAllStudentsList(formattedStudents);
-        if (formattedStudents.length > 0) {
-          setReportSearchStudentId(formattedStudents[0].id);
+        if (isStudent) {
+          const myStudentId = user?.studentProfile?.id || user?.id;
+          if (myStudentId) {
+            setReportSearchStudentId(myStudentId);
+            if (examsData.length > 0) {
+              handleGenerateReportCard(myStudentId, examsData[0].id);
+            }
+          }
+        } else {
+          const formattedStudents = studentsData.map((s: Student) => ({
+            id: s.id,
+            name: s.name,
+            admissionNo: s.admissionNo,
+            className: s.class || 'Class 10',
+          }));
+          setAllStudentsList(formattedStudents);
+          if (formattedStudents.length > 0) {
+            setReportSearchStudentId(formattedStudents[0].id);
+          }
         }
       } catch (err: any) {
         showToast('Error loading exam records. Please refresh.', 'error');
@@ -119,7 +143,7 @@ export const ExamsPage: React.FC = () => {
     };
 
     fetchInitialData();
-  }, []);
+  }, [user?.role, user?.studentProfile?.id, user?.id]);
 
   // 2. Fetch specific exam details when selectedExam changes
   useEffect(() => {
@@ -129,9 +153,9 @@ export const ExamsPage: React.FC = () => {
     }).catch(() => {});
   }, [selectedExam?.id]);
 
-  // 3. Load students for marks entry
+  // 3. Load students for marks entry (only for teachers/admins)
   useEffect(() => {
-    if (!marksClassId) return;
+    if (isStudent || !marksClassId) return;
     studentService.getStudents({ classId: marksClassId }).then((students: Student[]) => {
       const roster = students.map((s: Student, idx: number) => ({
         studentId: s.id,
@@ -142,7 +166,7 @@ export const ExamsPage: React.FC = () => {
       }));
       setMarksStudents(roster);
     }).catch(() => {});
-  }, [marksClassId]);
+  }, [marksClassId, isStudent]);
 
   // Helper: CBSE 9-Point Grading Scale
   const getCbseGrade = (marks: number, max: number = 100) => {
@@ -317,7 +341,7 @@ export const ExamsPage: React.FC = () => {
           }`}
         >
           <Calendar className="w-4 h-4" />
-          <span>Exams & Date Sheets</span>
+          <span>{isStudent ? 'My Exam Schedule' : 'Exams & Date Sheets'}</span>
         </button>
 
         {isTeacher && (
@@ -335,7 +359,16 @@ export const ExamsPage: React.FC = () => {
         )}
 
         <button
-          onClick={() => setActiveTab('reportCards')}
+          onClick={() => {
+            setActiveTab('reportCards');
+            if (isStudent) {
+              const myStudentId = user?.studentProfile?.id || user?.id;
+              const targetExamId = marksExamId || exams[0]?.id;
+              if (myStudentId && targetExamId && (!reportCardModalData || reportCardModalData.exam?.id !== targetExamId)) {
+                handleGenerateReportCard(myStudentId, targetExamId);
+              }
+            }
+          }}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
             activeTab === 'reportCards'
               ? 'bg-accent-blue text-white shadow-md'
@@ -343,7 +376,7 @@ export const ExamsPage: React.FC = () => {
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>CBSE Report Card Generator</span>
+          <span>{isStudent ? 'My CBSE Report Card' : 'CBSE Report Card Generator'}</span>
         </button>
       </div>
 
@@ -391,6 +424,8 @@ export const ExamsPage: React.FC = () => {
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         exam.status === 'ONGOING'
                           ? 'bg-emerald-500/15 text-emerald-600'
+                          : exam.status === 'COMPLETED'
+                          ? 'bg-purple-500/15 text-purple-600'
                           : 'bg-amber-500/15 text-amber-600'
                       }`}
                     >
@@ -401,7 +436,7 @@ export const ExamsPage: React.FC = () => {
                   <div className="mt-3 flex items-center justify-between text-xs text-muted">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      {new Date(exam.startDate).toLocaleDateString()} - {new Date(exam.endDate).toLocaleDateString()}
+                      {safeDate(exam.startDate)} - {safeDate(exam.endDate)}
                     </span>
                     <ChevronRight className="w-4 h-4 text-muted" />
                   </div>
@@ -452,7 +487,7 @@ export const ExamsPage: React.FC = () => {
                       selectedExam.subjects.map((sub, idx) => (
                         <tr key={idx} className="hover:bg-surface-raised/50 transition-colors">
                           <td className="py-4 px-3 font-semibold text-primary">
-                            {new Date(sub.examDate).toLocaleDateString('en-IN', {
+                            {safeDate(sub.examDate, {
                               weekday: 'short',
                               day: 'numeric',
                               month: 'short',
@@ -659,59 +694,111 @@ export const ExamsPage: React.FC = () => {
       {/* ========================================================================= */}
       {activeTab === 'reportCards' && (
         <div className="bg-surface rounded-3xl p-6 sm:p-8 border border-border shadow-card space-y-6">
-          <div>
-            <h2 className="text-xl font-extrabold text-primary">CBSE Format Student Report Card Generator</h2>
-            <p className="text-xs text-secondary mt-0.5">
-              Select an exam term and student to render and print the official CBSE Comprehensive Grade Sheet.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+            <div>
+              <h2 className="text-xl font-extrabold text-primary">
+                {isStudent ? 'My CBSE Academic Progress Report Card' : 'CBSE Format Student Report Card Generator'}
+              </h2>
+              <p className="text-xs text-secondary mt-0.5">
+                {isStudent
+                  ? 'Official scholastic marks breakdown, CBSE 9-point grades, and teacher evaluation comments.'
+                  : 'Select an exam term and student to render and print the official CBSE Comprehensive Grade Sheet.'}
+              </p>
+            </div>
+            {isStudent && (
+              <div className="flex items-center gap-3">
+                <label className="text-xs font-bold text-muted">Term:</label>
+                <select
+                  value={marksExamId}
+                  onChange={(e) => {
+                    const newExamId = e.target.value;
+                    setMarksExamId(newExamId);
+                    const myStudentId = user?.studentProfile?.id || user?.id;
+                    if (myStudentId) {
+                      handleGenerateReportCard(myStudentId, newExamId);
+                    }
+                  }}
+                  className="px-3 py-2 bg-surface border border-border rounded-xl text-xs font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-brand-sky"
+                >
+                  {exams.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
-          {/* Student Selector */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-surface-raised border border-border">
-            <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted block mb-1">
-                Select Exam Term
-              </label>
-              <select
-                value={marksExamId}
-                onChange={(e) => setMarksExamId(e.target.value)}
-                className="w-full px-3 py-2 bg-surface border border-border rounded-xl text-xs font-semibold text-primary"
-              >
-                {exams.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="sm:col-span-2 flex items-end gap-3">
-              <div className="flex-1">
+          {/* Student Selector (Only for Teachers / Admins) */}
+          {!isStudent && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-surface-raised border border-border">
+              <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted block mb-1">
-                  Select Student
+                  Select Exam Term
                 </label>
                 <select
-                  value={reportSearchStudentId}
-                  onChange={(e) => setReportSearchStudentId(e.target.value)}
+                  value={marksExamId}
+                  onChange={(e) => setMarksExamId(e.target.value)}
                   className="w-full px-3 py-2 bg-surface border border-border rounded-xl text-xs font-semibold text-primary"
                 >
-                  {allStudentsList.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.admissionNo}) — {s.className}
+                  {exams.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <button
-                onClick={() => handleGenerateReportCard(reportSearchStudentId, marksExamId)}
-                disabled={loadingReportCard}
-                className="px-6 py-2 rounded-xl bg-accent-blue text-white font-bold text-xs shadow-md hover:bg-brand-sky-dark transition-all disabled:opacity-50 shrink-0"
-              >
-                {loadingReportCard ? 'Generating...' : 'View Report Card'}
-              </button>
+              <div className="sm:col-span-2 flex items-end gap-3">
+                <div className="flex-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted block mb-1">
+                    Select Student
+                  </label>
+                  <select
+                    value={reportSearchStudentId}
+                    onChange={(e) => setReportSearchStudentId(e.target.value)}
+                    className="w-full px-3 py-2 bg-surface border border-border rounded-xl text-xs font-semibold text-primary"
+                  >
+                    {allStudentsList.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.admissionNo}) — {s.className}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={() => handleGenerateReportCard(reportSearchStudentId, marksExamId)}
+                  disabled={loadingReportCard}
+                  className="px-6 py-2 rounded-xl bg-accent-blue text-white font-bold text-xs shadow-md hover:bg-brand-sky-dark transition-all disabled:opacity-50 shrink-0"
+                >
+                  {loadingReportCard ? 'Generating...' : 'View Report Card'}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Loading Indicator */}
+          {loadingReportCard && (
+            <div className="p-12 text-center bg-surface-raised rounded-3xl border border-border">
+              <div className="w-8 h-8 border-4 border-accent-blue border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-xs font-bold text-muted">Generating CBSE Report Card...</p>
+            </div>
+          )}
+
+          {/* Empty State when no report card loaded */}
+          {!loadingReportCard && !reportCardModalData && (
+            <div className="p-12 text-center bg-surface rounded-3xl border border-border text-muted space-y-2">
+              <Award className="w-10 h-10 mx-auto text-accent-blue/50" />
+              <h4 className="text-sm font-bold text-primary">No Report Card Available Yet</h4>
+              <p className="text-xs text-secondary max-w-md mx-auto">
+                {isStudent
+                  ? 'Marks for this examination term have not been published by your teachers yet.'
+                  : 'Please select a valid student and exam term above to generate the report card.'}
+              </p>
+            </div>
+          )}
 
           {/* Printable Report Card Preview */}
           {reportCardModalData ? (
