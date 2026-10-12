@@ -81,35 +81,7 @@ const fadeUp: Variants = {
   }),
 };
 
-// Scale pop for cards
-const scalePop: Variants = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.6, delay, ease: EASE_OUT_CUBIC },
-  }),
-};
 
-// Horizontal slide from left
-const slideFromLeft: Variants = {
-  hidden: { opacity: 0, x: -50 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.7, delay, ease: EASE_OUT_CUBIC },
-  }),
-};
-
-// Horizontal slide from right
-const slideFromRight: Variants = {
-  hidden: { opacity: 0, x: 50 },
-  visible: (delay: number = 0) => ({
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.7, delay, ease: EASE_OUT_CUBIC },
-  }),
-};
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    ANIMATED COUNTER COMPONENT
@@ -861,14 +833,9 @@ export const LandingPage: React.FC = () => {
             { value: 99.4, suffix: '%', label: 'Fee Recovery Rate', color: 'text-emerald-600', decimals: 1 },
             { value: 15, suffix: ' hrs', label: 'Saved / Teacher Weekly', color: 'text-slate-950' },
           ].map((metric, idx) => (
-            <motion.div
+            <div
               key={idx}
-              custom={idx * 0.08}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              variants={scalePop}
-              className="p-5 rounded-2xl bg-slate-50/60 border border-slate-200/50 text-center"
+              className="p-5 rounded-2xl bg-slate-50/60 border border-slate-200/50 text-center hover:bg-slate-50 hover:border-slate-300/80 transition-all duration-200"
             >
               <span className={`text-3xl sm:text-4xl font-black ${metric.color} block`}>
                 <AnimatedCounter
@@ -881,7 +848,7 @@ export const LandingPage: React.FC = () => {
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-1.5 block">
                 {metric.label}
               </span>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -1007,19 +974,14 @@ export const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {featureCards.map((card, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                custom={idx * 0.07}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-40px' }}
-                variants={scalePop}
-                className={`p-8 rounded-3xl flex flex-col justify-between transition-all group ${
+                className={`p-8 rounded-3xl flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group ${
                   card.large ? 'md:col-span-2' : ''
                 } ${
                   card.dark
                     ? 'bg-slate-950 text-white shadow-xl hover:shadow-2xl'
-                    : 'bg-white border border-slate-200/70 shadow-sm hover:shadow-md'
+                    : 'bg-white border border-slate-200/70 shadow-sm hover:shadow-md hover:border-slate-300'
                 }`}
               >
                 <div className="space-y-4">
@@ -1064,7 +1026,7 @@ export const LandingPage: React.FC = () => {
                     <span>{card.tag}</span>
                   </div>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -1101,14 +1063,9 @@ export const LandingPage: React.FC = () => {
               badge: 'Parent Portal User',
             },
           ].map((t, idx) => (
-            <motion.div
+            <div
               key={idx}
-              custom={idx * 0.1}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              variants={idx % 2 === 0 ? slideFromLeft : slideFromRight}
-              className="p-7 rounded-3xl bg-slate-50 border border-slate-200/70 flex flex-col justify-between space-y-5 hover:shadow-md transition-shadow"
+              className="p-7 rounded-3xl bg-slate-50 border border-slate-200/70 flex flex-col justify-between space-y-5 hover:-translate-y-1 hover:shadow-md hover:border-slate-300/80 transition-all duration-300"
             >
               <div className="space-y-4">
                 <div className="flex items-center gap-0.5 text-amber-400">
@@ -1130,7 +1087,7 @@ export const LandingPage: React.FC = () => {
                   {t.badge}
                 </span>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -1206,17 +1163,12 @@ export const LandingPage: React.FC = () => {
               const isPopular = 'popular' in plan && plan.popular;
 
               return (
-                <motion.div
+                <div
                   key={key}
-                  custom={idx * 0.1}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={scalePop}
-                  className={`p-8 sm:p-10 rounded-3xl flex flex-col justify-between transition-all relative ${
+                  className={`p-8 sm:p-10 rounded-3xl flex flex-col justify-between transition-all duration-300 relative hover:-translate-y-1 ${
                     isPopular
-                      ? 'bg-blue-600 text-white shadow-2xl scale-[1.03] border-2 border-blue-400/60 z-20'
-                      : 'bg-white/5 border border-white/10 hover:border-white/20 text-white'
+                      ? 'bg-blue-600 text-white shadow-2xl scale-[1.02] border-2 border-blue-400/60 z-20 hover:shadow-blue-500/25'
+                      : 'bg-white/5 border border-white/10 hover:border-white/20 text-white hover:bg-white/[0.08]'
                   }`}
                 >
                   {isPopular && (
@@ -1270,7 +1222,7 @@ export const LandingPage: React.FC = () => {
                       Choose {plan.name}
                     </button>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -1292,13 +1244,8 @@ export const LandingPage: React.FC = () => {
           {faqs.map((faq, idx) => {
             const isOpen = expandedFaq === idx;
             return (
-              <motion.div
+              <div
                 key={idx}
-                custom={idx * 0.06}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUp}
                 className="rounded-2xl border border-slate-200 bg-white overflow-hidden transition-shadow hover:shadow-sm"
               >
                 <button
@@ -1328,7 +1275,7 @@ export const LandingPage: React.FC = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             );
           })}
         </div>
