@@ -7,7 +7,7 @@
 ## 📑 Table of Contents
 
 - [Architectural Overview](#-architectural-overview)
-- [System Architecture Diagram](#-system-architecture-diagram)
+- [System Architecture Flow](#-system-architecture-flow)
 - [Feature Matrix by User Role](#-feature-matrix-by-user-role)
 - [Technology Stack](#-technology-stack)
 - [Database Schema & Multi-Tenancy](#-database-schema--multi-tenancy)
@@ -32,36 +32,65 @@ SchoolHub follows a **Modular Monolith** pattern designed for high cohesion, str
 
 ---
 
-## 📊 System Architecture Diagram
+## 📊 System Architecture Flow
 
-```mermaid
-graph TD
-    Client["Web Browser / Mobile Viewport"] --> |"HTTPS / JSON / Cookies"| CDN["Cloudflare CDN & Edge Network"]
-    CDN --> Frontend["React 19 + Vite Frontend SPA"]
-    Frontend --> |"API Requests /api/v1"| ReverseProxy["Render / Nginx Web Service"]
-    
-    subgraph BackendEngine ["Express + TypeScript Modular Monolith"]
-        ReverseProxy --> AuthMiddleware["JWT & Auth Middleware"]
-        AuthMiddleware --> TenantMiddleware["Tenant Isolation Middleware (schoolId)"]
-        TenantMiddleware --> RBAC["Role-Based Access Control"]
-        
-        RBAC --> ModuleAuth["Auth & User Module"]
-        RBAC --> ModuleAcademic["Academics & CBSE Setup"]
-        RBAC --> ModuleStudents["Student & Teacher Portals"]
-        RBAC --> ModuleAttendance["Roll Call & Punch Engine"]
-        RBAC --> ModuleAssignments["Homework & Assignment Engine"]
-        RBAC --> ModuleFinance["Fee Invoicing & Payments"]
-        RBAC --> ModuleExams["Exams & Grade Books"]
-        RBAC --> ModuleUploads["Upload Service"]
-    end
-
-    subgraph DataCloudServices ["Data & Cloud Services"]
-        BackendEngine --> |"Connection Pooling / TLS"| NeonDB[("Neon Serverless PostgreSQL")]
-        ModuleUploads --> |"S3 Compatible API"| CloudflareR2[("Cloudflare R2 Object Storage")]
-        ModuleFinance --> |"Webhooks & UPI"| Razorpay["Razorpay Payment Gateway"]
-        BackendEngine --> |"Transactional SMTP"| Resend["Resend / SMTP Mailer"]
-    end
+```text
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                  CLIENT VIEWPORTS & CHANNELS                                    │
+│                     Desktop Web Browser  •  Tablet Viewport  •  Mobile Device                   │
+└───────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                │  HTTPS / Global Edge Caching
+                                                ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                             EDGE CDN & FRONTEND HOSTING (Cloudflare Pages)                      │
+│                React 19 + TypeScript + Vite 8 SPA  •  Tailwind CSS v4 Semantic Tokens           │
+└───────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                │  REST API Calls (/api/v1) + HttpOnly Cookies
+                                                ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   APPLICATION GATEWAY & HOSTING                                 │
+│                                    Render Web Service / Node.js 22 LTS                          │
+└───────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                │
+                                                ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   SECURITY & TENANT PIPELINE                                    │
+│   ├── Helmet (HTTP Security Headers) & CORS Dynamic Whitelist                                   │
+│   ├── JWT Auth Guard (Access Token 15m / Refresh Token 7d in HttpOnly Cookies)                  │
+│   ├── Tenant Isolation Middleware (Strict schoolId context extraction & IDOR defense)           │
+│   └── RBAC Gatekeeper (SUPER_ADMIN • SCHOOL_ADMIN • TEACHER • STUDENT • PARENT)                 │
+└───────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                │
+                                                ▼
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                               MODULAR MONOLITH BACKEND DOMAIN ENGINES                           │
+│   ├── Auth & School Onboarding Module         ├── Roll Call & Attendance Radar Engine           │
+│   ├── Academic Structure & CBSE Starter Pack  ├── Homework Broadcast & Submissions Portal       │
+│   ├── Student & Faculty Records Directories   ├── Fee Invoicing, UPI & Receipt Reconciliation   │
+│   ├── Timetable Slot Generator (Mon-Sat)      ├── Examinations, Marks Entry & CBSE Report Cards │
+│   ├── Notice Board & Urgent Circulars Hub     └── Cloudflare R2 / S3 Document Storage Handler    │
+└───────────────────────┬───────────────────────────────┬─────────────────────────┬───────────────┘
+                        │                               │                         │
+                        ▼                               ▼                         ▼
+┌───────────────────────────────┐ ┌───────────────────────────┐ ┌─────────────────────────────────┐
+│     NEON SERVERLESS POSTGRES  │ │    CLOUDFLARE R2 STORAGE  │ │    EXTERNAL INTEGRATIONS        │
+│  Prisma 7 ORM Connection Pool │ │  Worksheets & Circulars   │ │  Razorpay Payment Gateway (UPI) │
+│  Shared Schema + schoolId Idx │ │  Student Avatars & Photos │ │  Resend Transactional SMTP      │
+└───────────────────────────────┘ └───────────────────────────┘ └─────────────────────────────────┘
 ```
+
+### Architectural Tiers Breakdown
+
+| Architectural Tier | Component & Stack | Core Responsibility |
+| :--- | :--- | :--- |
+| **Presentation Layer** | React 19, Vite 8, Tailwind CSS v4, Framer Motion | Client SPA rendering, role-aware dashboard views, student digital almanac |
+| **Edge & CDN** | Cloudflare Pages & Global Anycast Network | Static asset delivery, edge caching, and client routing |
+| **Ingress & Hosting** | Render Web Service (Node.js 22 LTS container) | Managed HTTP runtime, process lifecycle, environment configuration |
+| **Security & Middleware**| Express, Helmet, CORS, jsonwebtoken, cookie-parser | Rate hygiene, CSRF mitigations, JWT session validation, tenant boundary enforcement |
+| **Domain Logic** | Express 4 + TypeScript 5 Modular Monolith | Business operations, CBSE academic logic, attendance calculation, fee billing |
+| **Relational Storage** | Neon Serverless PostgreSQL + Prisma 7 ORM | ACID transactions, automated pooling, indexed multi-tenant data structures |
+| **Object Storage** | Cloudflare R2 (S3-compatible API) | High-speed zero-egress storage for homework files, exam sheets, and circulars |
+| **Third-Party Services**| Razorpay & Resend SMTP | Instant UPI fee collections, webhooks, and transactional alert notifications |
 
 ---
 
