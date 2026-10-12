@@ -4,7 +4,7 @@
  * Configures security headers, CORS with credentials, cookie parsing, route mounting, and global error handling.
  */
 
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
@@ -93,7 +93,7 @@ export const createApp = (): Express => {
   app.use(`${apiPrefix}`, dashboardRoutes); // mounts /admin/dashboard and /dashboard
 
   // 4. Catch-all for undefined routes
-  app.all('*', (req: Request, res: Response, next) => {
+  app.all('*', (req: Request, res: Response, next: NextFunction) => {
     next(AppError.notFound(`Cannot find route ${req.method} ${req.originalUrl}`));
   });
 

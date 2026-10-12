@@ -19,13 +19,13 @@ export const requireTenant = async (
       return next(AppError.unauthorized('Authentication required'));
     }
 
-    let tenantId: string | null = null;
+    let tenantId: string | undefined;
 
     // If Super Admin, allow setting target school via header or query, otherwise require explicit school selection
     if (req.user.role === 'SUPER_ADMIN') {
       const headerSchoolId = req.headers['x-school-id'] as string;
       const querySchoolId = req.query.schoolId as string;
-      tenantId = headerSchoolId || querySchoolId || null;
+      tenantId = headerSchoolId || querySchoolId || undefined;
 
       if (!tenantId) {
         return next(
@@ -40,6 +40,10 @@ export const requireTenant = async (
         return next(AppError.forbidden('User does not belong to any school tenant'));
       }
       tenantId = req.user.schoolId;
+    }
+
+    if (!tenantId) {
+      return next(AppError.notFound('School tenant not found'));
     }
 
     // Verify school existence and check active status
