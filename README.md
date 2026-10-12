@@ -1,7 +1,5 @@
 # 🏫 SchoolHub — Multi-Tenant School Management SaaS Platform
 
-![SchoolHub Banner](https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1600)
-
 > **SchoolHub** is a production-ready, cloud-native, multi-tenant Software-as-a-Service (SaaS) platform built for modern K-12 educational institutions, schools, and CBSE/ICSE academy chains. It features complete data isolation per school tenant, role-based dashboards, automated fee collection, examination management, student digital almanacs, interactive teacher homework broadcasting, and live attendance tracking.
 
 ---
@@ -38,30 +36,30 @@ SchoolHub follows a **Modular Monolith** pattern designed for high cohesion, str
 
 ```mermaid
 graph TD
-    Client[Web Browser / Mobile Viewport] --> |HTTPS / JSON / Cookies| CDN[Cloudflare CDN & Edge Network]
-    CDN --> Frontend[React 19 + Vite Frontend SPA]
-    Frontend --> |API Requests /api/v1| ReverseProxy[Render / Nginx Web Service]
+    Client["Web Browser / Mobile Viewport"] --> |"HTTPS / JSON / Cookies"| CDN["Cloudflare CDN & Edge Network"]
+    CDN --> Frontend["React 19 + Vite Frontend SPA"]
+    Frontend --> |"API Requests /api/v1"| ReverseProxy["Render / Nginx Web Service"]
     
-    subgraph Backend [Express + TypeScript Modular Monolith]
-        ReverseProxy --> AuthMiddleware[JWT & Auth Middleware]
-        AuthMiddleware --> TenantMiddleware[Tenant Isolation Middleware (schoolId)]
-        TenantMiddleware --> RBAC[Role-Based Access Control]
+    subgraph BackendEngine ["Express + TypeScript Modular Monolith"]
+        ReverseProxy --> AuthMiddleware["JWT & Auth Middleware"]
+        AuthMiddleware --> TenantMiddleware["Tenant Isolation Middleware (schoolId)"]
+        TenantMiddleware --> RBAC["Role-Based Access Control"]
         
-        RBAC --> ModuleAuth[Auth & User Module]
-        RBAC --> ModuleAcademic[Academics & CBSE Setup]
-        RBAC --> ModuleStudents[Student & Teacher Portals]
-        RBAC --> ModuleAttendance[Roll Call & Punch Engine]
-        RBAC --> ModuleAssignments[Homework & Assignment Engine]
-        RBAC --> ModuleFinance[Fee Invoicing & Payments]
-        RBAC --> ModuleExams[Exams & Grade Books]
-        RBAC --> ModuleUploads[Upload Service]
+        RBAC --> ModuleAuth["Auth & User Module"]
+        RBAC --> ModuleAcademic["Academics & CBSE Setup"]
+        RBAC --> ModuleStudents["Student & Teacher Portals"]
+        RBAC --> ModuleAttendance["Roll Call & Punch Engine"]
+        RBAC --> ModuleAssignments["Homework & Assignment Engine"]
+        RBAC --> ModuleFinance["Fee Invoicing & Payments"]
+        RBAC --> ModuleExams["Exams & Grade Books"]
+        RBAC --> ModuleUploads["Upload Service"]
     end
 
-    subgraph Data & Cloud Services
-        Backend --> |Connection Pooling / TLS| NeonDB[(Neon Serverless PostgreSQL)]
-        ModuleUploads --> |S3 Compatible API| CloudflareR2[(Cloudflare R2 Object Storage)]
-        ModuleFinance --> |Webhooks & UPI| Razorpay[Razorpay Payment Gateway]
-        Backend --> |Transactional SMTP| Resend[Resend / SMTP Mailer]
+    subgraph DataCloudServices ["Data & Cloud Services"]
+        BackendEngine --> |"Connection Pooling / TLS"| NeonDB[("Neon Serverless PostgreSQL")]
+        ModuleUploads --> |"S3 Compatible API"| CloudflareR2[("Cloudflare R2 Object Storage")]
+        ModuleFinance --> |"Webhooks & UPI"| Razorpay["Razorpay Payment Gateway"]
+        BackendEngine --> |"Transactional SMTP"| Resend["Resend / SMTP Mailer"]
     end
 ```
 
