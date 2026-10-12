@@ -1,11 +1,40 @@
 # 🏫 SchoolHub — Multi-Tenant School Management SaaS Platform
 
-> **SchoolHub** is a production-ready, cloud-native, multi-tenant Software-as-a-Service (SaaS) platform built for modern K-12 educational institutions, schools, and CBSE/ICSE academy chains. It features complete data isolation per school tenant, role-based dashboards, automated fee collection, examination management, student digital almanacs, interactive teacher homework broadcasting, and live attendance tracking.
+### What is SchoolHub?
+
+**SchoolHub** is an all-in-one digital campus management platform built for modern K-12 schools, CBSE/ICSE colleges, and educational academies. It replaces scattered WhatsApp groups, paper notice boards, manual fee counters, and physical diaries with a single, real-time operating system for your entire school.
+
+Whether you run a single independent campus or an entire multi-city school chain, SchoolHub provides dedicated, isolated workspaces for every institution while giving administrators complete oversight.
+
+---
+
+### 🌟 Key Capabilities at a Glance
+
+* **⚡ 10-Second Daily Attendance**: Teachers mark roll call with a single tap; absence alerts are immediately tracked and accessible to parents.
+* **📢 Digital Homework & Broadcasts**: Teachers post homework, PDF worksheets, and study notes directly to student diaries with real-time delivery.
+* **💳 Instant Online Fee Collection**: Parents pay term fees securely via UPI, QR code, debit card, or net banking, with instant automated PDF receipts.
+* **📊 CBSE/ICSE Exam & Report Cards**: Configure grading scales, enter exam marks, and generate digital report cards in minutes.
+* **📖 Smart Library & Almanac Ledger**: Search the digital library catalog, track issued books, and monitor campus notices seamlessly.
+* **🛡️ Multi-Tenant Cloud Architecture**: Complete privacy and data isolation for every school, secured with role-based access control.
+
+---
+
+### 👥 Who Uses SchoolHub?
+
+| Role | What They Do on SchoolHub |
+| :--- | :--- |
+| **👑 Super Admin** | Manages all school tenants, monitors platform subscriptions, and tracks revenue metrics. |
+| **🏫 School Admin** | Runs daily operations — staff onboarding, admissions, fee tiers, timetables, and audit logs. |
+| **👩‍🏫 Teacher** | Takes class attendance, broadcasts homework assignments, and records exam scores. |
+| **🎒 Student & Parent** | Checks daily homework, tracks attendance %, downloads report cards, and pays school fees online. |
 
 ---
 
 ## 📑 Table of Contents
 
+- [What is SchoolHub?](#what-is-schoolhub)
+- [Key Capabilities at a Glance](#-key-capabilities-at-a-glance)
+- [Who Uses SchoolHub?](#-who-uses-schoolhub)
 - [Architectural Overview](#-architectural-overview)
 - [System Architecture Flow](#-system-architecture-flow)
 - [Feature Matrix by User Role](#-feature-matrix-by-user-role)
