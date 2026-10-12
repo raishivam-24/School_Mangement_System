@@ -7,9 +7,9 @@ import { z } from 'zod';
 
 export const createAssignmentSchema = z.object({
   body: z.object({
-    academicYearId: z.string().uuid('Invalid academicYearId'),
+    academicYearId: z.string().uuid('Invalid academicYearId').optional(),
     classId: z.string().uuid('Invalid classId'),
-    sectionId: z.string().uuid('Invalid sectionId'),
+    sectionId: z.string().uuid('Invalid sectionId').optional(),
     subjectId: z.string().uuid('Invalid subjectId'),
     title: z.string().min(2, 'Title is required'),
     description: z.string().min(5, 'Description is required'),

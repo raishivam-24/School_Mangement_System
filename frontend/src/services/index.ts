@@ -16,3 +16,4 @@ export * from './timetable.service';
 export * from './report.service';
 export * from './school.service';
 export * from './subscription.service';
+export * from './assignment.service';

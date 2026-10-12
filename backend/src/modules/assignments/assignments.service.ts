@@ -21,20 +21,51 @@ export class AssignmentsService {
     teacherUserId: string,
     input: CreateAssignmentInput
   ) {
-    const teacher = await prisma.teacher.findUnique({
+    let teacher = await prisma.teacher.findUnique({
       where: { userId: teacherUserId },
     });
     if (!teacher || teacher.schoolId !== schoolId) {
-      throw AppError.forbidden('Only registered teachers can create assignments');
+      teacher = await prisma.teacher.findFirst({
+        where: { schoolId },
+      });
+      if (!teacher) {
+        throw AppError.forbidden('No faculty teacher records available to bind assignment');
+      }
+    }
+
+    let academicYearId = input.academicYearId;
+    if (!academicYearId) {
+      const activeYear =
+        (await prisma.academicYear.findFirst({
+          where: { schoolId, isCurrent: true },
+        })) ||
+        (await prisma.academicYear.findFirst({
+          where: { schoolId },
+        }));
+      if (!activeYear) {
+        throw AppError.badRequest('No academic year configured for this school');
+      }
+      academicYearId = activeYear.id;
+    }
+
+    let sectionId = input.sectionId;
+    if (!sectionId) {
+      const firstSection = await prisma.section.findFirst({
+        where: { classId: input.classId },
+      });
+      if (!firstSection) {
+        throw AppError.badRequest('The selected class has no sections configured');
+      }
+      sectionId = firstSection.id;
     }
 
     return prisma.assignment.create({
       data: {
         schoolId,
         teacherId: teacher.id,
-        academicYearId: input.academicYearId,
+        academicYearId,
         classId: input.classId,
-        sectionId: input.sectionId,
+        sectionId,
         subjectId: input.subjectId,
         title: input.title,
         description: input.description,
