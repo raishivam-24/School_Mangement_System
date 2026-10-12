@@ -20,6 +20,7 @@ import {
   useSpring,
   useMotionValueEvent,
   useInView,
+  type Variants,
 } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../lib/api';
@@ -54,61 +55,59 @@ import {
   Globe,
 } from 'lucide-react';
 
-/* ═══════════════════════════════════════════════════════════════════════════════
-   ANIMATION VARIANTS
-   ═══════════════════════════════════════════════════════════════════════════════ */
+const EASE_OUT_CUBIC = [0.22, 1, 0.36, 1] as const;
 
 // Masked text reveal — each line slides up from behind a clip boundary
-const lineReveal = {
+const lineReveal: Variants = {
   hidden: { y: '110%', opacity: 0 },
-  visible: (i: number) => ({
+  visible: (i: number = 0) => ({
     y: '0%',
     opacity: 1,
     transition: {
       duration: 0.85,
       delay: 0.1 + i * 0.13,
-      ease: [0.22, 1, 0.36, 1],
+      ease: EASE_OUT_CUBIC,
     },
   }),
 };
 
 // Gentle fade-up for supporting copy
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, delay, ease: EASE_OUT_CUBIC },
   }),
 };
 
 // Scale pop for cards
-const scalePop = {
+const scalePop: Variants = {
   hidden: { opacity: 0, scale: 0.92 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, delay, ease: EASE_OUT_CUBIC },
   }),
 };
 
 // Horizontal slide from left
-const slideFromLeft = {
+const slideFromLeft: Variants = {
   hidden: { opacity: 0, x: -50 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     x: 0,
-    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, delay, ease: EASE_OUT_CUBIC },
   }),
 };
 
 // Horizontal slide from right
-const slideFromRight = {
+const slideFromRight: Variants = {
   hidden: { opacity: 0, x: 50 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     x: 0,
-    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, delay, ease: EASE_OUT_CUBIC },
   }),
 };
 
