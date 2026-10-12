@@ -666,12 +666,13 @@ export const LandingPage: React.FC = () => {
               <span>Get started</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
-            <a
-              href="#dashboard-preview"
-              className="px-6 py-3.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white text-xs sm:text-sm font-semibold transition-all text-center"
+            <Link
+              to="/login"
+              className="px-6 py-3.5 rounded-full bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white text-xs sm:text-sm font-semibold transition-all text-center flex items-center justify-center gap-2 group"
             >
-              Explore Live Preview
-            </a>
+              <span>Explore Live Demo</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
           </motion.div>
 
           {/* Social Proof Strip */}

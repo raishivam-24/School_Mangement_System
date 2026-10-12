@@ -14,6 +14,7 @@ import {
   Mail,
   Lock,
   ArrowRight,
+  ArrowLeft,
   Search,
   CheckCircle2,
   ShieldCheck,
@@ -84,9 +85,23 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-canvas flex flex-col justify-center items-center p-6 selection:bg-accent-blue-subtle selection:text-accent-blue">
+    <div className="min-h-screen bg-canvas flex flex-col justify-center items-center p-6 selection:bg-accent-blue-subtle selection:text-accent-blue relative">
+      {/* Top Navigation Row with Back Button */}
+      <div className="w-full max-w-md flex items-center justify-between mb-4">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-border text-xs font-bold text-secondary hover:text-primary hover:border-brand-sky shadow-sm transition-all group cursor-pointer active:scale-95"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 text-accent-blue group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Landing Page</span>
+        </Link>
+        <span className="text-[11px] font-bold text-muted uppercase tracking-wider">
+          Demo Portals
+        </span>
+      </div>
+
       {/* Brand Header */}
-      <Link to="/" className="flex items-center gap-3 mb-8">
+      <Link to="/" className="flex items-center gap-3 mb-6">
         <div className="w-11 h-11 rounded-2xl bg-accent-blue flex items-center justify-center text-white shadow-glow-sky">
           <Sparkles className="w-6 h-6" />
         </div>
