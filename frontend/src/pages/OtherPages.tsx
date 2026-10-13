@@ -11,6 +11,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useSocket, type ChatMessagePayload } from '../context/SocketContext';
 import { reportService } from '../services/report.service';
 import confetti from 'canvas-confetti';
 import {
@@ -729,26 +730,89 @@ const initialContacts: ChatContact[] = [
 ];
 
 export const MessagesPage: React.FC = () => {
+  const { user } = useAuth();
+  const {
+    socket,
+    isConnected,
+    typingUsers,
+    joinConversation,
+    leaveConversation,
+    sendMessage: sendSocketMessage,
+    startTyping,
+    stopTyping,
+  } = useSocket();
+
   const [contacts, setContacts] = useState<ChatContact[]>(initialContacts);
   const [activeContactId, setActiveContactId] = useState<string>('c1');
   const [inputText, setInputText] = useState('');
   const [contactSearch, setContactSearch] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0];
+
+  // Join active conversation room on socket
+  useEffect(() => {
+    joinConversation(activeContactId);
+    return () => {
+      leaveConversation(activeContactId);
+    };
+  }, [activeContactId, joinConversation, leaveConversation]);
+
+  // Listen for live incoming messages from Socket.io
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleIncomingMessage = (msg: ChatMessagePayload) => {
+      if (msg.senderId !== user?.id) {
+        const newChatMsg: ChatMessage = {
+          id: msg.id,
+          sender: msg.senderName,
+          text: msg.text,
+          time: msg.time,
+          isMe: false,
+        };
+
+        setContacts((prev) =>
+          prev.map((c) =>
+            c.id === msg.conversationId
+              ? { ...c, messages: [...c.messages, newChatMsg] }
+              : c
+          )
+        );
+      }
+    };
+
+    socket.on('receive_message', handleIncomingMessage);
+    return () => {
+      socket.off('receive_message', handleIncomingMessage);
+    };
+  }, [socket, user]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeContact?.messages]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputText(e.target.value);
+
+    // Broadcast typing indicator
+    startTyping(activeContactId);
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    typingTimerRef.current = setTimeout(() => {
+      stopTyping(activeContactId);
+    }, 1500);
+  };
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
+    const text = inputText.trim();
     const newMessage: ChatMessage = {
       id: `msg-${Date.now()}`,
       sender: 'You',
-      text: inputText.trim(),
+      text,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       isMe: true,
     };
@@ -761,25 +825,31 @@ export const MessagesPage: React.FC = () => {
 
     setContacts(updatedContacts);
     setInputText('');
+    stopTyping(activeContactId);
 
-    // Simulated responsive reply after 1.5 seconds
-    setTimeout(() => {
-      const replyMessage: ChatMessage = {
-        id: `reply-${Date.now()}`,
-        sender: activeContact.name,
-        text: `Understood, thanks for the update! I will coordinate with the department accordingly.`,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isMe: false,
-      };
+    // Emit live Socket.io event
+    sendSocketMessage(activeContactId, text, activeContact.id, user?.name);
 
-      setContacts((prev) =>
-        prev.map((c) =>
-          c.id === activeContactId
-            ? { ...c, messages: [...c.messages, replyMessage] }
-            : c
-        )
-      );
-    }, 1500);
+    // Simulated responsive reply if socket is not connected or in standalone demo mode
+    if (!isConnected) {
+      setTimeout(() => {
+        const replyMessage: ChatMessage = {
+          id: `reply-${Date.now()}`,
+          sender: activeContact.name,
+          text: `Understood, thanks for the update! I will coordinate with the department accordingly.`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isMe: false,
+        };
+
+        setContacts((prev) =>
+          prev.map((c) =>
+            c.id === activeContactId
+              ? { ...c, messages: [...c.messages, replyMessage] }
+              : c
+          )
+        );
+      }, 1500);
+    }
   };
 
   const filteredContacts = contacts.filter((c) =>
@@ -866,9 +936,21 @@ export const MessagesPage: React.FC = () => {
                 </p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-muted px-2.5 py-1 rounded-full bg-surface-raised border border-border">
-              END-TO-END SECURE
-            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${
+                  isConnected
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                    : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                {isConnected ? 'LIVE WEBSOCKET' : 'SOCKET OFFLINE'}
+              </span>
+              <span className="text-[10px] font-bold text-muted px-2.5 py-1 rounded-full bg-surface-raised border border-border hidden sm:inline-block">
+                END-TO-END SECURE
+              </span>
+            </div>
           </div>
 
           {/* Messages Stream */}
@@ -889,6 +971,16 @@ export const MessagesPage: React.FC = () => {
                 </div>
               </div>
             ))}
+            {typingUsers[activeContactId] && (
+              <div className="flex items-center gap-2 text-xs text-muted italic px-2 py-1">
+                <span className="flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-bounce [animation-delay:0.4s]" />
+                </span>
+                <span>{typingUsers[activeContactId]} is typing...</span>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -898,7 +990,7 @@ export const MessagesPage: React.FC = () => {
               type="text"
               placeholder={`Message ${activeContact.name}...`}
               value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
+              onChange={handleInputChange}
               className="flex-1 px-4 py-2.5 bg-surface-raised border border-border rounded-xl text-xs text-primary focus:outline-none focus:ring-2 focus:ring-brand-sky/20"
             />
             <button

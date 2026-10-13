@@ -35,6 +35,7 @@ import {
 } from './pages/OtherPages';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { NotificationProvider } from './context/NotificationContext';
+import { SocketProvider } from './context/SocketContext';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -95,11 +96,12 @@ export function App() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <NotificationProvider>
-            <BrowserRouter>
-              <Routes>
-                {/* Public Landing & Marketing */}
-                <Route path="/" element={<LandingPage />} />
+          <SocketProvider>
+            <NotificationProvider>
+              <BrowserRouter>
+                <Routes>
+                  {/* Public Landing & Marketing */}
+                  <Route path="/" element={<LandingPage />} />
 
               {/* Public Authentication */}
               <Route path="/login" element={<LoginPage />} />
@@ -142,7 +144,8 @@ export function App() {
             </Routes>
           </BrowserRouter>
         </NotificationProvider>
-      </AuthProvider>
+      </SocketProvider>
+    </AuthProvider>
     </QueryClientProvider>
     </ThemeProvider>
   );

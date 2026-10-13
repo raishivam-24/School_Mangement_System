@@ -3,9 +3,11 @@
  * @description Application Server Entry Point with database connection check and graceful shutdown handling.
  */
 
+import http from 'http';
 import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { prisma } from './db/prisma.js';
+import { initSocketServer } from './socket/socket.server.js';
 
 const startServer = async () => {
   try {
@@ -14,21 +16,26 @@ const startServer = async () => {
     await prisma.$connect();
     console.log('✅ PostgreSQL database connected successfully.');
 
-    // 2. Initialize Express application
+    // 2. Initialize Express application & HTTP Server
     const app = createApp();
+    const server = http.createServer(app);
 
-    // 3. Start listening
-    const server = app.listen(env.PORT, () => {
+    // 3. Attach Socket.io Engine
+    initSocketServer(server);
+
+    // 4. Start listening
+    server.listen(env.PORT, () => {
       console.log(`\n🚀 =================================================`);
       console.log(`🏫 School Management SaaS Backend is RUNNING!`);
       console.log(`🌐 Server Port: ${env.PORT}`);
       console.log(`🔗 API Base: http://localhost:${env.PORT}${env.API_PREFIX}`);
       console.log(`💚 Health:   http://localhost:${env.PORT}/health`);
       console.log(`⚙️  Mode:     ${env.NODE_ENV}`);
+      console.log(`💬 WebSockets: Socket.io Real-Time Messaging Active`);
       console.log(`🚀 =================================================\n`);
     });
 
-    // 4. Graceful Shutdown on termination signals
+    // 5. Graceful Shutdown on termination signals
     const shutdown = async (signal: string) => {
       console.log(`\n🛑 Received ${signal}. Gracefully shutting down...`);
       server.close(async () => {
