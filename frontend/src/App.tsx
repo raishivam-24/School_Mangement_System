@@ -33,6 +33,8 @@ import {
   ReportsPage,
   SettingsPage,
 } from './pages/OtherPages';
+import { NotificationsPage } from './pages/NotificationsPage';
+import { NotificationProvider } from './context/NotificationContext';
 
 // Create a client for React Query
 const queryClient = new QueryClient({
@@ -93,10 +95,11 @@ export function App() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Public Landing & Marketing */}
-              <Route path="/" element={<LandingPage />} />
+          <NotificationProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Public Landing & Marketing */}
+                <Route path="/" element={<LandingPage />} />
 
               {/* Public Authentication */}
               <Route path="/login" element={<LoginPage />} />
@@ -122,6 +125,7 @@ export function App() {
                   <Route path="/calendar" element={<CalendarPage />} />
                   <Route path="/library" element={<LibraryPage />} />
                   <Route path="/messages" element={<MessagesPage />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/reports" element={<ReportsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/settings" element={<SettingsPage />} />
@@ -137,8 +141,9 @@ export function App() {
               <Route path="*" element={<RootFallback />} />
             </Routes>
           </BrowserRouter>
-        </AuthProvider>
-      </QueryClientProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </QueryClientProvider>
     </ThemeProvider>
   );
 }

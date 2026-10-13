@@ -7,6 +7,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { cn } from '../../lib/utils';
 import {
   LayoutDashboard,
@@ -36,6 +37,7 @@ interface NavItem {
 
 export const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -181,6 +183,31 @@ export const Sidebar: React.FC = () => {
                 <>
                   <User className={cn('w-[18px] h-[18px]', isActive ? 'text-accent-blue' : 'text-muted group-hover:text-primary')} />
                   <span>Profile</span>
+                </>
+              )}
+            </NavLink>
+            <NavLink
+              to="/notifications"
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all cursor-pointer group',
+                  isActive
+                    ? 'bg-accent-blue/10 text-accent-blue font-semibold shadow-xs'
+                    : 'text-secondary hover:text-primary hover:bg-sidebar-hover'
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <Bell className={cn('w-[18px] h-[18px]', isActive ? 'text-accent-blue' : 'text-muted group-hover:text-primary')} />
+                  <span>Notifications</span>
+                  {unreadCount > 0 ? (
+                    <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500 text-white leading-none">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  ) : isActive ? (
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-accent-blue" />
+                  ) : null}
                 </>
               )}
             </NavLink>

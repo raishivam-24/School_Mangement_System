@@ -11,3 +11,4 @@ export * from './finance.types';
 export * from './attendance.types';
 export * from './announcement.types';
 export * from './assignment.types';
+export * from './notification.types';

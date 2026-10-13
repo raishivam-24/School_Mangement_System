@@ -30,6 +30,7 @@ import { reportRoutes } from './modules/reports/reports.routes.js';
 import path from 'path';
 import { subscriptionRoutes } from './modules/subscriptions/subscriptions.routes.js';
 import { uploadRoutes } from './modules/uploads/uploads.routes.js';
+import { notificationRoutes } from './modules/notifications/notifications.routes.js';
 
 export const createApp = (): Express => {
   const app = express();
@@ -90,6 +91,7 @@ export const createApp = (): Express => {
   app.use(`${apiPrefix}/reports`, reportRoutes);
   app.use(`${apiPrefix}/subscriptions`, subscriptionRoutes);
   app.use(`${apiPrefix}/uploads`, uploadRoutes);
+  app.use(`${apiPrefix}/notifications`, notificationRoutes);
   app.use(`${apiPrefix}`, dashboardRoutes); // mounts /admin/dashboard and /dashboard
 
   // 4. Catch-all for undefined routes
