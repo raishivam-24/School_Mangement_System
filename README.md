@@ -341,6 +341,17 @@ npm run dev
 # Frontend live at http://localhost:5173
 ```
 
+### 6. Running Automated Tests (Vitest)
+Contributors can run co-located unit and integration test suites:
+```bash
+# Run backend tests (Auth, Multi-Tenant middleware, Notifications, API endpoints)
+cd backend && npm test
+
+# Run frontend tests (Component testing, Command Palette, Notification Dropdown)
+cd frontend && npm test
+```
+All pull requests automatically trigger the **GitHub Actions CI Pipeline** (`.github/workflows/ci.yml`).
+
 ---
 
 ## 🔑 Environment Configuration
