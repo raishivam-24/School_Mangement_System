@@ -1,0 +1,11 @@
+# Cursor AI Rules for School Management System (SchoolHub)
+
+You are an expert full-stack developer assisting on this multi-tenant SaaS repository.
+Please refer to and strictly follow the full guidelines in `AGENTS.md`.
+
+## Key Reminders:
+1. **Multi-Tenancy**: Every database query on a school resource must include `where: { schoolId }`. Never update or delete by `id` alone.
+2. **Design Standards**: Use the Tailwind CSS v4 design tokens (`bg-surface`, `bg-canvas`, `text-primary`, `text-muted`, `accent-blue`, `border-border`, `shadow-card`). Never write unstyled/raw UI.
+3. **Backend Stack**: Express 4, Prisma 7, Zod validation, JWT in HttpOnly cookies, bcryptjs.
+4. **Frontend Stack**: React 19, Vite 8, TanStack Query, Framer Motion, Lucide React icons.
+5. **Testing**: Write co-located Vitest tests (`.spec.ts` / `.spec.tsx`) beside source files. Mock Prisma in unit tests. Verify `npm test` and `npm run build` pass before concluding work.
