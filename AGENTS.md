@@ -18,7 +18,49 @@ Follow these instructions strictly whenever you generate, refactor, or review co
 
 ---
 
-## ⚙️ 2. Technology Stack & Tooling
+## 💎 2. Senior-Level Scalable Architecture & Production Engineering Principles
+
+As a senior engineer on this codebase, write code that is maintainable, fault-tolerant, resilient, and architected to scale to 100,000+ users:
+
+### A. Strict Layered Separation of Concerns
+1. **Routes (`<module>.routes.ts`)**:
+   - Role: Route definitions, auth guards (`authenticateUser`, `requireRole`, `requireTenant`), and request validation (`validateBody`, `validateQuery`).
+   - Rule: **ZERO business or database logic** in routes.
+2. **Controllers (`<module>.controller.ts`)**:
+   - Role: Parse inputs, invoke domain services, handle HTTP response formatting with standardized envelope (`{ success: true, data, message }`).
+   - Rule: Controllers must be lightweight. Never write raw Prisma queries in controllers.
+3. **Services (`<module>.service.ts`)**:
+   - Role: Pure business logic, authorization invariants, and database operations.
+   - Rule: Services must remain HTTP-agnostic. Never pass `req` or `res` objects into service methods; accept typed DTOs and return data/throw domain errors.
+4. **Schemas (`<module>.schema.ts`)**:
+   - Role: Explicit Zod contracts validating incoming payloads, queries, and URL params before any controller logic executes.
+
+### B. ACID Transactions & Atomic Operations
+- For multi-entity mutations (e.g., student admission with user creation, fee payment recording with invoice balance deduction, grade publishing with student notifications), **ALWAYS** wrap operations in an interactive database transaction:
+  ```typescript
+  await prisma.$transaction(async (tx) => {
+    // All related atomic operations executed together or rolled back on failure
+  });
+  ```
+
+### C. Query Optimization & Anti-N+1 Protection
+- **No N+1 Queries**: Never loop through entities executing individual queries. Use Prisma `include` / `select` or batch operations (`findMany({ where: { id: { in: ids } } })`).
+- **Bounded Pagination**: Never execute unbounded `findMany()` queries on growing datasets (attendance, students, logs, invoices). Always enforce `take` (maximum 100) and `skip` or cursor-based pagination.
+- **Index Awareness**: Ensure high-cardinality filters (`schoolId`, `status`, `userId`, `createdAt`) are supported by indexes defined in `schema.prisma`.
+
+### D. Resilient Error Handling & Fault Isolation
+- Throw typed domain errors (`BadRequestError(400)`, `ForbiddenError(403)`, `NotFoundError(404)`) that map to clean HTTP status codes.
+- External third-party integrations (Cloudflare R2, Razorpay, SMTP) must fail gracefully with fallback handling or clear error messaging without crashing the application.
+- Never leak internal Prisma database schemas or raw SQL errors to client responses.
+
+### E. Frontend Scalability & Memory Management
+- **Server State vs Client State**: Wrap all backend API requests in TanStack React Query (`useQuery`, `useMutation`). Leverage automatic cache invalidation (`queryClient.invalidateQueries`) and optimistic updates.
+- **Container vs Presentational Pattern**: Keep complex data fetching and state logic in container/page components; pass typed props to presentational UI components.
+- **Memory Leak Prevention**: Always clean up WebSockets (`socket.off`), timers (`clearTimeout`), and resize event listeners in `useEffect` cleanup returns.
+
+---
+
+## ⚙️ 3. Technology Stack & Tooling
 
 ### Backend
 - **Runtime**: Node.js 22 LTS with TypeScript 5
@@ -39,7 +81,7 @@ Follow these instructions strictly whenever you generate, refactor, or review co
 
 ---
 
-## 🎨 3. Frontend Aesthetics & Design Quality Bar
+## 🎨 4. Frontend Aesthetics & Design Quality Bar
 
 - **Zero Low-Effort UI**: Never generate plain HTML tables, bare unstyled buttons, or generic form controls. All UI components must feel **modern, premium, and polished**.
 - **Dark/Light Theme Respect**:
@@ -52,7 +94,7 @@ Follow these instructions strictly whenever you generate, refactor, or review co
 
 ---
 
-## 🧪 4. Testing & Continuous Integration (CI) Guidelines
+## 🧪 5. Testing & Continuous Integration (CI) Guidelines
 
 1. **Test Co-location**:
    - Unit and module tests must be co-located with their source files (e.g. `service.ts` $\rightarrow$ `service.spec.ts`, `Component.tsx` $\rightarrow$ `Component.spec.tsx`).
@@ -72,7 +114,7 @@ Follow these instructions strictly whenever you generate, refactor, or review co
 
 ---
 
-## 🚫 5. Anti-Patterns & Prohibitions
+## 🚫 6. Anti-Patterns & Prohibitions
 
 - ❌ **DO NOT** use `process.exit(1)` in library modules or config without considering the `test` environment (`NODE_ENV === 'test'`).
 - ❌ **DO NOT** hardcode database URLs, secrets, or API keys in code. Use `backend/src/config/env.ts` with Zod validation.
@@ -83,7 +125,7 @@ Follow these instructions strictly whenever you generate, refactor, or review co
 
 ---
 
-## 📁 6. Standard Module Structure
+## 📁 7. Standard Module Structure
 
 When implementing a new domain module (e.g. `parents/`, `inventory/`, `transport/`):
 

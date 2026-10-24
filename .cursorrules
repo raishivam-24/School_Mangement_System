@@ -4,8 +4,13 @@ You are an expert full-stack developer assisting on this multi-tenant SaaS repos
 Please refer to and strictly follow the full guidelines in `AGENTS.md`.
 
 ## Key Reminders:
-1. **Multi-Tenancy**: Every database query on a school resource must include `where: { schoolId }`. Never update or delete by `id` alone.
-2. **Design Standards**: Use the Tailwind CSS v4 design tokens (`bg-surface`, `bg-canvas`, `text-primary`, `text-muted`, `accent-blue`, `border-border`, `shadow-card`). Never write unstyled/raw UI.
-3. **Backend Stack**: Express 4, Prisma 7, Zod validation, JWT in HttpOnly cookies, bcryptjs.
-4. **Frontend Stack**: React 19, Vite 8, TanStack Query, Framer Motion, Lucide React icons.
-5. **Testing**: Write co-located Vitest tests (`.spec.ts` / `.spec.tsx`) beside source files. Mock Prisma in unit tests. Verify `npm test` and `npm run build` pass before concluding work.
+1. **Senior Scalable Architecture**:
+   - Strict layered separation: Routes (guards only) $\rightarrow$ Controllers (HTTP parse only) $\rightarrow$ Services (pure business logic & Prisma) $\rightarrow$ Schemas (Zod validation).
+   - Zero business or database queries in routes or controllers.
+   - Wrap multi-entity writes in `prisma.$transaction`.
+   - Prevent N+1 queries using `include` / `select` or batch operations; enforce pagination bounds (`take <= 100`).
+2. **Multi-Tenancy**: Every database query on a school resource must include `where: { schoolId }`. Never update or delete by `id` alone.
+3. **Design Standards**: Use the Tailwind CSS v4 design tokens (`bg-surface`, `bg-canvas`, `text-primary`, `text-muted`, `accent-blue`, `border-border`, `shadow-card`). Never write unstyled/raw UI.
+4. **Backend Stack**: Express 4, Prisma 7, Zod validation, JWT in HttpOnly cookies, bcryptjs.
+5. **Frontend Stack**: React 19, Vite 8, TanStack Query, Framer Motion, Lucide React icons.
+6. **Testing**: Write co-located Vitest tests (`.spec.ts` / `.spec.tsx`) beside source files. Mock Prisma in unit tests. Verify `npm test` and `npm run build` pass before concluding work.
