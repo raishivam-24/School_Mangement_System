@@ -19,6 +19,12 @@ jobs:
       run:
         working-directory: ./backend
 
+    env:
+      NODE_ENV: test
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/school_test_db?schema=public"
+      JWT_ACCESS_SECRET: "ci_super_secret_jwt_access_key_min_16_chars_secure"
+      JWT_REFRESH_SECRET: "ci_super_secret_jwt_refresh_key_min_16_chars_secure"
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

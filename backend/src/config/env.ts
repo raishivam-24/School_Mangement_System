@@ -18,13 +18,32 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('http://localhost:3000,http://localhost:5173'),
 
   // Database
-  DATABASE_URL: z.string({
-    required_error: 'DATABASE_URL is required for PostgreSQL connection',
-  }),
+  DATABASE_URL: z.string().default(
+    process.env.NODE_ENV === 'test' || process.env.VITEST
+      ? 'postgresql://postgres:postgres@localhost:5432/school_test_db?schema=public'
+      : ''
+  ).refine(
+    (val) => process.env.NODE_ENV === 'test' || process.env.VITEST || val.length > 0,
+    { message: 'DATABASE_URL is required for PostgreSQL connection' }
+  ),
 
   // JWT Auth Configuration
-  JWT_ACCESS_SECRET: z.string().min(16, 'JWT_ACCESS_SECRET must be at least 16 characters'),
-  JWT_REFRESH_SECRET: z.string().min(16, 'JWT_REFRESH_SECRET must be at least 16 characters'),
+  JWT_ACCESS_SECRET: z.string().default(
+    process.env.NODE_ENV === 'test' || process.env.VITEST
+      ? 'test_super_secret_jwt_access_key_min_16_chars'
+      : ''
+  ).refine(
+    (val) => process.env.NODE_ENV === 'test' || process.env.VITEST || val.length >= 16,
+    { message: 'JWT_ACCESS_SECRET must be at least 16 characters' }
+  ),
+  JWT_REFRESH_SECRET: z.string().default(
+    process.env.NODE_ENV === 'test' || process.env.VITEST
+      ? 'test_super_secret_jwt_refresh_key_min_16_chars'
+      : ''
+  ).refine(
+    (val) => process.env.NODE_ENV === 'test' || process.env.VITEST || val.length >= 16,
+    { message: 'JWT_REFRESH_SECRET must be at least 16 characters' }
+  ),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
   COOKIE_DOMAIN: z.string().default('localhost'),
