@@ -9,3 +9,4 @@ export * from './CollectPaymentModal';
 export * from './CreateFeeStructureModal';
 export * from './StudentPersonalFeesView';
 export * from './SchoolAdminFinanceView';
+export * from './ParentFeeLedgerView';

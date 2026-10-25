@@ -1,10 +1,20 @@
+
 /**
  * @file seed.ts
- * @description Database Seeder for initializing Platform Super Admin, Demo School Tenant,
- * Academic structure, Teachers, Students, Enrollments, and Financial samples.
+ * @description Database seeder for the platform admin, demo school,
+ * academic structure, teachers, students, parents, enrollments and samples.
  */
 
-import { UserRole, SchoolStatus, SubscriptionPlan, Gender, AttendanceStatus, ExamStatus, InvoiceStatus, PaymentMethod } from '@prisma/client';
+import {
+  UserRole,
+  SchoolStatus,
+  SubscriptionPlan,
+  Gender,
+  AttendanceStatus,
+  ExamStatus,
+  InvoiceStatus,
+  PaymentMethod,
+} from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { prisma } from '../src/db/prisma.js';
 
@@ -12,7 +22,11 @@ async function main() {
   console.log('🌱 Starting Database Seeding...');
 
   // 1. Seed Platform Super Admin
-  const superAdminPasswordHash = await bcrypt.hash('SuperAdmin@Secure123!', 12);
+  const superAdminPasswordHash = await bcrypt.hash(
+    'SuperAdmin@Secure123!',
+    12,
+  );
+
   const superAdmin = await prisma.user.upsert({
     where: { email: 'superadmin@platform.com' },
     update: {},
@@ -23,6 +37,7 @@ async function main() {
       role: UserRole.SUPER_ADMIN,
     },
   });
+
   console.log(`✅ Seeded Super Admin: ${superAdmin.email}`);
 
   // 2. Seed Demo School Tenant
@@ -40,13 +55,20 @@ async function main() {
       maxStudents: 2000,
     },
   });
-  console.log(`✅ Seeded Demo School: ${school.name} (Code: ${school.code})`);
+
+  console.log(
+    `✅ Seeded Demo School: ${school.name} (Code: ${school.code})`,
+  );
 
   // 3. Seed School Subscription
-  const existingSub = await prisma.schoolSubscription.findFirst({ where: { schoolId: school.id } });
+  const existingSub = await prisma.schoolSubscription.findFirst({
+    where: { schoolId: school.id },
+  });
+
   if (!existingSub) {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + 365);
+
     await prisma.schoolSubscription.create({
       data: {
         schoolId: school.id,
@@ -62,7 +84,11 @@ async function main() {
   }
 
   // 4. Seed School Admin User
-  const schoolAdminPasswordHash = await bcrypt.hash('Admin@Secure123!', 12);
+  const schoolAdminPasswordHash = await bcrypt.hash(
+    'Admin@Secure123!',
+    12,
+  );
+
   const schoolAdmin = await prisma.user.upsert({
     where: { email: 'admin@dpa.edu' },
     update: {},
@@ -74,6 +100,7 @@ async function main() {
       role: UserRole.SCHOOL_ADMIN,
     },
   });
+
   console.log(`✅ Seeded School Admin: ${schoolAdmin.email}`);
 
   // 5. Seed Academic Year
@@ -96,7 +123,12 @@ async function main() {
 
   // 6. Seed Classes & Sections
   const class10 = await prisma.class.upsert({
-    where: { schoolId_name: { schoolId: school.id, name: 'Class 10' } },
+    where: {
+      schoolId_name: {
+        schoolId: school.id,
+        name: 'Class 10',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -106,7 +138,12 @@ async function main() {
   });
 
   const sectionA = await prisma.section.upsert({
-    where: { classId_name: { classId: class10.id, name: 'A' } },
+    where: {
+      classId_name: {
+        classId: class10.id,
+        name: 'A',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -117,7 +154,12 @@ async function main() {
   });
 
   const sectionB = await prisma.section.upsert({
-    where: { classId_name: { classId: class10.id, name: 'B' } },
+    where: {
+      classId_name: {
+        classId: class10.id,
+        name: 'B',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -129,7 +171,12 @@ async function main() {
 
   // 7. Seed Subjects
   const mathSubject = await prisma.subject.upsert({
-    where: { schoolId_code: { schoolId: school.id, code: 'MATH101' } },
+    where: {
+      schoolId_code: {
+        schoolId: school.id,
+        code: 'MATH101',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -140,7 +187,12 @@ async function main() {
   });
 
   const scienceSubject = await prisma.subject.upsert({
-    where: { schoolId_code: { schoolId: school.id, code: 'SCI101' } },
+    where: {
+      schoolId_code: {
+        schoolId: school.id,
+        code: 'SCI101',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -151,7 +203,11 @@ async function main() {
   });
 
   // 8. Seed Teacher
-  const teacherPasswordHash = await bcrypt.hash('Teacher@Secure123!', 12);
+  const teacherPasswordHash = await bcrypt.hash(
+    'Teacher@Secure123!',
+    12,
+  );
+
   const teacherUser = await prisma.user.upsert({
     where: { email: 'amit.sharma@dpa.edu' },
     update: {},
@@ -165,7 +221,12 @@ async function main() {
   });
 
   const teacher = await prisma.teacher.upsert({
-    where: { schoolId_employeeId: { schoolId: school.id, employeeId: 'TCH-001' } },
+    where: {
+      schoolId_employeeId: {
+        schoolId: school.id,
+        employeeId: 'TCH-001',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -178,7 +239,7 @@ async function main() {
     },
   });
 
-  // Assign Teacher to Math for Class 10
+  // Assign Teacher to Mathematics for Class 10
   await prisma.classSubject.upsert({
     where: {
       classId_subjectId: {
@@ -195,8 +256,12 @@ async function main() {
     },
   });
 
-  // 9. Seed Student & Enrollment
-  const studentPasswordHash = await bcrypt.hash('Student@Secure123!', 12);
+  // 9. Seed Student
+  const studentPasswordHash = await bcrypt.hash(
+    'Student@Secure123!',
+    12,
+  );
+
   const studentUser = await prisma.user.upsert({
     where: { email: 'rahul.sharma@dpa.edu' },
     update: {},
@@ -210,7 +275,12 @@ async function main() {
   });
 
   const student = await prisma.student.upsert({
-    where: { schoolId_admissionNo: { schoolId: school.id, admissionNo: 'ADM-2026-001' } },
+    where: {
+      schoolId_admissionNo: {
+        schoolId: school.id,
+        admissionNo: 'ADM-2026-001',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -244,7 +314,54 @@ async function main() {
       status: 'ACTIVE',
     },
   });
-  console.log(`✅ Seeded Demo Student: ${student.firstName} ${student.lastName} in ${class10.name}-${sectionA.name}`);
+
+  console.log(
+    `✅ Seeded Demo Student: ${student.firstName} ${student.lastName} in ${class10.name}-${sectionA.name}`,
+  );
+
+  // 9.1 Seed Parent User and Profile
+  const parentPasswordHash = await bcrypt.hash('Parent@123', 12);
+
+  const parentUser = await prisma.user.upsert({
+    where: { email: 'parent@school.com' },
+    update: {
+      schoolId: school.id,
+      passwordHash: parentPasswordHash,
+      name: 'Rahul Sharma Parent',
+      role: UserRole.PARENT,
+    },
+    create: {
+      schoolId: school.id,
+      email: 'parent@school.com',
+      passwordHash: parentPasswordHash,
+      name: 'Rahul Sharma Parent',
+      role: UserRole.PARENT,
+    },
+  });
+
+  const parent = await prisma.parent.upsert({
+    where: { userId: parentUser.id },
+    update: {
+      schoolId: school.id,
+      relationship: 'FATHER',
+      phone: '+91 99999 88888',
+      address: 'Flat 402, Sunshine Heights, New Delhi',
+    },
+    create: {
+      schoolId: school.id,
+      userId: parentUser.id,
+      relationship: 'FATHER',
+      phone: '+91 99999 88888',
+      address: 'Flat 402, Sunshine Heights, New Delhi',
+    },
+  });
+
+  await prisma.student.update({
+    where: { id: student.id },
+    data: { parentId: parent.id },
+  });
+
+  console.log(`✅ Seeded Demo Parent: ${parentUser.email}`);
 
   // 10. Seed Sample Attendance
   const today = new Date();
@@ -337,24 +454,34 @@ async function main() {
 
   // 12. Seed Announcement
   const existingAnnouncement = await prisma.announcement.findFirst({
-    where: { schoolId: school.id, title: 'Welcome to Academic Year 2026-2027' },
+    where: {
+      schoolId: school.id,
+      title: 'Welcome to Academic Year 2026-2027',
+    },
   });
+
   if (!existingAnnouncement) {
     await prisma.announcement.create({
       data: {
         schoolId: school.id,
         authorId: schoolAdmin.id,
         title: 'Welcome to Academic Year 2026-2027',
-        content: 'We welcome all students and staff back to school for an exciting new term!',
+        content:
+          'We welcome all students and staff back to school for an exciting new term!',
         priority: 'HIGH',
         isPublished: true,
       },
     });
   }
 
-  // 13. Seed Core Academic Subjects (English, Social Science)
+  // 13. Seed Core Academic Subjects
   const englishSubject = await prisma.subject.upsert({
-    where: { schoolId_code: { schoolId: school.id, code: 'ENG101' } },
+    where: {
+      schoolId_code: {
+        schoolId: school.id,
+        code: 'ENG101',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -365,7 +492,12 @@ async function main() {
   });
 
   const sstSubject = await prisma.subject.upsert({
-    where: { schoolId_code: { schoolId: school.id, code: 'SST101' } },
+    where: {
+      schoolId_code: {
+        schoolId: school.id,
+        code: 'SST101',
+      },
+    },
     update: {},
     create: {
       schoolId: school.id,
@@ -375,7 +507,7 @@ async function main() {
     },
   });
 
-  // 14. Seed Examinations & Date Sheets
+  // 14. Seed Examinations
   const midTermExam = await prisma.exam.upsert({
     where: { id: 'exam-midterm-2026' },
     update: {},
@@ -391,7 +523,7 @@ async function main() {
     },
   });
 
-  const pa1Exam = await prisma.exam.upsert({
+  await prisma.exam.upsert({
     where: { id: 'exam-pa1-2026' },
     update: {},
     create: {
@@ -408,7 +540,13 @@ async function main() {
 
   // Exam Subjects Schedule for Class 10
   const subMath = await prisma.examSubject.upsert({
-    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: mathSubject.id } },
+    where: {
+      examId_classId_subjectId: {
+        examId: midTermExam.id,
+        classId: class10.id,
+        subjectId: mathSubject.id,
+      },
+    },
     update: {},
     create: {
       examId: midTermExam.id,
@@ -424,7 +562,13 @@ async function main() {
   });
 
   const subSci = await prisma.examSubject.upsert({
-    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: scienceSubject.id } },
+    where: {
+      examId_classId_subjectId: {
+        examId: midTermExam.id,
+        classId: class10.id,
+        subjectId: scienceSubject.id,
+      },
+    },
     update: {},
     create: {
       examId: midTermExam.id,
@@ -440,7 +584,13 @@ async function main() {
   });
 
   const subEng = await prisma.examSubject.upsert({
-    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: englishSubject.id } },
+    where: {
+      examId_classId_subjectId: {
+        examId: midTermExam.id,
+        classId: class10.id,
+        subjectId: englishSubject.id,
+      },
+    },
     update: {},
     create: {
       examId: midTermExam.id,
@@ -456,7 +606,13 @@ async function main() {
   });
 
   const subSst = await prisma.examSubject.upsert({
-    where: { examId_classId_subjectId: { examId: midTermExam.id, classId: class10.id, subjectId: sstSubject.id } },
+    where: {
+      examId_classId_subjectId: {
+        examId: midTermExam.id,
+        classId: class10.id,
+        subjectId: sstSubject.id,
+      },
+    },
     update: {},
     create: {
       examId: midTermExam.id,
@@ -471,9 +627,14 @@ async function main() {
     },
   });
 
-  // Seed Exam Results for Rahul Sharma (student)
+  // Seed Exam Results for Rahul Sharma
   await prisma.examResult.upsert({
-    where: { examSubjectId_studentId: { examSubjectId: subMath.id, studentId: student.id } },
+    where: {
+      examSubjectId_studentId: {
+        examSubjectId: subMath.id,
+        studentId: student.id,
+      },
+    },
     update: {},
     create: {
       examSubjectId: subMath.id,
@@ -485,19 +646,30 @@ async function main() {
   });
 
   await prisma.examResult.upsert({
-    where: { examSubjectId_studentId: { examSubjectId: subSci.id, studentId: student.id } },
+    where: {
+      examSubjectId_studentId: {
+        examSubjectId: subSci.id,
+        studentId: student.id,
+      },
+    },
     update: {},
     create: {
       examSubjectId: subSci.id,
       studentId: student.id,
       marksObtained: 93.0,
       grade: 'A1',
-      remarks: 'Outstanding experimental application and physics problem solving.',
+      remarks:
+        'Outstanding experimental application and physics problem solving.',
     },
   });
 
   await prisma.examResult.upsert({
-    where: { examSubjectId_studentId: { examSubjectId: subEng.id, studentId: student.id } },
+    where: {
+      examSubjectId_studentId: {
+        examSubjectId: subEng.id,
+        studentId: student.id,
+      },
+    },
     update: {},
     create: {
       examSubjectId: subEng.id,
@@ -509,7 +681,12 @@ async function main() {
   });
 
   await prisma.examResult.upsert({
-    where: { examSubjectId_studentId: { examSubjectId: subSst.id, studentId: student.id } },
+    where: {
+      examSubjectId_studentId: {
+        examSubjectId: subSst.id,
+        studentId: student.id,
+      },
+    },
     update: {},
     create: {
       examSubjectId: subSst.id,
@@ -523,16 +700,21 @@ async function main() {
   console.log('\n🎉 Database Seeding Completed Successfully!\n');
   console.log('====================================================');
   console.log('🔑 TEST LOGIN CREDENTIALS:');
-  console.log('👑 Super Admin: superadmin@platform.com  | SuperAdmin@Secure123!');
-  console.log('🏫 School Admin: admin@dpa.edu          | Admin@Secure123!');
-  console.log('👨‍🏫 Teacher:     amit.sharma@dpa.edu    | Teacher@Secure123!');
-  console.log('🎓 Student:     rahul.sharma@dpa.edu   | Student@Secure123!');
+  console.log(
+    '👑 Super Admin: superadmin@platform.com | SuperAdmin@Secure123!',
+  );
+  console.log('🏫 School Admin: admin@dpa.edu | Admin@Secure123!');
+  console.log('👨‍🏫 Teacher: amit.sharma@dpa.edu | Teacher@Secure123!');
+  console.log(
+    '🎓 Student: rahul.sharma@dpa.edu | Student@Secure123!',
+  );
+  console.log('👨‍👩‍👦 Parent: parent@school.com | Parent@123');
   console.log('====================================================\n');
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seeding failed:', e);
+  .catch((error) => {
+    console.error('❌ Seeding failed:', error);
     process.exit(1);
   })
   .finally(async () => {

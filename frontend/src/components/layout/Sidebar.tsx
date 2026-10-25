@@ -1,7 +1,8 @@
+
 /**
  * @file Sidebar.tsx
- * @description Production dark sidebar with theme-aware active states, glow effects,
- * and role-based navigation. Uses CSS design tokens for automatic theme adaptation.
+ * @description Production dark sidebar with theme-aware active states,
+ * glow effects, and role-based navigation.
  */
 
 import React from 'react';
@@ -45,7 +46,7 @@ export const Sidebar: React.FC = () => {
     navigate('/login');
   };
 
-  // Define dynamic menu items based on Role
+  // Define navigation items according to the user's role.
   const getNavItems = (): NavItem[] => {
     if (!user) return [];
 
@@ -85,6 +86,18 @@ export const Sidebar: React.FC = () => {
       ];
     }
 
+    if (user.role === 'PARENT') {
+      return [
+        { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+        { name: 'Attendance', to: '/attendance', icon: CalendarCheck },
+        { name: 'Fee Ledger', to: '/finance', icon: DollarSign },
+        { name: 'Exams & Reports', to: '/exams', icon: Award },
+        { name: 'Circulars', to: '/announcements', icon: Bell },
+        { name: 'Timetable', to: '/timetable', icon: Clock },
+        { name: 'Messages', to: '/messages', icon: MessageSquare },
+      ];
+    }
+
     // SCHOOL_ADMIN (default)
     return [
       { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
@@ -104,6 +117,14 @@ export const Sidebar: React.FC = () => {
 
   const navItems = getNavItems();
 
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 cursor-pointer group',
+      isActive
+        ? 'bg-accent-blue/10 text-accent-blue font-semibold shadow-xs'
+        : 'text-secondary hover:text-primary hover:bg-sidebar-hover',
+    );
+
   return (
     <aside className="w-64 bg-sidebar flex flex-col h-screen py-5 px-3 shrink-0 border-r border-border transition-colors duration-200">
       <div className="flex-1 overflow-y-auto space-y-6 pr-0.5">
@@ -112,10 +133,12 @@ export const Sidebar: React.FC = () => {
           <div className="w-10 h-10 rounded-xl bg-accent-blue flex items-center justify-center text-white shadow-sm shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
+
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-primary tracking-tight flex items-center gap-1.5">
               School<span className="text-accent-blue">Hub</span>
             </h1>
+
             {user?.school && (
               <p className="text-[11px] text-muted font-medium truncate">
                 {user.school.name}
@@ -124,34 +147,32 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Section: MENU */}
+        {/* MENU */}
         <div>
           <p className="text-[10px] font-bold tracking-[0.15em] text-muted uppercase px-3 mb-2">
             MENU
           </p>
+
           <nav className="space-y-0.5">
             {navItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.to}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 cursor-pointer group',
-                    isActive
-                      ? 'bg-accent-blue/10 text-accent-blue font-semibold shadow-xs'
-                      : 'text-secondary hover:text-primary hover:bg-sidebar-hover'
-                  )
-                }
+                className={navLinkClass}
               >
                 {({ isActive }) => (
                   <>
                     <item.icon
                       className={cn(
                         'w-[18px] h-[18px] transition-colors',
-                        isActive ? 'text-accent-blue' : 'text-muted group-hover:text-primary'
+                        isActive
+                          ? 'text-accent-blue'
+                          : 'text-muted group-hover:text-primary',
                       )}
                     />
+
                     <span>{item.name}</span>
+
                     {isActive && (
                       <div className="ml-auto w-1.5 h-1.5 rounded-full bg-accent-blue" />
                     )}
@@ -162,93 +183,98 @@ export const Sidebar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Section: OTHER */}
-        <div>
-          <p className="text-[10px] font-bold tracking-[0.15em] text-muted uppercase px-3 mb-2">
-            OTHER
-          </p>
-          <div className="space-y-0.5">
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all cursor-pointer group',
-                  isActive
-                    ? 'bg-accent-blue/10 text-accent-blue font-semibold shadow-xs'
-                    : 'text-secondary hover:text-primary hover:bg-sidebar-hover'
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <User className={cn('w-[18px] h-[18px]', isActive ? 'text-accent-blue' : 'text-muted group-hover:text-primary')} />
-                  <span>Profile</span>
-                </>
-              )}
-            </NavLink>
-            <NavLink
-              to="/notifications"
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all cursor-pointer group',
-                  isActive
-                    ? 'bg-accent-blue/10 text-accent-blue font-semibold shadow-xs'
-                    : 'text-secondary hover:text-primary hover:bg-sidebar-hover'
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Bell className={cn('w-[18px] h-[18px]', isActive ? 'text-accent-blue' : 'text-muted group-hover:text-primary')} />
-                  <span>Notifications</span>
-                  {unreadCount > 0 ? (
-                    <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500 text-white leading-none">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  ) : isActive ? (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-accent-blue" />
-                  ) : null}
-                </>
-              )}
-            </NavLink>
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all cursor-pointer group',
-                  isActive
-                    ? 'bg-accent-blue/10 text-accent-blue font-semibold shadow-xs'
-                    : 'text-secondary hover:text-primary hover:bg-sidebar-hover'
-                )
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Settings className={cn('w-[18px] h-[18px]', isActive ? 'text-accent-blue' : 'text-muted group-hover:text-primary')} />
-                  <span>Settings</span>
-                </>
-              )}
-            </NavLink>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm text-secondary hover:text-red-500 hover:bg-red-500/10 transition-all text-left cursor-pointer group"
-            >
-              <LogOut className="w-[18px] h-[18px] text-muted group-hover:text-red-500" />
-              <span>Log out</span>
-            </button>
+        {/* OTHER: hidden for parents */}
+        {user?.role !== 'PARENT' && (
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.15em] text-muted uppercase px-3 mb-2">
+              OTHER
+            </p>
+
+            <div className="space-y-0.5">
+              <NavLink to="/profile" className={navLinkClass}>
+                {({ isActive }) => (
+                  <>
+                    <User
+                      className={cn(
+                        'w-[18px] h-[18px]',
+                        isActive
+                          ? 'text-accent-blue'
+                          : 'text-muted group-hover:text-primary',
+                      )}
+                    />
+                    <span>Profile</span>
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink to="/notifications" className={navLinkClass}>
+                {({ isActive }) => (
+                  <>
+                    <Bell
+                      className={cn(
+                        'w-[18px] h-[18px]',
+                        isActive
+                          ? 'text-accent-blue'
+                          : 'text-muted group-hover:text-primary',
+                      )}
+                    />
+                    <span>Notifications</span>
+
+                    {unreadCount > 0 ? (
+                      <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-rose-500 text-white leading-none">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    ) : isActive ? (
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-accent-blue" />
+                    ) : null}
+                  </>
+                )}
+              </NavLink>
+
+              <NavLink to="/settings" className={navLinkClass}>
+                {({ isActive }) => (
+                  <>
+                    <Settings
+                      className={cn(
+                        'w-[18px] h-[18px]',
+                        isActive
+                          ? 'text-accent-blue'
+                          : 'text-muted group-hover:text-primary',
+                      )}
+                    />
+                    <span>Settings</span>
+                  </>
+                )}
+              </NavLink>
+            </div>
           </div>
+        )}
+
+        {/* Log out: visible for every role */}
+        <div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm text-secondary hover:text-red-500 hover:bg-red-500/10 transition-all text-left cursor-pointer group"
+          >
+            <LogOut className="w-[18px] h-[18px] text-muted group-hover:text-red-500" />
+            <span>Log out</span>
+          </button>
         </div>
       </div>
 
-      {/* User Card at Bottom — always anchored at bottom of screen, no page scrolling needed */}
+      {/* User Card at Bottom */}
       {user && (
         <div className="pt-3 border-t border-border mt-auto shrink-0">
           <div className="p-3 rounded-xl bg-surface-raised border border-border flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-accent-violet/15 text-accent-violet flex items-center justify-center font-bold text-sm ring-1 ring-accent-violet/30 shrink-0">
               {user.name.charAt(0).toUpperCase()}
             </div>
+
             <div className="overflow-hidden min-w-0">
-              <p className="text-sm font-semibold text-primary truncate leading-tight">{user.name}</p>
+              <p className="text-sm font-semibold text-primary truncate leading-tight">
+                {user.name}
+              </p>
+
               <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent-blue/10 text-accent-blue mt-1">
                 {user.role.replace('_', ' ')}
               </span>
