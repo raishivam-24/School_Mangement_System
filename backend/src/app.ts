@@ -17,6 +17,7 @@ import { AppError } from './utils/apiError.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
 import { schoolRoutes } from './modules/schools/schools.routes.js';
 import { academicRoutes } from './modules/academics/academics.routes.js';
+import { parentRoutes } from './modules/parents/parent.routes.js';
 import { studentRoutes } from './modules/students/students.routes.js';
 import { teacherRoutes } from './modules/teachers/teachers.routes.js';
 import { attendanceRoutes } from './modules/attendance/attendance.routes.js';
@@ -80,6 +81,7 @@ export const createApp = (): Express => {
   app.use(`${apiPrefix}/auth`, authRoutes);
   app.use(`${apiPrefix}/schools`, schoolRoutes);
   app.use(`${apiPrefix}/academics`, academicRoutes);
+  app.use(`${apiPrefix}/parent`, parentRoutes);
   app.use(`${apiPrefix}/students`, studentRoutes);
   app.use(`${apiPrefix}/teachers`, teacherRoutes);
   app.use(`${apiPrefix}/attendance`, attendanceRoutes);
