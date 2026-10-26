@@ -263,6 +263,14 @@ export const LoginPage: React.FC = () => {
             >
               <GraduationCap className="w-3.5 h-3.5 text-accent-violet" /> Student
             </button>
+            <button
+              type="button"
+              onClick={() => quickFill('parent@school.com', 'Parent@123')}
+              className="px-2.5 py-2 rounded-xl bg-surface-raised hover:bg-accent-blue-subtle text-secondary hover:text-accent-blue font-bold text-[11px] transition-all flex items-center gap-1.5 justify-center"
+            >
+              <Users className="w-3.5 h-3.5 text-accent-blue" />
+              Parent
+            </button>
           </div>
         </div>
 
