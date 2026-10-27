@@ -14,7 +14,10 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  X,
+  Wallet,
 } from 'lucide-react';
+
 import { api } from '../../../lib/api';
 
 interface ParentDashboardViewProps {
@@ -27,6 +30,14 @@ interface Child {
   lastName: string;
   admissionNo?: string;
   status?: string;
+}
+
+interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  balanceAmount: number | string;
+  dueDate: string;
+  status: string;
 }
 
 interface DashboardData {
@@ -51,13 +62,7 @@ interface DashboardData {
   fees: {
     outstandingDues: number;
     unpaidInvoiceCount: number;
-    invoices: Array<{
-      id: string;
-      invoiceNumber: string;
-      balanceAmount: number | string;
-      dueDate: string;
-      status: string;
-    }>;
+    invoices: Invoice[];
   };
   upcomingExams: Array<{
     id: string;
@@ -104,6 +109,7 @@ function formatDate(value?: string | null): string {
   if (!value) return 'Not available';
 
   const date = new Date(value);
+
   if (Number.isNaN(date.getTime())) return 'Not available';
 
   return date.toLocaleDateString('en-IN', {
@@ -120,6 +126,7 @@ function formatCurrency(value: number | string | undefined): string {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
   }).format(Number.isFinite(amount) ? amount : 0);
 }
 
@@ -127,18 +134,20 @@ function getStatusClass(status?: string | null): string {
   const normalized = (status ?? '').toUpperCase();
 
   if (
-    ['PRESENT', 'SUBMITTED', 'PAID', 'COMPLETED', 'PASS'].includes(normalized)
+    ['PRESENT', 'SUBMITTED', 'PAID', 'COMPLETED', 'PASS'].includes(
+      normalized,
+    )
   ) {
-    return 'text-green-700 bg-green-100';
+    return 'bg-green-100 text-green-700';
   }
 
   if (
     ['ABSENT', 'OVERDUE', 'FAILED', 'NOT_SUBMITTED'].includes(normalized)
   ) {
-    return 'text-red-700 bg-red-100';
+    return 'bg-red-100 text-red-700';
   }
 
-  return 'text-amber-700 bg-amber-100';
+  return 'bg-amber-100 text-amber-700';
 }
 
 const StatCard: React.FC<{
@@ -154,6 +163,7 @@ const StatCard: React.FC<{
         <p className="mt-2 text-2xl font-bold text-primary">{value}</p>
         <p className="mt-1 text-xs text-secondary">{description}</p>
       </div>
+
       <div className="rounded-xl bg-primary/10 p-3">
         <Icon size={22} className="text-primary" />
       </div>
@@ -174,11 +184,13 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
   const [dashboardError, setDashboardError] = useState('');
   const [retryKey, setRetryKey] = useState(0);
 
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+
   const retry = useCallback(() => {
     setRetryKey((current) => current + 1);
   }, []);
 
-  // Load the students linked to the authenticated parent.
   useEffect(() => {
     let cancelled = false;
 
@@ -192,8 +204,8 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
         if (cancelled) return;
 
         const linkedChildren = Array.isArray(result) ? result : [];
-        setChildren(linkedChildren);
 
+        setChildren(linkedChildren);
         setSelectedChildId((current) =>
           linkedChildren.some((child) => child.id === current)
             ? current
@@ -207,6 +219,7 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
             ? error.message
             : 'Unable to load your linked children.',
         );
+
         setChildren([]);
         setSelectedChildId('');
       } finally {
@@ -221,7 +234,6 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
     };
   }, [retryKey]);
 
-  // Load the dashboard whenever the selected child or retry key changes.
   useEffect(() => {
     let cancelled = false;
 
@@ -322,20 +334,24 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
 
   const resultAverage =
     dashboard?.latestResults.length
-      ? dashboard.latestResults.reduce(
-          (total, result) =>
-            total +
-            Number(
-              result.percentage ??
-                (result.maxMarks > 0
-                  ? (result.marksObtained / result.maxMarks) * 100
-                  : 0),
-            ),
-          0,
-        ) / dashboard.latestResults.length
+      ? dashboard.latestResults.reduce((total, result) => {
+          const percentage =
+            result.percentage ??
+            (result.maxMarks > 0
+              ? (result.marksObtained / result.maxMarks) * 100
+              : 0);
+
+          return total + Number(percentage);
+        }, 0) / dashboard.latestResults.length
       : null;
 
   const teacher = dashboard?.enrollment?.classTeacher;
+
+  const visibleInvoices = dashboard?.fees.invoices.slice(0, 3) ?? [];
+
+  const firstVisibleUnpaidInvoice = visibleInvoices.find(
+    (invoice) => Number(invoice.balanceAmount) > 0,
+  );
 
   return (
     <div className="space-y-6 pb-8">
@@ -374,6 +390,7 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
           >
             Select child
           </label>
+
           <select
             id="parent-child"
             value={selectedChildId}
@@ -430,13 +447,13 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
                 <div className="rounded-2xl bg-primary/10 p-4">
                   <GraduationCap size={30} className="text-primary" />
                 </div>
+
                 <div>
                   <h2 className="text-xl font-bold text-primary">
                     {dashboard.student.firstName} {dashboard.student.lastName}
                   </h2>
                   <p className="mt-1 text-sm text-secondary">
-                    Admission No:{' '}
-                    {dashboard.student.admissionNo || 'Not available'}
+                    Admission No: {dashboard.student.admissionNo || 'Not available'}
                   </p>
                   <p className="mt-1 text-sm text-secondary">
                     Class {dashboard.enrollment?.class?.name || 'N/A'}
@@ -446,6 +463,7 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
                   </p>
                 </div>
               </div>
+
               <div className="rounded-xl bg-primary/5 px-4 py-3">
                 <p className="text-xs text-secondary">Today&apos;s attendance</p>
                 <span
@@ -464,210 +482,178 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
               title="Overall Attendance"
               value={`${attendancePercentage.toFixed(1)}%`}
               description={
-                dashboard.attendance.meets75PercentThreshold
+                attendancePercentage >= 75
                   ? 'Meets the 75% attendance threshold'
                   : 'Below the recommended 75% threshold'
               }
               icon={CalendarCheck}
             />
+
             <StatCard
               title="Outstanding Fees"
               value={formatCurrency(dashboard.fees.outstandingDues)}
               description={`${dashboard.fees.unpaidInvoiceCount} unpaid invoice(s)`}
               icon={CreditCard}
             />
+
             <StatCard
               title="Academic Average"
               value={
-                resultAverage === null
-                  ? 'N/A'
-                  : `${resultAverage.toFixed(1)}%`
+                resultAverage === null ? 'N/A' : `${resultAverage.toFixed(1)}%`
               }
               description={`${dashboard.latestResults.length} recent result(s)`}
               icon={Award}
             />
+
             <StatCard
               title="Upcoming Exams"
               value={String(dashboard.upcomingExams.length)}
               description="Scheduled examinations"
-              icon={BookOpen}
+              icon={ClipboardList}
             />
           </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <section className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-3">
-                <CalendarCheck className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">
-                  Attendance Overview
-                </h2>
+                <CalendarCheck className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Attendance</h2>
               </div>
 
               <div className="mt-5">
-                <div className="mb-2 flex justify-between text-sm">
-                  <span className="text-secondary">Attendance percentage</span>
-                  <span className="font-semibold text-primary">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-secondary">Overall attendance</span>
+                  <strong className="text-primary">
                     {attendancePercentage.toFixed(1)}%
-                  </span>
+                  </strong>
                 </div>
-                <div
-                  className="h-3 overflow-hidden rounded-full bg-border"
-                  role="progressbar"
-                  aria-label="Attendance percentage"
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={attendancePercentage}
-                >
+
+                <div className="mt-2 h-3 overflow-hidden rounded-full bg-border">
                   <div
                     className={`h-full rounded-full ${
                       attendancePercentage >= 75
                         ? 'bg-green-500'
-                        : 'bg-amber-500'
+                        : 'bg-red-500'
                     }`}
                     style={{ width: `${attendancePercentage}%` }}
                   />
                 </div>
-                <p className="mt-2 text-xs text-secondary">
-                  {dashboard.attendance.presentDays} present day(s) out of{' '}
-                  {dashboard.attendance.totalDays} recorded day(s).
+
+                <p className="mt-3 text-sm text-secondary">
+                  {dashboard.attendance.presentDays} present days out of{' '}
+                  {dashboard.attendance.totalDays} recorded days.
                 </p>
-              </div>
 
-              <div
-                className={`mt-4 rounded-xl p-3 text-sm ${
-                  attendancePercentage >= 75
-                    ? 'bg-green-50 text-green-800'
-                    : 'bg-amber-50 text-amber-800'
-                }`}
-              >
-                {attendancePercentage >= 75
-                  ? 'Attendance currently meets the 75% threshold.'
-                  : 'Attendance is below 75%. Please review the attendance record.'}
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-border bg-surface p-5">
-              <div className="flex items-center gap-3">
-                <UserRound className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">
-                  Class Information
-                </h2>
-              </div>
-
-              <div className="mt-4 space-y-3 text-sm">
-                <div className="flex justify-between gap-3">
-                  <span className="text-secondary">Class</span>
-                  <span className="text-right font-medium text-primary">
-                    {dashboard.enrollment?.class?.name || 'Not available'}
-                  </span>
-                </div>
-                <div className="flex justify-between gap-3">
-                  <span className="text-secondary">Section</span>
-                  <span className="text-right font-medium text-primary">
-                    {dashboard.enrollment?.section?.name || 'Not available'}
-                  </span>
-                </div>
-                <div className="border-t border-border pt-3">
-                  <p className="font-medium text-primary">Class teacher</p>
-                  <p className="mt-1 text-secondary">
-                    {teacher?.name || 'Teacher information not available'}
+                {dashboard.attendance.todayReason && (
+                  <p className="mt-2 text-sm text-secondary">
+                    Note: {dashboard.attendance.todayReason}
                   </p>
-                  {teacher?.phone && (
-                    <p className="mt-1 text-secondary">
-                      Phone: {teacher.phone}
-                    </p>
-                  )}
-                  {teacher?.email && (
-                    <p className="mt-1 break-all text-secondary">
-                      Email: {teacher.email}
-                    </p>
-                  )}
-                  {!teacher && (
-                    <p className="mt-1 text-xs text-secondary">
-                      Teacher contact details are not currently provided by
-                      the dashboard API.
-                    </p>
-                  )}
-                </div>
+                )}
               </div>
             </section>
 
             <section className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-3">
-                <CreditCard className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">Fee Summary</h2>
+                <Wallet className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Fee Summary</h2>
               </div>
 
               <p className="mt-4 text-2xl font-bold text-primary">
                 {formatCurrency(dashboard.fees.outstandingDues)}
               </p>
               <p className="mt-1 text-sm text-secondary">
-                Total outstanding balance
+                Outstanding balance across unpaid invoices
               </p>
 
-              {dashboard.fees.invoices.length === 0 ? (
+              {visibleInvoices.length === 0 ? (
                 <p className="mt-4 text-sm text-secondary">
                   No unpaid invoices to display.
                 </p>
               ) : (
                 <div className="mt-4 space-y-3">
-                  {dashboard.fees.invoices.slice(0, 3).map((invoice) => (
+                  {visibleInvoices.map((invoice) => (
                     <div
                       key={invoice.id}
-                      className="flex items-center justify-between gap-3 border-t border-border pt-3"
+                      className="flex flex-col justify-between gap-2 rounded-xl border border-border p-3 sm:flex-row sm:items-center"
                     >
                       <div>
-                        <p className="text-sm font-medium text-primary">
+                        <p className="font-semibold text-primary">
                           {invoice.invoiceNumber}
                         </p>
                         <p className="mt-1 text-xs text-secondary">
-                          Due {formatDate(invoice.dueDate)}
+                          Due: {formatDate(invoice.dueDate)}
                         </p>
                       </div>
-                      <p className="text-sm font-semibold text-primary">
-                        {formatCurrency(invoice.balanceAmount)}
-                      </p>
+
+                      <div className="sm:text-right">
+                        <p className="font-semibold text-primary">
+                          {formatCurrency(invoice.balanceAmount)}
+                        </p>
+                        <span
+                          className={`mt-1 inline-flex rounded-full px-2 py-1 text-xs ${getStatusClass(
+                            invoice.status,
+                          )}`}
+                        >
+                          {invoice.status}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (firstVisibleUnpaidInvoice) {
+                    setSelectedInvoice(firstVisibleUnpaidInvoice);
+                    setPaymentModalOpen(true);
+                  }
+                }}
+                disabled={!firstVisibleUnpaidInvoice}
+                className="mt-4 w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Wallet size={16} className="mr-2 inline" />
+                View Payment Details
+              </button>
 
               <p className="mt-4 text-xs text-secondary">
                 View the Fee Ledger for invoice details and available payment
                 receipts. Online payment is not initiated from this dashboard.
               </p>
             </section>
+          </div>
 
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <section className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-3">
-                <BookOpen className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">Upcoming Exams</h2>
+                <ClipboardList className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Upcoming Exams</h2>
               </div>
 
               {dashboard.upcomingExams.length === 0 ? (
                 <p className="mt-4 text-sm text-secondary">
-                  No upcoming exams available.
+                  No upcoming exams scheduled.
                 </p>
               ) : (
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-3">
                   {dashboard.upcomingExams.slice(0, 5).map((exam) => (
                     <div
                       key={exam.id}
-                      className="flex items-start justify-between gap-3 border-t border-border pt-3"
+                      className="rounded-xl border border-border p-3"
                     >
-                      <div>
-                        <p className="font-medium text-primary">
-                          {exam.exam.name}
-                        </p>
-                        <p className="mt-1 text-sm text-secondary">
-                          {exam.subject.name}
-                          {exam.exam.term ? ` • ${exam.exam.term}` : ''}
-                        </p>
-                      </div>
-                      <div className="text-right text-sm text-secondary">
-                        <p>{formatDate(exam.examDate)}</p>
-                        {exam.startTime && <p>{exam.startTime}</p>}
-                      </div>
+                      <p className="font-semibold text-primary">
+                        {exam.exam.name}
+                      </p>
+                      <p className="mt-1 text-sm text-secondary">
+                        {exam.subject.name}
+                        {exam.exam.term ? ` • ${exam.exam.term}` : ''}
+                      </p>
+                      <p className="mt-1 flex items-center gap-2 text-xs text-secondary">
+                        <Clock size={14} />
+                        {formatDate(exam.examDate)}
+                        {exam.startTime ? ` • ${exam.startTime}` : ''}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -676,92 +662,91 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
 
             <section className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-3">
-                <Award className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">Latest Results</h2>
+                <Award className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Latest Results</h2>
               </div>
 
               {dashboard.latestResults.length === 0 ? (
                 <p className="mt-4 text-sm text-secondary">
-                  No exam results available yet.
+                  No examination results available yet.
                 </p>
               ) : (
                 <div className="mt-4 space-y-3">
-                  {dashboard.latestResults.slice(0, 5).map((result) => {
-                    const percentage =
-                      result.percentage ??
-                      (result.maxMarks > 0
-                        ? (result.marksObtained / result.maxMarks) * 100
-                        : 0);
-
-                    return (
-                      <div
-                        key={result.id}
-                        className="flex items-center justify-between gap-3 border-t border-border pt-3"
-                      >
-                        <div>
-                          <p className="font-medium text-primary">
-                            {result.examSubject.subject.name}
-                          </p>
-                          <p className="mt-1 text-xs text-secondary">
-                            {result.examSubject.exam.name}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-primary">
-                            {result.marksObtained}/{result.maxMarks}
-                          </p>
-                          <p className="mt-1 text-xs text-secondary">
-                            {Number(percentage).toFixed(1)}%
-                            {result.grade ? ` • Grade ${result.grade}` : ''}
-                          </p>
-                        </div>
+                  {dashboard.latestResults.slice(0, 5).map((result) => (
+                    <div
+                      key={result.id}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
+                    >
+                      <div>
+                        <p className="font-semibold text-primary">
+                          {result.examSubject.subject.name}
+                        </p>
+                        <p className="mt-1 text-xs text-secondary">
+                          {result.examSubject.exam.name}
+                        </p>
                       </div>
-                    );
-                  })}
+
+                      <div className="text-right">
+                        <p className="font-semibold text-primary">
+                          {result.marksObtained} / {result.maxMarks}
+                        </p>
+                        <p className="mt-1 text-xs text-secondary">
+                          {(
+                            result.percentage ??
+                            (result.maxMarks > 0
+                              ? (result.marksObtained / result.maxMarks) * 100
+                              : 0)
+                          ).toFixed(1)}
+                          %
+                          {result.grade ? ` • Grade ${result.grade}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </section>
+          </div>
 
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <section className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-3">
-                <ClipboardList className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">
-                  Recent Homework
-                </h2>
+                <BookOpen className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Recent Homework</h2>
               </div>
 
               {dashboard.assignments.length === 0 ? (
                 <p className="mt-4 text-sm text-secondary">
-                  No recent homework assignments available.
+                  No recent homework available.
                 </p>
               ) : (
-                <div className="mt-4 space-y-4">
+                <div className="mt-4 space-y-3">
                   {dashboard.assignments.slice(0, 3).map((assignment) => (
                     <div
                       key={assignment.id}
-                      className="flex items-start justify-between gap-3 border-t border-border pt-3"
+                      className="rounded-xl border border-border p-3"
                     >
-                      <div>
-                        <p className="font-medium text-primary">
-                          {assignment.title}
-                        </p>
-                        <p className="mt-1 text-xs text-secondary">
-                          {assignment.subject} • Due{' '}
-                          {formatDate(assignment.dueDate)}
-                        </p>
-                        {assignment.submittedAt && (
-                          <p className="mt-1 text-xs text-secondary">
-                            Submitted {formatDate(assignment.submittedAt)}
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                        <div>
+                          <p className="font-semibold text-primary">
+                            {assignment.title}
                           </p>
-                        )}
+                          <p className="mt-1 text-sm text-secondary">
+                            {assignment.subject}
+                          </p>
+                          <p className="mt-1 text-xs text-secondary">
+                            Due: {formatDate(assignment.dueDate)}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`inline-flex w-fit rounded-full px-2 py-1 text-xs ${getStatusClass(
+                            assignment.submissionStatus,
+                          )}`}
+                        >
+                          {assignment.submissionStatus.replaceAll('_', ' ')}
+                        </span>
                       </div>
-                      <span
-                        className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
-                          assignment.submissionStatus,
-                        )}`}
-                      >
-                        {assignment.submissionStatus.replace(/_/g, ' ')}
-                      </span>
                     </div>
                   ))}
                 </div>
@@ -770,48 +755,183 @@ export const ParentDashboardView: React.FC<ParentDashboardViewProps> = ({
 
             <section className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-center gap-3">
-                <Bell className="text-primary" size={21} />
-                <h2 className="font-semibold text-primary">
-                  Recent Circulars
-                </h2>
+                <UserRound className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Class Teacher</h2>
+              </div>
+
+              {teacher ? (
+                <div className="mt-4 rounded-xl border border-border p-4">
+                  <p className="font-semibold text-primary">
+                    {teacher.name || 'Teacher name unavailable'}
+                  </p>
+                  {teacher.email && (
+                    <p className="mt-2 text-sm text-secondary">
+                      Email: {teacher.email}
+                    </p>
+                  )}
+                  {teacher.phone && (
+                    <p className="mt-1 text-sm text-secondary">
+                      Phone: {teacher.phone}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="mt-4 text-sm text-secondary">
+                  Class teacher contact details are not available.
+                </p>
+              )}
+            </section>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <section className="rounded-2xl border border-border bg-surface p-5">
+              <div className="flex items-center gap-3">
+                <Bell className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">Recent Circulars</h2>
               </div>
 
               {dashboard.circulars.length === 0 ? (
                 <p className="mt-4 text-sm text-secondary">
-                  No recent circulars available.
+                  No recent circulars.
                 </p>
               ) : (
-                <div className="mt-4 space-y-4">
-                  {dashboard.circulars.slice(0, 5).map((circular) => (
-                    <article
+                <div className="mt-4 space-y-3">
+                  {dashboard.circulars.slice(0, 3).map((circular) => (
+                    <div
                       key={circular.id}
-                      className="border-t border-border pt-3"
+                      className="rounded-xl border border-border p-3"
                     >
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="font-medium text-primary">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="font-semibold text-primary">
                           {circular.title}
-                        </h3>
+                        </p>
                         <span
-                          className={`rounded-full px-2 py-1 text-xs ${getStatusClass(
+                          className={`shrink-0 rounded-full px-2 py-1 text-xs ${getStatusClass(
                             circular.priority,
                           )}`}
                         >
                           {circular.priority}
                         </span>
                       </div>
-                      <p className="mt-2 whitespace-pre-wrap text-sm text-secondary">
+
+                      <p className="mt-2 text-sm text-secondary">
                         {circular.content}
                       </p>
                       <p className="mt-2 text-xs text-secondary">
                         {formatDate(circular.createdAt)}
                       </p>
-                    </article>
+                    </div>
                   ))}
                 </div>
               )}
             </section>
+
+            <section className="rounded-2xl border border-border bg-surface p-5">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="text-primary" size={22} />
+                <h2 className="text-lg font-bold text-primary">
+                  Academic Summary
+                </h2>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <div className="flex items-center justify-between rounded-xl border border-border p-3">
+                  <span className="text-sm text-secondary">
+                    Attendance threshold
+                  </span>
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                      attendancePercentage >= 75
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}
+                  >
+                    {attendancePercentage >= 75 ? 'Met' : 'Below 75%'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-border p-3">
+                  <span className="text-sm text-secondary">Academic average</span>
+                  <span className="font-semibold text-primary">
+                    {resultAverage === null
+                      ? 'N/A'
+                      : `${resultAverage.toFixed(1)}%`}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-border p-3">
+                  <span className="text-sm text-secondary">Unpaid invoices</span>
+                  <span className="font-semibold text-primary">
+                    {dashboard.fees.unpaidInvoiceCount}
+                  </span>
+                </div>
+              </div>
+            </section>
           </div>
         </>
+      )}
+
+      {paymentModalOpen && selectedInvoice && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setPaymentModalOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="payment-modal-title"
+            className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h2
+                id="payment-modal-title"
+                className="text-lg font-bold text-primary"
+              >
+                Payment Details
+              </h2>
+
+              <button
+                type="button"
+                aria-label="Close payment details"
+                onClick={() => setPaymentModalOpen(false)}
+                className="rounded-lg p-2 text-secondary hover:bg-border"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-4">
+              <div>
+                <p className="text-sm text-secondary">Invoice number</p>
+                <p className="mt-1 font-semibold text-primary">
+                  {selectedInvoice.invoiceNumber}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-sm text-secondary">Outstanding amount</p>
+                <p className="mt-1 text-2xl font-bold text-primary">
+                  {formatCurrency(selectedInvoice.balanceAmount)}
+                </p>
+              </div>
+
+              <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
+                Online payments are not configured yet. No payment has been
+                initiated. Please contact your school office for payment
+                instructions.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setPaymentModalOpen(false)}
+              className="mt-5 w-full rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
